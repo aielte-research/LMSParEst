@@ -1,0 +1,148 @@
+experiment_name: ""
+experiment_name_base: fbm_hurst #base name for the experiments
+experiment_name_extension: !!python/tuple ['model_fname','data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
+experiment_tags: !!python/tuple ["FBM","LSTM","hurst"]
+#+-------------+
+#| DATA PARAMS |
+#+-------------+
+#the following parameters will be read by the database file (in this case time_series.py)
+data_fname: time_series.py
+data_params:
+    ts_type: fbm          
+    hurst: 
+        gen: random.uniform
+        a: 0
+        b: 1
+    epoch_length: 100000
+    n: 400
+    lambd: 1                              
+    inference: !!python/tuple ['hurst']
+    method: fft
+
+#+--------------+
+#| MODEL PARAMS |
+#+--------------+
+#this is the way to specify which model to train:
+model_state_dict_path: null
+model_fname: LSTM.py
+model_params:
+    diff: true       #work on the increments, instead of the original series
+    standardize: true
+    invariant_nu_layer: null
+    additive_nu_layer: null
+    init_hom: null
+    embedding: null
+        #bias: false
+        #channels: !!python/tuple [1, 128, 256, 256, 128]
+        #kernel_sizes: 4 
+        #activation:
+            #name: PReLU
+        #leave_last_layer_bare: true
+
+    vec_hom: null
+
+    lstm:
+        input_size: 1
+        hidden_size: 128
+        num_layers: 2 
+        bidirectional: false 
+        residual: false
+
+    adaptive_out_length: 1
+
+    mlp:
+        bias: true
+        channels: !!python/tuple [128, 64, 1]
+        batch_norm: false # Add batch normalization between the output mlp layers (but not after the last)
+        dropout: 0 # Add batch normalization between the output mlp layers (but not after the last)
+        activation:
+            name: PReLU
+
+#+--------------+
+#| TRAIN PARAMS |
+#+--------------+
+train_params:
+    shuffle: false
+    freeze_list: !!python/tuple []
+    lr: 0.0001
+    optimizer_class: torch.optim.AdamW
+    loss_fun_class: torch.nn.MSELoss
+    
+    num_epochs: 100
+    train_batch_size: 32
+    val_batch_size: 128
+    skip_train: false
+    skip_val: true
+
+    #? if should be in trainer
+    metric_names:
+    change_seed: true
+    num_cores: 16
+    private_save_path: /data/PEwDL/saved_models/fbm_hurst_lstm_n-400.pt
+
+    metrics:
+        session:
+            scatter_plot: 
+                child_metric: exp_real_inferred
+                metric_func: scatter_plot
+                metric_params:
+                    title: hurst
+
+            deviation_plot: 
+                child_metric: exp_real_inferred
+                metric_func: deviation
+                metric_params:
+                    plot_limit: 50000
+                    measure_interval: 0.025
+                    steps: 1000
+
+            loss_plot: 
+                child_metric: exp_loss
+                metric_func: general_line_plot
+                metric_params:
+                    title: FBM hurst losses
+
+            mse_plot: 
+                child_metric: exp_real_inferred
+                metric_func: mse
+                metric_params:
+                    title: hurst
+                
+        experiment:
+            exp_real_inferred:
+                child_metric: ep_real_inferred
+                metric_func: experiment_saver
+                metric_params: !!python/dict {}
+
+            exp_loss:
+                child_metric: epoch_loss
+                metric_func: experiment_saver
+                metric_params: !!python/dict {}
+
+        epoch:
+            epoch_loss:
+                child_metric: batch_loss
+                metric_func: my_avg
+                metric_params:
+                    message: loss
+
+            ep_real_inferred:
+                child_metric: batch_real_inferred
+                metric_func: epoch_saver
+                metric_params: 
+                    start_count: 0
+                    overwrite_last: true
+
+        batch:
+            batch_real_inferred:
+                metric_func: batch_saver
+                metric_params:
+                    start_count: 9900
+
+        #batch_loss is here by default
+
+    running_logs:
+        session: true
+        experiment: false
+        epoch: false
+        batch: false

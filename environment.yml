@@ -1,0 +1,24 @@
+name: PEwDL
+channels:
+  - defaults
+dependencies:
+  - python=3.9
+  - numpy=1.22
+  - scipy=1.6.2
+  - scikit-learn=1.0.1
+  - pandas
+  - tqdm 
+  - bokeh
+  - matplotlib #=3.5.1
+  - plotly
+  - colorcet
+  - jupyter
+  - pip
+  - pip:
+    - neptune
+    - torch==1.13.0
+    - fbm
+    - transformers
+    - antropy
+    - hurst
+    - pathos

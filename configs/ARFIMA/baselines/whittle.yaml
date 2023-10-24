@@ -1,0 +1,131 @@
+experiment_name: ""
+experiment_name_base: ARFIMA_baseline #base name for the experiments
+experiment_name_extension: !!python/tuple ['model_fname','data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
+experiment_tags: !!python/tuple ["R_over_S","LSTM","d"]
+#+-------------+
+#| DATA PARAMS |
+#+-------------+
+#the following parameters will be read by the database file (in this case time_series.py)
+data_fname: time_series.py
+data_params:
+    ts_type: arfima
+    warmup: 0
+    d: 
+        gen: random.uniform
+        a: -0.5
+        b: 0.5
+    epoch_length: 10000
+    n: 
+        - 100
+        - 200
+        - 400
+        - 800
+        - 1600
+        - 3200
+        - 6400
+        - 12800
+    inference: !!python/tuple ['d']
+
+#+--------------+
+#| MODEL PARAMS |
+#+--------------+
+#this is the way to specify which model to train:
+model_fname: whittle.py
+model_state_dict_path: null
+model_params: 
+    num_cores: 20
+    diff: false
+    shift: -0.5 
+    spec_name: arfima 
+
+#+--------------+
+#| TRAIN PARAMS |
+#+--------------+
+train_params:
+    shuffle: false
+    freeze_list: !!python/tuple []
+    lr: 0.0001
+    optimizer_class: torch.optim.AdamW
+    loss_fun_class: torch.nn.MSELoss
+    
+    num_epochs: 1
+    train_batch_size: 64
+    val_batch_size: 64
+    skip_train: true
+    skip_val: false
+
+    #? if should be in trainer
+    metric_names:
+    change_seed: true
+    num_cores: 16
+    auto_save_path_naming: false
+    load_previous: !!python/tuple []
+    private_save_path: null
+
+    metrics:
+        session:
+            scatter_plot: 
+                child_metric: exp_real_inferred
+                metric_func: scatter_plot
+                metric_params:
+                    title: d
+
+            deviation_plot: 
+                child_metric: exp_real_inferred
+                metric_func: deviation
+                metric_params:
+                    plot_limit: 10000
+                    measure_interval: 0.025
+                    steps: 1000
+                    title: d
+
+            loss_plot: 
+                child_metric: exp_loss
+                metric_func: general_line_plot
+                metric_params:
+                    title: ARFIMA d losses
+
+            mse_plot: 
+                child_metric: exp_real_inferred
+                metric_func: mse
+                metric_params:
+                    title: d
+                
+        experiment:
+            exp_real_inferred:
+                child_metric: ep_real_inferred
+                metric_func: experiment_saver
+                metric_params: !!python/dict {}
+
+            exp_loss:
+                child_metric: epoch_loss
+                metric_func: experiment_saver
+                metric_params: !!python/dict {}
+
+        epoch:
+            epoch_loss:
+                child_metric: batch_loss
+                metric_func: my_avg
+                metric_params:
+                    message: loss
+
+            ep_real_inferred:
+                child_metric: batch_real_inferred
+                metric_func: epoch_saver
+                metric_params: 
+                    start_count: 0
+                    overwrite_last: true
+
+        batch:
+            batch_real_inferred:
+                metric_func: batch_saver
+                metric_params:
+                    start_count: 0
+
+        #batch_loss is here by default
+
+    running_logs:
+        session: true
+        experiment: false
+        epoch: false
+        batch: false
