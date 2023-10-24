@@ -1,0 +1,248 @@
+  - experiment_name: ""
+    experiment_name_base: Integrity_test_fBm_DELETE_ME
+    experiment_name_extension: !!python/tuple ['model_fname']
+    experiment_tags: !!python/tuple ["FBM","LSTM","hurst"]
+    #+-------------+
+    #| DATA PARAMS |
+    #+-------------+
+    #the following parameters will be read by the database file (in this case time_series.py)
+    data_fname: time_series.py
+    data_params: &data
+        ts_type: fbm          
+        hurst: 
+            gen: random.uniform
+            a: 0
+            b: 1
+        epoch_length: 100
+        n: 100
+        lambd: 1                              
+        inference: !!python/tuple ['hurst']
+        method: fft
+
+    #+--------------+
+    #| MODEL PARAMS |
+    #+--------------+
+    model_fname: 
+        - R_over_S.py
+        - higuchi.py
+        - whittle.py
+        - variogram.py
+    model_state_dict_path: null
+    model_params: 
+        num_cores: 8
+        diff: true
+
+    #+--------------+
+    #| TRAIN PARAMS |
+    #+--------------+
+    train_params:
+        adaptive_distr: false
+        local_radius: 0.0001
+        shuffle: false
+        freeze_list: !!python/tuple []
+        lr: 0.0005
+        optimizer_class: torch.optim.AdamW
+        loss_fun_class: torch.nn.MSELoss
+        
+        num_epochs: 1
+        train_batch_size: 64
+        val_batch_size: 64
+        skip_train: true
+        skip_val: false
+
+        #? if should be in trainer
+        metric_names:
+        change_seed: true
+        num_cores: 16
+        private_save_path: null
+
+        metrics: &metrics
+            session:
+                scatter_plot: 
+                    child_metric: exp_real_inferred
+                    metric_func: scatter_plot
+                    metric_params:
+                        title: hurst
+
+                deviation_plot: 
+                    child_metric: exp_real_inferred
+                    metric_func: deviation
+                    metric_params:
+                        plot_limit: 50000
+                        measure_interval: 0.025
+                        steps: 1000
+
+                loss_plot: 
+                    child_metric: exp_loss
+                    metric_func: general_line_plot
+                    metric_params:
+                        title: FBM hurst losses
+
+                mse_plot: 
+                    child_metric: exp_real_inferred
+                    metric_func: mse
+                    metric_params:
+                        title: hurst
+                    
+            experiment:
+                exp_real_inferred:
+                    child_metric: ep_real_inferred
+                    metric_func: experiment_saver
+                    metric_params: !!python/dict {}
+
+                exp_loss:
+                    child_metric: epoch_loss
+                    metric_func: experiment_saver
+                    metric_params: !!python/dict {}
+
+            epoch:
+                epoch_loss:
+                    child_metric: batch_loss
+                    metric_func: my_avg
+                    metric_params:
+                        message: loss
+
+                ep_real_inferred:
+                    child_metric: batch_real_inferred
+                    metric_func: epoch_saver
+                    metric_params: 
+                        start_count: 0
+                        overwrite_last: true
+
+            batch:
+                batch_real_inferred:
+                    metric_func: batch_saver
+                    metric_params:
+                        start_count: 0
+
+            #batch_loss is here by default
+
+        running_logs: &running_logs
+            session: true
+            experiment: false
+            epoch: false
+            batch: false
+
+  - experiment_name: ""
+    experiment_name_base: Integrity_test_fBM_DELETE_ME
+    experiment_name_extension: !!python/tuple ['model_fname']
+    experiment_tags: !!python/tuple ["FBM","LSTM","hurst"]
+    #+-------------+
+    #| DATA PARAMS |
+    #+-------------+
+    #the following parameters will be read by the database file (in this case time_series.py)
+    data_fname: time_series.py
+    data_params: *data
+
+    #+--------------+
+    #| MODEL PARAMS |
+    #+--------------+
+    model_state_dict_path: null
+    model_fname: base.py
+    model_params:
+        diff: true
+        standardize: true
+        invariant_nu_layer: null
+        additive_nu_layer: null
+        #base_type: polynomial
+        #base_dim: 0
+        embedding:
+            bias: true
+            channels: !!python/tuple [1, 64, 64, 128, 128, 128, 128]
+            kernel_sizes: 4 
+            activation:
+                name: PReLU
+        adaptive_out_length: 1
+        vec_hom: null
+        mlp:
+            bias: true
+            channels: !!python/tuple [128, 64, 1]
+            batch_norm: false # Add batch normalization between the output mlp layers (but not after the last)
+            dropout: 0 # Add batch normalization between the output mlp layers (but not after the last)
+            activation:
+                name: PReLU
+
+    #+--------------+
+    #| TRAIN PARAMS |
+    #+--------------+
+    train_params: &train_params
+        shuffle: false
+        freeze_list: !!python/tuple []
+        lr: 0.0001
+        optimizer_class: torch.optim.AdamW
+        loss_fun_class: torch.nn.MSELoss
+        
+        num_epochs: 2
+        train_batch_size: 32
+        val_batch_size: 128
+        skip_train: false
+        skip_val: true
+
+        #? if should be in trainer
+        metric_names:
+        change_seed: true
+        num_cores: 16
+        private_save_path: null
+
+        metrics: *metrics
+        running_logs: *running_logs
+
+  - experiment_name: ""
+    experiment_name_base: Integrity_test_fBM_DELETE_ME
+    experiment_name_extension: !!python/tuple ['model_fname']
+    experiment_tags: !!python/tuple ["FBM","LSTM","hurst"]
+    #+-------------+
+    #| DATA PARAMS |
+    #+-------------+
+    #the following parameters will be read by the database file (in this case time_series.py)
+    data_fname: time_series.py
+    data_params: *data
+
+    #+--------------+
+    #| MODEL PARAMS |
+    #+--------------+
+    model_state_dict_path: null
+    model_fname: LSTM.py
+    model_params:
+        parallel: true
+        diff: true       #work on the increments, instead of the original series
+        standardize: true
+        invariant_nu_layer: null
+        additive_nu_layer: null
+        init_hom: null
+        embedding: null
+            #bias: false
+            #channels: !!python/tuple [1, 128, 256, 256, 128]
+            #kernel_sizes: 4 
+            #activation:
+                #name: PReLU
+            #leave_last_layer_bare: true
+
+        vec_hom: null
+
+        lstm:
+            input_size: 1
+            hidden_size: 128
+            num_layers: 2
+            bidirectional: false 
+            residual: false
+
+        adaptive_out_length: 1
+
+        mlp:
+            bias: true
+            channels: !!python/tuple [128, 64, 1]
+            batch_norm: false # Add batch normalization between the output mlp layers (but not after the last)
+            dropout: 0 # Add batch normalization between the output mlp layers (but not after the last)
+            activation:
+                name: PReLU
+
+        avg_base: null
+        nu_estimator: false
+        simple_nu_estimator: false
+        rs: null
+
+    #+--------------+
+    #| TRAIN PARAMS |
+    #+--------------+
+    train_params: *train_params
