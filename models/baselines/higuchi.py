@@ -31,6 +31,3 @@ class Model():
         higuchi_est = [2 - higuchi_fd(s) + self.shift for s in x]
         higuchi_est = torch.FloatTensor(higuchi_est)
         return torch.unsqueeze(higuchi_est, 1)
-
-
-

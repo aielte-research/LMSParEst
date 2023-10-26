@@ -72,6 +72,3 @@ class Model():
             est = [2 - fd + self.shift for fd in p.map(variogram, x)]
         est = torch.FloatTensor(est)
         return torch.unsqueeze(est, 1)
-
-
-

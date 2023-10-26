@@ -213,6 +213,3 @@ class Model(BaseRegressor):
                 self.load_state_dict(get_state_dict(state_dict))
             except: #if it was accidentally saved as a parallel model, should not happen anymore
                 self.load_state_dict(get_state_dict_parallel(state_dict))
-
-
-
