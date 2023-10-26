@@ -1,8 +1,20 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as f
-from import_tools import get_state_dict, get_state_dict_parallel
 
+def get_state_dict(state_dict):
+    if torch.cuda.is_available():
+        return torch.load(state_dict)
+    return torch.load(state_dict,map_location=torch.device('cpu'))
+
+def get_state_dict_parallel(state_dict): #if it was accidentally saved as a parallel model 
+    from collections import OrderedDict
+    state_dict=get_state_dict(state_dict)
+    new_state_dict = OrderedDict()
+    for k, v in state_dict.items():
+        name = k[7:] #remove 'module'
+        new_state_dict[name] = v
+    return new_state_dict
 
 class Permute(nn.Module):
     def __init__(self, perm):

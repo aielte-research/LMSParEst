@@ -1,7 +1,7 @@
 import torch
 import importlib
 
-from import_tools import string_import
+from helper_functions import string_import
 
 #TSPairs is a class from which we initiate objects that can be given to the Pytorch dataloader
 #such an object has fixed epoch length paramater which determines

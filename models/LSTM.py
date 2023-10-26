@@ -1,6 +1,6 @@
 import torch.nn as nn
 from models.base import BaseRegressor as Base
-from import_tools import get_state_dict, get_state_dict_parallel
+from models.base import get_state_dict, get_state_dict_parallel
 
 class Res_LSTM(nn.Module):
     def __init__(self, input_size=64, hidden_size=64, num_layers=2, bidirectional=False, residual=False):

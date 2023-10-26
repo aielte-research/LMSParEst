@@ -1,12 +1,16 @@
-import torch
 import math
 from pathlib import Path
+import importlib
 
-use_cuda = torch.cuda.is_available()
-def to_cuda(var):
-    if use_cuda:
-        return var.cuda()
-    return var
+def string_import(s):
+    parts = s.split('.')
+
+    module = '.'.join(parts[:-1])
+    attr = parts[-1]
+
+    module = importlib.import_module(module)
+
+    return getattr(module, attr)
 
 def human_format(num, digits=4, kilo = 1000):
     magnitude = 0

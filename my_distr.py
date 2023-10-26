@@ -29,21 +29,13 @@ def rand_rand_ar_params(max_length):
 
     return out
 
-
 def rand_unif_list(length, a, b):
     out = [random.uniform(a, b) for _ in range(length)]
 
     return out
 
 def rand_rand_unif_list(max_length, a, b):
-
     length = random.randint(1, max_length)
     out = rand_unif_list(length, a, b)
 
     return out
-
-    
-#x = rand_rand_ar_params(1)
-#print(x)
-
-

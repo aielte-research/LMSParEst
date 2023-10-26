@@ -1,5 +1,4 @@
-import sys, argparse
-import os,importlib
+import os, importlib
 import torch
 
 import copy
@@ -10,11 +9,9 @@ import time
 import torch
 import yaml
 from torch.utils import data
-from my_functions import pretty_time
+from helper_functions import pretty_time, string_import
 
 from metrics.loss import Loss
-from metrics.metric_block import MetricBlock
-import import_tools 
 
 import neptune
 
@@ -271,17 +268,17 @@ class ExperimentTrainer(MetaTrainer):
         self.train_pairs = self.database[0]
         self.val_pairs = self.database[1]
 
-        self.optimizer_class = import_tools.string_import(self.optimizer_class)
+        self.optimizer_class = string_import(self.optimizer_class)
         self.optimizer = self.optimizer_class(self.model.parameters(), self.lr)
 
-        self.loss_fun = import_tools.string_import(self.loss_fun_class)()
+        self.loss_fun = string_import(self.loss_fun_class)()
 
         
         metric_names=[]
         for metric_level in self.metrics.values():
             metric_names+=[metric["metric_func"] for metric in metric_level.values()]
 
-        self.metric_classes = import_tools.import_metric(metric_names)
+        self.metric_classes = import_metric(metric_names)
 
 
         #------------CREATING THE EXPERIMENT LEVEL NEPTUNE OBJECT----------
@@ -488,6 +485,20 @@ def to_cuda(var):
     if use_cuda:
         return var.cuda()
     return var
+
+def import_metric(metric_names):
+    if not metric_names:
+        return []
+
+    mdl_list = [importlib.import_module('metrics.' + name)
+                                                     for name in metric_names]
+
+    class_names = [name.capitalize() for name in metric_names]
+
+    metrics =  [getattr(mdl, class_name) for mdl, class_name 
+                                                 in zip(mdl_list, class_names)]
+
+    return {k: v for k, v in zip(metric_names, metrics)}
 
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
