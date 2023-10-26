@@ -6,7 +6,7 @@ experiment_tags: !!python/tuple ["R_over_S","LSTM","d"]
 #| DATA PARAMS |
 #+-------------+
 #the following parameters will be read by the database file (in this case time_series.py)
-data_fname: time_series.py
+data_fname: baselines/time_series.py
 data_params:
     ts_type: arfima
     warmup: 0
@@ -30,7 +30,7 @@ data_params:
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_fname: variogram.py
+model_fname: baselines/variogram.py
 model_state_dict_path: null
 model_params: 
     num_cores: 1

@@ -23,7 +23,7 @@ data_params: &data_params
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_fname: higuchi.py
+model_fname: baselines/higuchi.py
 model_state_dict_path: null
 model_params: 
     num_cores: 1

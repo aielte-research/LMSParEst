@@ -46,7 +46,7 @@ data_params:
 #+--------------+
 #this is the way to specify which model to train:
 model_fname:
-    - classical_fou.py
+    - baselines/classical_fou.py
 model_state_dict_path: null
 model_params:
     range:

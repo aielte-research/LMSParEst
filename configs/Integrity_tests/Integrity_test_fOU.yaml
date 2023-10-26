@@ -31,8 +31,8 @@
     #| MODEL PARAMS |
     #+--------------+
     model_fname: 
-        - classical_fou.py
-        - R_over_S.py
+        - baselines/classical_fou.py
+        - baselines/R_over_S.py
     model_state_dict_path: null
     model_params: 
         estimated_param: hurst

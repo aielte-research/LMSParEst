@@ -33,10 +33,10 @@ data_params: &data_params
 #+--------------+
 #this is the way to specify which model to train:
 model_fname: 
-    - R_over_S.py
-    - higuchi.py
-    - whittle.py
-    - variogram.py
+    - baselines/R_over_S.py
+    - baselines/higuchi.py
+    - baselines/whittle.py
+    - baselines/variogram.py
 model_state_dict_path: null
 model_params: null
 #+--------------+

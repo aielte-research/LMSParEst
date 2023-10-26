@@ -32,10 +32,10 @@ data_params:
 #+--------------+
 #this is the way to specify which model to train:
 model_fname:
-    #- higuchi.py
-    - classical_fou.py
-    #- R_over_S.py
-    #- whittle.py
+    #- baselines/higuchi.py
+    - baselines/classical_fou.py
+    #- baselines/R_over_S.py
+    #- baselines/whittle.py
 model_state_dict_path: null
 model_params:
     estimated_param: hurst

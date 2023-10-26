@@ -30,7 +30,7 @@ data_params:
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_fname: whittle.py
+model_fname: baselines/whittle.py
 model_state_dict_path: null
 model_params: 
     num_cores: 20
