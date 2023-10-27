@@ -1,17 +1,4 @@
 import functools as ft
-import numpy as np
-
-# class Exp_saver_data_class(np.ndarray):
-#     def __new__(cls, input_array, info=None):
-#         # Input array is an already formed ndarray instance
-#         # We first cast to be our class type
-#         obj = np.asarray(input_array).view(cls)
-#         return obj
-#     def __add__(self, x):
-#         return np.concatenate((self, x), axis=1)
-#     def __iadd__(self, x):
-#         self=Exp_saver_data_class(np.concatenate((self, x), axis=1))
-#         return self
 
 def flatten(seq):
     return ft.reduce(lambda a, b: a + b, seq)

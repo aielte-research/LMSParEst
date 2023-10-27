@@ -18,4 +18,3 @@ class Epoch_saver():
 
         else:
             return []
-

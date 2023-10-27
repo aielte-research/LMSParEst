@@ -30,8 +30,6 @@ class Scatter_plot():
         #     for i in range(len(results[seq_idx])):
         #         if math.isnan(results[seq_idx][i]):
         #             results[seq_idx][i]="NaN"
-        
-        # print (results[0][:100])
 
         params={
             "Xs": goals,

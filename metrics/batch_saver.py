@@ -26,5 +26,3 @@ class Batch_saver():
             return [[x[self.real_param_idx].item(), y[self.inferred_param_idx].item()] for x, y in zip(batch_label, inferred_label)]
         else:
             return []
-
-
