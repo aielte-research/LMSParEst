@@ -5,7 +5,7 @@ from scipy.fftpack import fft
 from fbm import FBM
 
 
-def base_gen(hurst=0.7, n=2000, method="fft", T = 1):
+def fbm(hurst=0.7, n=2000, method="fft", length = 1):
 
     """
         One dimensional fraction Brownian motion generator object through different methods.
@@ -55,7 +55,7 @@ def base_gen(hurst=0.7, n=2000, method="fft", T = 1):
             np.cumsum([0, *np.real(W[1:(n + 1)])])
 
         # rescale the for the final T
-        W = (T ** hurst) * W
+        W = (length ** hurst) * W
         return W
 
     elif method in ('cholesky', 'hosking', 'daviesharte'):
@@ -71,12 +71,5 @@ def gen(hurst = 0.7, n = 2000, method = 'fft', lambd = 1, d=None):
     m = n - 1
     scale = lambd * (m ** hurst)
 
-    #t = np.linspace(0, n, n + 1)
-    #loc_vec_1 = nu_0 * t ** 0
-    #loc_vec_1 = nu_1 * t
-    #loc_vec_2 = nu_2 * t ** 2
-
     #return lambd * base_gen(hurst = hurst, n = m, method = method, T = 1)
-    return scale * base_gen(hurst = hurst, n = m, method = method, T = 1)
-          
-
+    return scale * fbm(hurst = hurst, n = m, method = method, T = 1)
