@@ -1,198 +1,86 @@
-from process_generators.new_fbm_gen import FBM
 import numpy as np
-from abc import abstractmethod
+import cmath
+from scipy.fftpack import fft
 
-class Abstract:
-    @abstractmethod
-    def get_covariance_matrix(self):
-        pass
-
-    @abstractmethod
-    def get_covariance_matrix_sqrt(self):
-        pass
-
-    @abstractmethod
-    def get_increments(self):
-        pass
-
-    @abstractmethod
-    def get_path(self):
-        pass
-
-class FOU(Abstract):
-    # Cholesky
-    def __init__(self, hurst, alpha, sigma, initial_value=0, mu=0, time_grid=[], n=1000, T=1, isEquidistant=True):
-        self.hurst = hurst
-        self.n = n
-        self.T = T
-        self.isEquidistant = isEquidistant
-        self.time_grid = self.time_grid_setter(time_grid)
-        self.sigma = self.sigma_setter(sigma)
-        self.alpha = self.alpha_setter(alpha)
-        self.mu = mu
-        self.initial_value = initial_value
-        self.weights = self.integrand_setter()
-        self.fbm = FBM(hurst=hurst, time_grid=time_grid,
-                       T=T, n=n, isEquidistant=isEquidistant)
-        self.delta_grid = self.delta_grid_setter()  # majd az Euler-sémához fog kelleni
-
-
-    def delta_grid_setter(self):
-        if self.isEquidistant:
-            return np.diff(self.time_grid)
-
-    def euler_scheme(self):
-        fou_increments = np.zeros(self.n-1)
-        path = np.zeros(self.n)
-        path[0] = self.initial_value
-        fbm_increments = self.fbm.get_increments()
-        for i in range(self.n-1):
-            fou_increments[i] = self.alpha * self.delta_grid[i] * \
-                (self.mu - path[i]) + self.sigma * fbm_increments[i]
-            path[i+1] = fou_increments[i] + path[i]
-        return path
-
-    def sigma_setter(self, sigma):
-        if sigma > 0:
-            return sigma
+def fbm_increments(n, hurst):
+    r = np.zeros(n+1)
+    for i in range(n+1):
+        if i == 0:
+            r[0] = 1
         else:
-            raise Exception("The volatility parameter has to be positive.")
+            r[i] = 1 / 2 * ((i + 1)**(2*hurst) - 2*i **
+                            (2*hurst) + (i - 1)**(2*hurst))
+    r = np.concatenate([r, r[::-1][1:len(r)-1]])
+    lmbd = np.real(fft(r) / (2*n))
+    sqrt = [cmath.sqrt(x) for x in lmbd]
+    W = fft(sqrt * (np.random.normal(size=2*n) +
+                    np.random.normal(size=2*n) * complex(0, 1)))
 
-    def alpha_setter(self, alpha):
-        if alpha > 0:
-            return alpha
-        else:
-            raise Exception("The drift parameter has to be positive.")
+    W = n**(-hurst) * np.real(W[1:(n )])
 
-    def time_grid_setter(self, time_grid):
-        if self.isEquidistant:
-            delta = self.T/(self.n-1)
-            return [j*delta for j in range(0, self.n)]
-        else:
-            return time_grid
+    return W
 
-    def integrand_setter(self):
-        # mu még nincs benne
-        return [self.sigma*np.exp(-self.alpha*(self.T-self.time_grid[idx]))
-            for idx in range(self.n-1)]
+def time_grid_setter(n):
+        delta = 1/(n-1)
+        return [j*delta for j in range(0, n)]
 
-    def get_path(self):
-        if self.initial_value == 0 and self.mu == 0:
-            return np.cumsum([self.initial_value, *(self.weights * self.fbm.get_increments())])
-        elif self.mu == 0:
-            return [self.initial_value, *[np.exp(-self.alpha*self.time_grid[i]) * self.initial_value +
-                                          (self.weights * self.fbm.get_increments())[i-1] for i in range(1, len(self.time_grid))]]
-        else:
-            return [self.initial_value, *[np.exp(-self.alpha*self.time_grid[i]) * self.initial_value + self.mu*(1-np.exp(-self.alpha*self.time_grid[i])) +
-                                          (self.weights * self.fbm.get_increments())[i-1] for i in range(1, len(self.time_grid))]]
+def old_integrand_setter(n, sigma, alpha, time_grid):
+    disc_integrands = np.zeros((n-1, n-1))
 
-    def get_increment(self):
-        return np.diff(self.get_path())
+    for i in range(n-1):
+        for j in range(i+1):
+            disc_integrands[i][j] = sigma*np.exp(-alpha*(time_grid[i]-time_grid[j]))
 
+    return disc_integrands
 
-class FOU_noncond(Abstract):
-    """
-    Returns a realisation according to the "non-conditional", i.e. according to the joint distribution of the variables determined by the time_grid and the parameters
-    """
-    def __init__(self, hurst, alpha, sigma, initial_value=0, mu=0, time_grid=[], n=1000, T=1, isEquidistant=True):
-        self.hurst = hurst
-        self.n = n
-        self.T = T
-        self.isEquidistant = isEquidistant
-        self.time_grid = self.time_grid_setter(time_grid)
-        self.sigma = self.sigma_setter(sigma)
-        self.alpha = self.alpha_setter(alpha)
-        self.mu = mu
-        self.initial_value = initial_value
-        self.weights = self.integrand_setter()
-        self.fbm = FBM(hurst=hurst, time_grid=time_grid,
-                       T=T, n=n, isEquidistant=isEquidistant)
-        self.delta_grid = self.delta_grid_setter()  # majd az Euler-sémához fog kelleni
-
-
-    def delta_grid_setter(self):
-        if self.isEquidistant:
-            return np.diff(self.time_grid)
-
-    def euler_scheme(self):
-        fou_increments = np.zeros(self.n-1)
-        path = np.zeros(self.n)
-        path[0] = self.initial_value
-        fbm_increments = self.fbm.get_increments()
-        for i in range(self.n-1):
-            fou_increments[i] = self.alpha * self.delta_grid[i] * \
-                (self.mu - path[i]) + self.sigma * fbm_increments[i]
-            path[i+1] = fou_increments[i] + path[i]
-        return path
-
-    def sigma_setter(self, sigma):
-        if sigma > 0:
-            return sigma
-        else:
-            raise Exception("The volatility parameter has to be positive.")
-
-    def alpha_setter(self, alpha):
-        if alpha > 0:
-            return alpha
-        else:
-            raise Exception("The drift parameter has to be positive.")
-
-    def time_grid_setter(self, time_grid):
-        if self.isEquidistant:
-            delta = self.T/(self.n-1)
-            return [j*delta for j in range(0, self.n)]
-        else:
-            return time_grid
-
-    def integrand_setter(self):
+def integrand_setter(sigma, alpha, time_grid):
         # it has to be stored in a mtx in this case, since we aim at simulating according to the non-conditional joint distribution
         # this mtx will be multiplied by the increment vector
-        disc_integrands = np.zeros((self.n-1, self.n-1))
 
-        for i in range(self.n-1):
-            for j in range(i+1):
-                disc_integrands[i][j] = self.sigma*np.exp(-self.alpha*(self.time_grid[i]-self.time_grid[j]))
+    x1 = np.array(time_grid[:-1])
+    x1 = np.expand_dims(x1, 1)
+    x1 = np.exp(-x1)
 
+    x2 = np.array(time_grid[:-1])
+    x2 = np.expand_dims(x2, 1)
+    x2 = np.exp(x2)
 
-        return disc_integrands
+    mtx = x1 @ x2.transpose()
+    mtx = np.tril(mtx)
 
+    disc_integrands = sigma * (mtx ** alpha)
 
-    def get_path(self):
-        if self.initial_value == 0 and self.mu == 0:
-            return np.cumsum([self.initial_value, *(self.weights @ self.fbm.get_increments())])
-        elif self.mu == 0:
-            return [self.initial_value, *[np.exp(-self.alpha*self.time_grid[i]) * self.initial_value +
-                                          (self.weights @ self.fbm.get_increments())[i-1] for i in range(1, len(self.time_grid))]]
-        else:
-            return [self.initial_value, *[np.exp(-self.alpha*self.time_grid[i]) * self.initial_value + self.mu*(1-np.exp(-self.alpha*self.time_grid[i])) +
-                                          (self.weights @ self.fbm.get_increments())[i-1] for i in range(1, len(self.time_grid))]]
+    #disc_integrands = sigma * x1 @ x2.transpose()
+    disc_integrands = np.tril(disc_integrands)
 
-    def get_increment(self):
-        return np.diff(self.get_path())
-
-def gen(extra_batch_size = 1, n = 200, hurst = 0.7, varalpha = 0.5, lambd = 1, gamma_varsigma = 0.5, nu = 0.5):
+    return disc_integrands
 
 
-    alpha = -np.log(varalpha) * (n - 1)
+def fou(n, hurst, alpha, sigma, initial_value):
+    # only equi case
 
-    if gamma_varsigma < 0:
-        varsigma = 1
-        gamma = 1 + gamma_varsigma
-    else:
-        gamma = 1
-        varsigma = 1 - gamma_varsigma
+    fbm_incs = fbm_increments(n,hurst)
 
-    sigma = varsigma * (n - 1) ** hurst
-    mu = nu
-    initial_value = mu + gamma
+    time_grid = time_grid_setter(n)
+
+    weights = integrand_setter(sigma,alpha,time_grid)
+
+    #print('weights', weights.shape)
+    #print('fbm_incs', fbm_incs.shape)
+    mtx = weights @ fbm_incs
+    return np.array([initial_value, *[np.exp(-alpha*time_grid[i]) * initial_value +
+                             mtx[i-1] for i in range(1, len(time_grid))]])
 
 
-    fou_gen = FOU_noncond(n = n, initial_value = initial_value, hurst = hurst,
-                  alpha = alpha, sigma = sigma, T = 1)
+def gen(n = 200, dt = 1, hurst = 0.5, alpha = 0.5, sigma = 1, gamma = 0, mu = 0):
+    path = fou(
+        n = n,
+        initial_value = gamma,
+        hurst = hurst,
+        alpha = alpha * (n - 1) * dt,
+        sigma = sigma * ((n - 1) * dt) ** hurst
+    ) + mu
 
-    if extra_batch_size == 1:
-        res = fou_gen.get_path()
-    else:
-        res = [fou_gen.get_path() for _ in range(extra_batch_size)]
-    return res
+    return path
+
 

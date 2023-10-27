@@ -9,7 +9,7 @@ experiment_tags: !!python/tuple ["FOU","baseline","hurst"]
 data_fname: time_series.py
 data_params:
     dt: 1
-    ts_type: func_fou
+    ts_type: fou
     hurst: 
         gen: random.uniform
         a: 0

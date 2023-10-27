@@ -13,7 +13,7 @@ data_params:
      - 2
      - 0.5
      - 0.05
-    ts_type: func_fou
+    ts_type: fou
     hurst: 
         gen: random.uniform
         a: 0.50

@@ -8,7 +8,7 @@ experiment_tags: !!python/tuple ['FOU', 'Hurst', 'LSTM']
 #the following parameters will be read by the database file (in this case time_series.py)
 data_fname: time_series.py
 data_params:
-    ts_type: func_fou          
+    ts_type: fou          
     n: 100
     dt: 0.01
     epoch_length: 100000
