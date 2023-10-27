@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 
-#df = pd.read_csv('databases/fbm.csv', delim_whitespace=True)
+#df = pd.read_csv('process_generators/fbm.csv', delim_whitespace=True)
 #df = df.to_numpy()
 #df = torch.FloatTensor(df)
 #print(df.size())
@@ -15,7 +15,7 @@ class TSPairs(torch.utils.data.dataset.Dataset):
         self.seq_start_idx = config['seq_start_idx']
         self.target_param_idx = config['target_param_idx']
         self.seq_end_idx = self.seq_start_idx + config['n']
-        path = 'databases/' + config['file_name']
+        path = 'process_generators/' + config['file_name']
         df = pd.read_csv(path, delim_whitespace=True)
         df = df.to_numpy()
         self.data_tensor = torch.FloatTensor(df)

@@ -96,9 +96,7 @@ class Database():
     def __init__(self, config, train_freq, val_freq):
          #first we import our generator
 
-        gen_module = importlib.import_module('databases.' +
-                                                config['ts_type'] + '_gen')
-
+        gen_module = importlib.import_module('process_generators.' + config['ts_type'] + '_gen')
         generator = gen_module.gen
         new_config = {k: import_param(k, v) for k, v in config.items()
                                       if k != 'ts_type'}

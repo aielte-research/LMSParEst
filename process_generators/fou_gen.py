@@ -1,6 +1,23 @@
-from databases.new_fbm_gen import FBM
-from process_tools.abstract import Abstract
+from process_generators.new_fbm_gen import FBM
 import numpy as np
+from abc import abstractmethod
+
+class Abstract:
+    @abstractmethod
+    def get_covariance_matrix(self):
+        pass
+
+    @abstractmethod
+    def get_covariance_matrix_sqrt(self):
+        pass
+
+    @abstractmethod
+    def get_increments(self):
+        pass
+
+    @abstractmethod
+    def get_path(self):
+        pass
 
 class FOU(Abstract):
     # Cholesky

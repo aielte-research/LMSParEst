@@ -71,5 +71,5 @@ def gen(hurst = 0.7, n = 2000, method = 'fft', lambd = 1, d=None):
     m = n - 1
     scale = lambd * (m ** hurst)
 
-    #return lambd * base_gen(hurst = hurst, n = m, method = method, T = 1)
-    return scale * fbm(hurst = hurst, n = m, method = method, T = 1)
+    #return lambd * base_gen(hurst = hurst, n = m, method = method, length = 1)
+    return scale * fbm(hurst = hurst, n = m, method = method, length = 1)

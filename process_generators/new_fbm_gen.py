@@ -1,5 +1,5 @@
 import numpy as np
-from process_tools.isonormal import ISONormal
+from isonormal import ISONormal
 from process_tools.ltm import LTMatrix
 # a szimulálás [0,1]-en történik és skálázással kapjuk vissza a [0,T]-re
 

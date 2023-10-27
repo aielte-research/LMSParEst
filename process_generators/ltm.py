@@ -1,6 +1,4 @@
 import numpy as np
-import time
-
 
 class LTMatrix:
     def __init__(self, vec):
@@ -27,4 +25,3 @@ class LTMatrix:
         else:
             self.fill()
             return self.lower_triang
-

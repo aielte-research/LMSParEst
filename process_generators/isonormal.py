@@ -1,7 +1,6 @@
-from process_tools.abstract import Abstract
 import numpy as np
 
-class ISONormal(Abstract):
+class ISONormal():
     def __init__(self, covariance_matrix):
         # legeneráljuk a gyökmátrix transzponáltat
         # csak egyszer kell

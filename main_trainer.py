@@ -185,7 +185,7 @@ class SessionTrainer(MetaTrainer):
 
             #Import data class
             print('Loading database {} ...'.format(experiment_cfg["data_fname"]))
-            data_lib = import_lib("databases",experiment_cfg["data_fname"])
+            data_lib = import_lib("process_generators",experiment_cfg["data_fname"])
 
             #we may want to train with random sequence length
             #in this case we have to pass the batch sizes to the data object
