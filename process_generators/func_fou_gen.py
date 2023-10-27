@@ -1,9 +1,6 @@
-import random
 import numpy as np
 import cmath
-import torch
 from scipy.fftpack import fft
-
 
 def fbm_increments(n, hurst):
     r = np.zeros(n+1)
@@ -19,24 +16,9 @@ def fbm_increments(n, hurst):
     W = fft(sqrt * (np.random.normal(size=2*n) +
                     np.random.normal(size=2*n) * complex(0, 1)))
 
-
-
     W = n**(-hurst) * np.real(W[1:(n )])
 
-    # rescale the for the final T
-
     return W
-
-    # W1 = n**(-hurst) * \
-    #     np.cumsum([0, *np.real(W[1:(n)])])
-
-    # W2 = n**(-hurst) * \
-    #     np.cumsum([0, *np.real(W[(n+1):])])
-
-    # # rescale the for the final T
-    # W1 = (T ** hurst) * W1
-    # W2 = (T ** hurst) * W2
-    # return W1, W2
 
 def time_grid_setter(n):
         delta = 1/(n-1)
@@ -90,17 +72,14 @@ def fou(n, hurst, alpha, sigma, initial_value):
                              mtx[i-1] for i in range(1, len(time_grid))]])
 
 
-def gen(n = 200, dt = 1, hurst = 0.5, alpha = 0.5, lambd = 1, sigma = 1, gamma = 0, mu = 0):
-    #if gamma_varsigma < 0:
-        #varsigma = 1
-        #gamma = 1 + gamma_varsigma
-    #else:
-        #gamma = 1
-        #varsigma = 1 - gamma_varsigma
-
-
-    path = fou(n = n, initial_value = gamma, hurst = hurst,
-                  alpha = alpha * (n - 1) * dt, sigma = sigma * ((n - 1) * dt) ** hurst) + mu
+def gen(n = 200, dt = 1, hurst = 0.5, alpha = 0.5, sigma = 1, gamma = 0, mu = 0):
+    path = fou(
+        n = n,
+        initial_value = gamma,
+        hurst = hurst,
+        alpha = alpha * (n - 1) * dt,
+        sigma = sigma * ((n - 1) * dt) ** hurst
+    ) + mu
 
     return path
 
