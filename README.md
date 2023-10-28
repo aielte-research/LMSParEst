@@ -73,10 +73,11 @@ We introduce a pure deep neural network-based methodology for the estimation of 
       ```
 
    * **Option b: do nothing**
+   
       Use the technical user already provided in `neptune_cfg.yaml`, in this case no steps are needed.
 
    * **Option c: bypass logging to neptune.ai entirely**
-   
+
       Edit `neptune_cfg.yaml`, write:
       ```yaml
       NEPTUNE_API_TOKEN: null
