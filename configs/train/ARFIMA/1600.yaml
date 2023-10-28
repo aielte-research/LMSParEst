@@ -15,7 +15,7 @@ data_params:
         a: -0.5
         b: 0.5
     epoch_length: 100000
-    n: 12800
+    n: 1600
     inference: !!python/tuple ['d']
 
 #+--------------+
@@ -67,9 +67,9 @@ train_params:
     optimizer_class: torch.optim.AdamW
     loss_fun_class: torch.nn.MSELoss
     
-    num_epochs: 100
-    train_batch_size: 24
-    val_batch_size: 24
+    num_epochs: 200
+    train_batch_size: 32
+    val_batch_size: 128
     skip_train: false
     skip_val: true
 
@@ -79,7 +79,7 @@ train_params:
     num_cores: 16
     auto_save_path_naming: false
     load_previous: !!python/tuple []
-    private_save_path: /data/PEwDL/saved_models/arfima_d_lstm_n-12800.pt
+    private_save_path: model_checkpoiints/ARFIMA/ARFIMA_d_LSTM_n-1600.pt
 
     metrics:
         session:

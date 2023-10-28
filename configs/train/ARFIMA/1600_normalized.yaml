@@ -1,5 +1,5 @@
 experiment_name: ""
-experiment_name_base: arfima d #base name for the experiments
+experiment_name_base: arfima_d_normalized #base name for the experiments
 experiment_name_extension: !!python/tuple ['model_fname','data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
 experiment_tags: !!python/tuple ["ARFIMA","LSTM","d"]
 #+-------------+
@@ -15,7 +15,7 @@ data_params:
         a: -0.5
         b: 0.5
     epoch_length: 100000
-    n: 200                            
+    n: 1600
     inference: !!python/tuple ['d']
 
 #+--------------+
@@ -26,7 +26,7 @@ model_state_dict_path: null
 model_fname: LSTM.py
 model_params:
     diff: false       #work on the increments, instead of the original series
-    standardize: false
+    standardize: true
     invariant_nu_layer: null
     additive_nu_layer: null
     init_hom: null
@@ -67,7 +67,7 @@ train_params:
     optimizer_class: torch.optim.AdamW
     loss_fun_class: torch.nn.MSELoss
     
-    num_epochs: 100
+    num_epochs: 200
     train_batch_size: 32
     val_batch_size: 128
     skip_train: false
@@ -79,7 +79,7 @@ train_params:
     num_cores: 16
     auto_save_path_naming: false
     load_previous: !!python/tuple []
-    private_save_path: /data/PEwDL/saved_models/arfima_d_lstm_n-200.pt
+    private_save_path: model_checkpoiints/ARFIMA/ARFIMA_d_LSTM_n-1600_normalized.pt
 
     metrics:
         session:
