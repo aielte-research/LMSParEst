@@ -265,7 +265,7 @@ train_params:
             batch_real_inferred:
                 metric_func: batch_saver
                 metric_params:
-                    start_count: 9900
+                    start_count: 0
 
         #batch_loss is here by default
 
