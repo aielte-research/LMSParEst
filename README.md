@@ -46,19 +46,20 @@ We introduce a pure deep neural network-based methodology for the estimation of 
    ```
 
 3. Install the required packages:
-   **Option a: Using conda**
-   First, create the conda environment:
-   ```sh
-   conda env create
-   ```
-   Activate the environment:
-   ```sh
-   conda activate LMSParEst
-   ```
-   **Option b: Using pip**
-   ```sh
-   pip install -r requirements.txt
-   ```
+
+   * **Option a: Using conda**
+      First, create the conda environment:
+      ```sh
+      conda env create
+      ```
+      Activate the environment:
+      ```sh
+      conda activate LMSParEst
+      ```
+   * **Option b: Using pip**
+      ```sh
+      pip install -r requirements.txt
+      ```
 
 4. OPTIONAL: Set up neptune.ai api token and project name
    
