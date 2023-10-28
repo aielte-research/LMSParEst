@@ -1,0 +1,16 @@
+numpy==1.22
+scipy==1.6.2
+pandas
+tqdm
+bokeh
+matplotlib==3.5.1
+plotly
+colorcet
+jupyter
+neptune
+torch==1.13.0
+fbm
+transformers
+antropy
+hurst
+pathos
