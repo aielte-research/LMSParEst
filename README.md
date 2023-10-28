@@ -2,30 +2,22 @@
 
 > This paper is currently under double-blind review.
 
-## Table of Contents
+## Introduction
+
+We introduce a pure deep neural network-based methodology for the estimation of long memory parameters associated with time series models, emphasizing on long-range dependence. Such parameters, notably the Hurst exponent, play an essential role in defining the long-range dependence, roughness, and self-similarity of stochastic processes. Our approach is pivotal in diverse domains such as finance, physics, and engineering, where rapid and precise estimation of these parameters is crucial.
 
 ## Table of Contents
 - [Introduction](#introduction)
 - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
-- [Usage](#usage)
-    - [Training](#training)
-    - [Inference](#inference)
-- [Datasets](#datasets)
-- [Models](#models)
-    - [1D CNN](#1d-cnn)
-    - [LSTM](#lstm)
-- [Results](#results)
+- [Training](#training)
+- [Inference](#inference)
 - [Contributing](#contributing)
 - [License](#license)
 - [Acknowledgements](#acknowledgements)
 - [References](#references)
 ---
-
-## Introduction
-
-We introduce a pure deep neural network-based methodology for the estimation of long memory parameters associated with time series models, emphasizing on long-range dependence. Such parameters, notably the Hurst exponent, play an essential role in defining the long-range dependence, roughness, and self-similarity of stochastic processes. Our approach is pivotal in diverse domains such as finance, physics, and engineering, where rapid and precise estimation of these parameters is crucial.
 
 ## Getting Started
 
@@ -73,7 +65,7 @@ We introduce a pure deep neural network-based methodology for the estimation of 
       ```
 
    * **Option b: do nothing**
-   
+
       Use the technical user already provided in `neptune_cfg.yaml`, in this case no steps are needed.
 
    * **Option c: bypass logging to neptune.ai entirely**
@@ -98,7 +90,7 @@ E.g.
 
 You can specify the save destination in the `train_params/private_save_path` field of the config file.
 
-## Evaluating
+## Inference
 
 You can load a previously trained model using the `model_state_dict_path` field of the config.
 The model parameters have to be matching.
