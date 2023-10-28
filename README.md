@@ -47,7 +47,8 @@ We introduce a pure deep neural network-based methodology for the estimation of 
 
 3. Install the required packages:
 
-   * **Option a: Using conda**
+   * **Option a: using conda**
+
       First, create the conda environment:
       ```sh
       conda env create
@@ -56,7 +57,7 @@ We introduce a pure deep neural network-based methodology for the estimation of 
       ```sh
       conda activate LMSParEst
       ```
-   * **Option b: Using pip**
+   * **Option b: using pip**
       ```sh
       pip install -r requirements.txt
       ```
