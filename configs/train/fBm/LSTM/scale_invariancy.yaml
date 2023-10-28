@@ -145,4 +145,3 @@ train_params:
         session: true
         experiment: false
         epoch: false
-        batch: false
