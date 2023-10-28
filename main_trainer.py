@@ -17,6 +17,8 @@ import neptune
 
 from tqdm import trange as trange
 
+from unittest.mock import MagicMock
+
 #------------------------------------------------------------------------------
 #                          ABSTRACT LEVEL
 #------------------------------------------------------------------------------
@@ -163,12 +165,16 @@ class SessionTrainer(MetaTrainer):
         #--------------------CREATING THE SESSION LEVEL NEPTUNE OBJECT---------------
         with open('neptune_cfg.yaml') as file: 
             self.neptune_cfg = yaml.load(file, Loader = yaml.FullLoader)
-        self.neptune_experiment = neptune.init_run(
-            project = self.neptune_cfg['project_qualified_name'],
-            api_token = os.getenv('NEPTUNE_API_TOKEN',self.neptune_cfg['NEPTUNE_API_TOKEN']),
-            name = "Session: "+self.serialized_cfg[0]["experiment_name_base"],
-            tags = list(self.serialized_cfg[0]["experiment_tags"])
-        )
+        if os.getenv('NEPTUNE_API_TOKEN',self.neptune_cfg['NEPTUNE_API_TOKEN']) is not None:
+            self.neptune_experiment = neptune.init_run(
+                project = self.neptune_cfg['project_qualified_name'],
+                api_token = os.getenv('NEPTUNE_API_TOKEN',self.neptune_cfg['NEPTUNE_API_TOKEN']),
+                name = "Session: "+self.serialized_cfg[0]["experiment_name_base"],
+                tags = list(self.serialized_cfg[0]["experiment_tags"])
+            )
+        else:
+            self.neptune_experiment = MagicMock()
+
         self.neptune_experiment["parameters"] = str(self.serialized_cfg)
         self.neptune_experiment["yaml/"+config_fname].upload(config_fname)
         self.neptune_experiment.sync()
@@ -284,11 +290,16 @@ class ExperimentTrainer(MetaTrainer):
             self.neptune_cfg = yaml.load(file, Loader = yaml.FullLoader)
         self.exp_name = self.serialized_cfg[self.exp_idx]["experiment_name"]
 
-                
-        self.neptune_experiment = neptune.init_run(project = self.neptune_cfg['project_qualified_name'],
-                                               api_token = os.getenv('NEPTUNE_API_TOKEN',self.neptune_cfg['NEPTUNE_API_TOKEN']),
-                                               name = "Experiment {}: {}".format(self.exp_idx+1, self.exp_name),
-                                               tags = list(self.serialized_cfg[self.exp_idx]["experiment_tags"]))
+        if os.getenv('NEPTUNE_API_TOKEN',self.neptune_cfg['NEPTUNE_API_TOKEN']) is not None:
+            self.neptune_experiment = neptune.init_run(
+                project = self.neptune_cfg['project_qualified_name'],
+                api_token = os.getenv('NEPTUNE_API_TOKEN',self.neptune_cfg['NEPTUNE_API_TOKEN']),
+                name = "Experiment {}: {}".format(self.exp_idx+1, self.exp_name),
+                tags = list(self.serialized_cfg[self.exp_idx]["experiment_tags"])
+            )
+        else:
+            self.neptune_experiment = MagicMock()
+        
         self.neptune_experiment["parameters"] = str(self.serialized_cfg[self.exp_idx])
         #------------------------------------------------------------------
 

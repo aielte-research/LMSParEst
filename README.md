@@ -62,15 +62,25 @@ We introduce a pure deep neural network-based methodology for the estimation of 
       pip install -r requirements.txt
       ```
 
-4. OPTIONAL: Set up neptune.ai api token and project name
-   
-   Put the neptune.ai project name and your api token in the `neptune_cfg.yaml` file.
-   For the api token you can also use the `NEPTUNE_API_TOKEN` env. var.
-   ```sh
-   export NEPTUNE_API_TOKEN="YOUR_API_TOKEN"
-   ```
+4. OPTIONAL: Neptune.ai
 
-   You can also use the technical user already provided in `neptune_cfg.yaml`, in this case no steps are needed.
+   * **Option a: Set up neptune.ai api token and project name**
+   
+      Put the neptune.ai project name and your api token in the `neptune_cfg.yaml` file.
+      For the api token you can also use the `NEPTUNE_API_TOKEN` env. var.
+      ```sh
+      export NEPTUNE_API_TOKEN="YOUR_API_TOKEN"
+      ```
+
+   * **Option b: do nothing**
+      Use the technical user already provided in `neptune_cfg.yaml`, in this case no steps are needed.
+
+   * **Option c: bypass logging to neptune.ai entirely**
+      Edit `neptune_cfg.yaml`, write:
+      ```yaml
+      NEPTUNE_API_TOKEN: null
+      ```
+      this will disable neptune.ai logging.
    
 ## Training
 
