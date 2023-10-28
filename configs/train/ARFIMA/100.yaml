@@ -9,7 +9,7 @@ experiment_tags: !!python/tuple ["ARFIMA","LSTM","d"]
 data_fname: time_series.py
 data_params:
     ts_type: arfima
-    warmup: 65536
+    warmup: 0
     d: 
         gen: random.uniform
         a: -0.5
