@@ -38,7 +38,7 @@ data_params:
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_checkpoint_path: model_checkpoiints/fOU/fOU_Hurst_LSTM_n-100.pt
+model_checkpoint_path: model_checkpoints/fOU/fOU_Hurst_LSTM_n-100.pt
 model_fname: LSTM.py
 model_params:
     diff: false
@@ -75,7 +75,7 @@ train_params:
 
     load_previous: !!python/tuple [] #loads the previous model with matching model params and additional train params specified in this tuple
     auto_save_naming: true  #names the saved state dict automatically using the experiment_name_extensions
-    auto_save_folder: model_checkpoiints/fOU/
+    auto_save_folder: model_checkpoints/fOU/
     shuffle: false
     freeze_list: !!python/tuple []
     lr: 0.0001

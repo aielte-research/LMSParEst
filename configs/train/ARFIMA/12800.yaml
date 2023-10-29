@@ -79,7 +79,7 @@ train_params:
     num_cores: 16
     auto_save_path_naming: false
     load_previous: !!python/tuple []
-    checkpoint_save_path: model_checkpoiints/ARFIMA/ARFIMA_d_LSTM_n-12800.pt
+    checkpoint_save_path: model_checkpoints/ARFIMA/ARFIMA_d_LSTM_n-12800.pt
 
     metrics:
         session:
