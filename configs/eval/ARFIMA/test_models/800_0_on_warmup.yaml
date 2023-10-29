@@ -1,6 +1,6 @@
 experiment_name: ""
 experiment_name_base: arfima_d_cross_test #base name for the experiments
-experiment_name_extension: !!python/tuple ['model_fname','data_params/n','data_params/warmup','model_state_dict_path'] # Eg using this experiment_name: example_metrics_a-0_b-1
+experiment_name_extension: !!python/tuple ['model_fname','data_params/n','data_params/warmup','model_checkpoint_path'] # Eg using this experiment_name: example_metrics_a-0_b-1
 experiment_tags: !!python/tuple ["ARFIMA","LSTM","d","warmup"]
 #+-------------+
 #| DATA PARAMS |
@@ -22,7 +22,7 @@ data_params:
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_state_dict_path: /data/PEwDL/saved_models/arfima_d_lstm_n-800.pt
+model_checkpoint_path: /data/PEwDL/saved_models/arfima_d_lstm_n-800.pt
 model_fname: LSTM.py
 model_params:
     diff: false       #work on the increments, instead of the original series
@@ -79,7 +79,7 @@ train_params:
     num_cores: 16
     auto_save_path_naming: false
     load_previous: !!python/tuple []
-    private_save_path: null
+    checkpoint_save_path: null
     metrics:
         session:
             scatter_plot: 

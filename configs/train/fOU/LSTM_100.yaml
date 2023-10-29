@@ -31,7 +31,7 @@ data_params:
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_state_dict_path: null
+model_checkpoint_path: null
 model_fname: LSTM.py
 model_params:
     diff: false
@@ -82,7 +82,7 @@ train_params:
     num_cores: 16
     auto_save_path_naming: false
     load_previous: !!python/tuple []
-    private_save_path: model_checkpoiints/fOU/fOU_Hurst_LSTM_n-100.pt
+    checkpoint_save_path: model_checkpoiints/fOU/fOU_Hurst_LSTM_n-100.pt
 
     metrics:
         session:

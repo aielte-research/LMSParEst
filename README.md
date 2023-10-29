@@ -88,11 +88,11 @@ E.g.
    CUDA_VISIBLE_DEVICES=0 python run.py -c configs/FBM/save_models_n/800.yaml
 ```
 
-You can specify the save destination in the `train_params/private_save_path` field of the config file.
+You can specify the save destination in the `train_params/checkpoint_save_path` field of the config file.
 
 ## Inference
 
-You can load a previously trained model using the `model_state_dict_path` field of the config.
+You can load a previously trained model using the `model_checkpoint_path` field of the config.
 The model parameters have to be matching.
 
 You can also evaluate the trained model on your own sequences.

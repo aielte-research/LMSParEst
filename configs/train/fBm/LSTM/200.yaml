@@ -23,7 +23,7 @@ data_params:
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_state_dict_path: null
+model_checkpoint_path: null
 model_fname: LSTM.py
 model_params:
     diff: true       #work on the increments, instead of the original series
@@ -78,7 +78,7 @@ train_params:
     metric_names:
     change_seed: true
     num_cores: 16
-    private_save_path: /data/PEwDL/saved_models/fbm_hurst_lstm_n-200.pt
+    checkpoint_save_path: /data/PEwDL/saved_models/fbm_hurst_lstm_n-200.pt
 
     metrics:
         session:

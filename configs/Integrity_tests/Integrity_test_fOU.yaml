@@ -33,7 +33,7 @@
     model_fname: 
         - baselines/classical_fou.py
         - baselines/R_over_S.py
-    model_state_dict_path: null
+    model_checkpoint_path: null
     model_params: 
         estimated_param: hurst
         diff: false
@@ -61,7 +61,7 @@
         metric_names:
         change_seed: true
         num_cores: 16
-        private_save_path: null
+        checkpoint_save_path: null
 
         metrics: &metrics
             session:

@@ -24,7 +24,7 @@ data_params:
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_state_dict_path: /data/PEwDL/saved_models/arfima_d_lstm_n-12800.pt
+model_checkpoint_path: /data/PEwDL/saved_models/arfima_d_lstm_n-12800.pt
 model_fname: LSTM.py
 model_params:
     diff: true       #work on the increments, instead of the original series
@@ -81,7 +81,7 @@ train_params:
     num_cores: 16
     auto_save_path_naming: false
     load_previous: !!python/tuple []
-    private_save_path: null
+    checkpoint_save_path: null
 
     metrics:
         session:

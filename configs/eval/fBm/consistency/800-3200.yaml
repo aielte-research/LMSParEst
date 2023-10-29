@@ -1,6 +1,6 @@
 experiment_name: ""
 experiment_name_base: fbm_hurst_eval #base name for the experiments
-experiment_name_extension: !!python/tuple ['model_state_dict_path','data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
+experiment_name_extension: !!python/tuple ['model_checkpoint_path','data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
 experiment_tags: !!python/tuple ["FBM","LSTM","hurst"]
 #+-------------+
 #| DATA PARAMS |
@@ -32,7 +32,7 @@ data_params:
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_state_dict_path: 
+model_checkpoint_path: 
     - /data/PEwDL/saved_models/fbm_hurst_lstm_n-800.pt
     - /data/PEwDL/saved_models/fbm_hurst_lstm_n-1600.pt
     - /data/PEwDL/saved_models/fbm_hurst_lstm_n-3200.pt
@@ -90,7 +90,7 @@ train_params:
     metric_names:
     change_seed: true
     num_cores: 16
-    private_save_path: null
+    checkpoint_save_path: null
 
     metrics:
         session:

@@ -25,7 +25,7 @@ data_params:
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_state_dict_path: 
+model_checkpoint_path: 
     #- /data/PEwDL/saved_models/fbm_hurst_lstm_n-6400.pt
     - /data/PEwDL/saved_models/FBM_LSTM/fbm_hurst_fine_tuning_model_fname-LSTM_n-12800.pt
 model_fname: LSTM.py
@@ -87,7 +87,7 @@ train_params:
     metric_names:
     change_seed: true
     num_cores: 16
-    private_save_path: null
+    checkpoint_save_path: null
 
     metrics:
         session:

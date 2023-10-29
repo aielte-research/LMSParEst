@@ -152,12 +152,12 @@ class SessionTrainer(MetaTrainer):
         self.metric_level = self.serialized_cfg[0]['train_params']['metrics']['session']
 
         auto_naming = self.serialized_cfg[0]['train_params'].get('auto_save_naming', False)
-        auto_save_folder = self.serialized_cfg[0]['train_params'].get('auto_save_folder', self.serialized_cfg[0]['train_params']['private_save_path'])
+        auto_save_folder = self.serialized_cfg[0]['train_params'].get('auto_save_folder', self.serialized_cfg[0]['train_params']['checkpoint_save_path'])
         if auto_naming:
             serialized_cfg = []
             for cfg in self.serialized_cfg:
                 cfg_copy = copy.deepcopy(cfg)
-                cfg_copy['train_params']['private_save_path'] = os.path.join(auto_save_folder,cfg_copy['experiment_name']+".pt")
+                cfg_copy['train_params']['checkpoint_save_path'] = os.path.join(auto_save_folder,cfg_copy['experiment_name']+".pt")
                 serialized_cfg.append(cfg_copy)
 
             self.serialized_cfg = serialized_cfg
@@ -213,7 +213,7 @@ class SessionTrainer(MetaTrainer):
             
             #Load model
             
-            state_dict_path = experiment_cfg["model_state_dict_path"]
+            state_dict_path = experiment_cfg["model_checkpoint_path"]
             load_previous = experiment_cfg['train_params'].get('load_previous', None)
             
             if load_previous is not None:
@@ -228,7 +228,7 @@ class SessionTrainer(MetaTrainer):
                     #print(cfg['model_params'],experiment_cfg['model_params'])
                     
                     if True:#model_param_cond and train_param_cond:
-                        state_dict_path = cfg['train_params']["private_save_path"]
+                        state_dict_path = cfg['train_params']["checkpoint_save_path"]
 
             print(f'Loading model {experiment_cfg["model_fname"]} (pretrained weights {state_dict_path})...')
 
@@ -379,11 +379,11 @@ class EpochTrainer(MetaTrainer):
             
 
     def end_signal(self):
-        if self.private_save_path is not None:
+        if self.checkpoint_save_path is not None:
             if self.parallel:
-                torch.save(self.model.module.state_dict(), self.private_save_path)
+                torch.save(self.model.module.state_dict(), self.checkpoint_save_path)
             else:
-                torch.save(self.model.state_dict(), self.private_save_path)
+                torch.save(self.model.state_dict(), self.checkpoint_save_path)
 
         if self.train:
             self.progressbar.set_postfix(loss = '{:06.8f}'.format(self.metric_res["epoch_loss"][-1]))
