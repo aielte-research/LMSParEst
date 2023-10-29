@@ -61,7 +61,7 @@ train_params:
     metric_names:
     change_seed: true
     num_cores: 16
-    private_save_path: /data/kdavid/saved_models/proba.pt
+    private_save_path: null
 
     metrics: &metrics
         session:
