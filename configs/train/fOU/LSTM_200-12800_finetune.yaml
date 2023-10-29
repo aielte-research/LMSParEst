@@ -92,7 +92,7 @@ train_params:
     metric_names:
     change_seed: true
     num_cores: 16
-    checkpoint_save_path: ""
+    checkpoint_save_path: null
 
     metrics:
         session:
