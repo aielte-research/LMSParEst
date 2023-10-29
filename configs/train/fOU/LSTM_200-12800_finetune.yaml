@@ -1,7 +1,7 @@
 experiment_name: ""
-experiment_name_base: fou_hurst #base name for the experiments
-experiment_name_extension: !!python/tuple ['model_fname','data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
-experiment_tags: !!python/tuple ['FOU', 'Hurst', 'LSTM']
+experiment_name_base: fOU_Hurst_LSTM_finetune_until #base name for the experiments
+experiment_name_extension: !!python/tuple ['data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
+experiment_tags: !!python/tuple ['fOU', 'Hurst', 'LSTM']
 #+-------------+
 #| DATA PARAMS |
 #+-------------+
