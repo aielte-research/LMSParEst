@@ -30,7 +30,7 @@ data_params:
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_checkpoint_path: /data/PEwDL/saved_models/fbm_hurst_conv_n-100.pt
+model_checkpoint_path: model_checkpoints/fBm/fBM_Hurst_conv1D_n-100.pt
 model_fname: base.py
 model_params:
     diff: true
@@ -69,7 +69,7 @@ train_params:
 
     load_previous: !!python/tuple [] #loads the previous model with matching model params and additional train params specified in this tuple
     auto_save_naming: true  #names the saved state dict automatically using the experiment_name_extensions
-    auto_save_folder: /data/PEwDL/saved_models/FBM_Conv1D/
+    auto_save_folder: model_checkpoints/fBm/
     shuffle: false
     freeze_list: !!python/tuple []
     lr: 0.0001

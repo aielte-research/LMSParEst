@@ -30,7 +30,7 @@ data_params:
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_checkpoint_path: /data/PEwDL/saved_models/FOU_LSTM/fou_hurst_model_fname-LSTM_n-12800.pt
+model_checkpoint_path: model_checkpoints/fOU/fOU_Hurst_model_fname-LSTM_n-12800.pt
 model_fname: LSTM.py
 model_params:
     diff: false

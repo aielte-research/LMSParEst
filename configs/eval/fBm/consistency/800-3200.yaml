@@ -33,9 +33,9 @@ data_params:
 #+--------------+
 #this is the way to specify which model to train:
 model_checkpoint_path: 
-    - /data/PEwDL/saved_models/fbm_hurst_lstm_n-800.pt
-    - /data/PEwDL/saved_models/fbm_hurst_lstm_n-1600.pt
-    - /data/PEwDL/saved_models/fbm_hurst_lstm_n-3200.pt
+    - model_checkpoints/fBm/fBm_Hurst_LSTM_n-800.pt
+    - model_checkpoints/fBm/fBm_Hurst_LSTM_n-1600.pt
+    - model_checkpoints/fBm/fBm_Hurst_LSTM_n-3200.pt
 model_fname: LSTM.py
 model_params:
     diff: true       #work on the increments, instead of the original series

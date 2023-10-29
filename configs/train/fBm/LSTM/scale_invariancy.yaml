@@ -78,7 +78,7 @@ train_params:
     metric_names:
     change_seed: true
     num_cores: 16
-    checkpoint_save_path: null #/data/PEwDL/saved_models/fbm_hurst_lstm_n-400.pt
+    checkpoint_save_path: null #model_checkpoints/fBm/fBm_Hurst_LSTM_n-400.pt
 
     metrics:
         session:

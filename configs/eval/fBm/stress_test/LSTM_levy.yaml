@@ -26,8 +26,8 @@ data_params:
 #+--------------+
 #this is the way to specify which model to train:
 model_checkpoint_path: 
-    #- /data/PEwDL/saved_models/fbm_hurst_lstm_n-6400.pt
-    - /data/PEwDL/saved_models/FBM_LSTM/fbm_hurst_fine_tuning_model_fname-LSTM_n-12800.pt
+    #- model_checkpoints/fBm/fBm_Hurst_LSTM_n-6400.pt
+    - model_checkpoints/fBm/fBm_Hurst_fine_tuning_model_fname-LSTM_n-12800.pt
 model_fname: LSTM.py
 model_params:
     parallel: true
