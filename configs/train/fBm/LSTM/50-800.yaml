@@ -1,7 +1,7 @@
 experiment_name: ""
-experiment_name_base: fbm_hurst #base name for the experiments
-experiment_name_extension: !!python/tuple ['model_fname','data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
-experiment_tags: !!python/tuple ["FBM","LSTM","hurst"]
+experiment_name_base: fBm_Hurst_LSTM #base name for the experiments
+experiment_name_extension: !!python/tuple ['data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
+experiment_tags: !!python/tuple ["fBm","Hurst","LSTM"]
 #+-------------+
 #| DATA PARAMS |
 #+-------------+
@@ -14,7 +14,12 @@ data_params:
         a: 0
         b: 1
     epoch_length: 100000
-    n: 1600
+    n: 
+        - 50
+        - 100
+        - 200
+        - 400
+        - 800
     lambd: 1                              
     inference: !!python/tuple ['hurst']
     method: fft
@@ -62,6 +67,11 @@ model_params:
 #| TRAIN PARAMS |
 #+--------------+
 train_params:
+    parallel: false #if true: use torch.nn.DataParallel for multigpu training
+
+    load_previous: null #loads the previous model with matching model params and additional train params specified in this tuple
+    auto_save_naming: true  #names the saved state dict automatically using the experiment_name_extensions
+    auto_save_folder: model_checkpoints/fBm/
     shuffle: false
     freeze_list: !!python/tuple []
     lr: 0.0001
@@ -78,7 +88,7 @@ train_params:
     metric_names:
     change_seed: true
     num_cores: 16
-    checkpoint_save_path: model_checkpoints/fBm/fBm_Hurst_LSTM_n-1600.pt
+    checkpoint_save_path: null
 
     metrics:
         session:
@@ -100,7 +110,7 @@ train_params:
                 child_metric: exp_loss
                 metric_func: general_line_plot
                 metric_params:
-                    title: FBM hurst losses
+                    title: fBm Hurst losses
 
             mse_plot: 
                 child_metric: exp_real_inferred

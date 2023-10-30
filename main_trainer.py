@@ -402,9 +402,12 @@ class EpochTrainer(MetaTrainer):
         pairs = self.train_pairs if self.train else self.val_pairs
         batch_size = self.train_batch_size if self.train else self.val_batch_size
 
-        return ({'batch': b} for b in data.DataLoader(dataset = pairs,
-                        batch_size = batch_size, num_workers = self.num_cores,
-                                                       shuffle = self.shuffle))
+        return ({'batch': b} for b in data.DataLoader(
+            dataset = pairs,
+            batch_size = batch_size,
+            num_workers = self.num_cores,
+            shuffle = self.shuffle
+        ))
 
 
 #------------------------------------------------------------------------------
