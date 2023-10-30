@@ -1,7 +1,7 @@
 experiment_name: ""
-experiment_name_base: fbm_hurst #base name for the experiments
-experiment_name_extension: !!python/tuple ['model_fname','data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
-experiment_tags: !!python/tuple ["FBM","Conv1D","Hurst"]
+experiment_name_base: fBm_Hurst_conv1D #base name for the experiments
+experiment_name_extension: !!python/tuple ['data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
+experiment_tags: !!python/tuple ["FBM","conv1D","Hurst"]
 #+-------------+
 #| DATA PARAMS |
 #+-------------+
@@ -47,6 +47,12 @@ model_params:
         dropout: 0 # Add batch normalization between the output mlp layers (but not after the last)
         activation:
             name: PReLU
+        
+    avg_base: null
+    nu_estimator: false
+    simple_nu_estimator: false
+    rs: null
+    init_hom: null
 
 #+--------------+
 #| TRAIN PARAMS |
@@ -68,7 +74,7 @@ train_params:
     metric_names:
     change_seed: true
     num_cores: 16
-    checkpoint_save_path: model_checkpoints/fBm/fBM_Hurst_conv1D_n-100.pt
+    checkpoint_save_path: model_checkpoints/fBm/fBm_Hurst_conv1D_n-100.pt
 
     metrics:
         session:
@@ -90,7 +96,7 @@ train_params:
                 child_metric: exp_loss
                 metric_func: general_line_plot
                 metric_params:
-                    title: FBM hurst losses
+                    title: fBm Hurst losses
 
             mse_plot: 
                 child_metric: exp_real_inferred
