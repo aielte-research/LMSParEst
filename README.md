@@ -92,15 +92,33 @@ You can specify the save destination in the `train_params/checkpoint_save_path` 
 
 ## Inference
 
-You can load a previously trained model using the `model_checkpoint_path` field of the config.
-The model parameters have to be matching.
-
-You can also evaluate the trained model on your own sequences.
-
-E.g.
+You can also evaluate on your own sequences in a `.csv`,
+```csv
+0.14667,0.0,0.23876,0.22432,0.37156,0.65699,...,-0.73709
+0.36946,0.0,0.07471,0.07089,0.09757,0.10229,...,-2.16548
+...
+0.42360,0.0,-0.06837,-0.06133,-0.11648,-0.14680,...
+```
+`.tsv`,
+```tsv
+0.14667  0.0   0.23876  0.22432  0.37156  0.65699  ...
+0.36946  0.0   0.07471  0.07089  0.09757  0.10229  ...
+...
+0.42360  0.0   -0.06837 -0.06133 -0.11648 -0.14680 ...
+```
+or `.json`
+```json
+[
+   [0.14667, 0.0, 0.23876, 0.22432, ..., -0.73709],
+   [0.36946, 0.0, 0.07471, 0.07089, ..., -2.16548],
+   ...,
+   [0.42360, 0.0, -0.06837, -0.06133, ..., -1.33228]
+]
+```
+format.
 
 ```sh
-   CUDA_VISIBLE_DEVICES=0 python main_trainer.py -c configs/FBM/fBm_Hurst_LSTM_eval_from_csv.yaml
+   CUDA_VISIBLE_DEVICES=0 python inference.py -f inference_input_data/tst.csv
 ```
 
 See the `data_params` field of the `fBm_Hurst_LSTM_eval_from_csv.yaml` config filr for more information on input csv format.

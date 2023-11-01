@@ -1,3 +1,4 @@
+import os
 import json
 import yaml
 import itertools
@@ -47,7 +48,7 @@ def dict_access_multi(dic, keys):
 
 def read_file(fpath):
     with open(fpath) as f:
-        extension = fpath.split('.')[-1]
+        extension = os.path.splitext(fpath)[1].strip(".")
         if extension == 'json':
             orig = json.loads(f.read())
         elif extension in ['yaml', 'yml']:

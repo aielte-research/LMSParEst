@@ -13,9 +13,17 @@ from helper_functions import string_import
 #e.g. hurst_gen = lamba: n_gen = lambda: random.randrange(3000, 10000)
 #moreover if we dont want to infer a random value we can put its name to the no_inference list
 class TSPairs(torch.utils.data.dataset.Dataset):
-  
-    def __init__(self, epoch_length, ts_gen, inference = [], extra_params = [],
-                       const_in_batch = [], random_freq = 64, extra_batch_size = 1, **params):
+    def __init__(
+        self,
+        epoch_length,
+        ts_gen,
+        inference = [],
+        extra_params = [],
+        const_in_batch = [],
+        random_freq = 64,
+        extra_batch_size = 1,
+        **params
+    ):
         #the init method. this method will only be called once at the beginning
         #of the training session. it returns the actual object the dataloader can work with
 
@@ -34,11 +42,16 @@ class TSPairs(torch.utils.data.dataset.Dataset):
         self.param_gen = {k: v for k, v in params.items()
                           if (callable(v) and k not in const_in_batch)}
 
-        self.const_batch_param_gen = {k: v for k, v in params.items()
-                                      if (callable(v) and k in const_in_batch)}
+        self.const_batch_param_gen = {
+            k: v for k, v in params.items()
+            if (callable(v) and k in const_in_batch)
+        }
 
-        self.const_batch_list = [{k: v() for k, v in self.const_batch_param_gen.items()}
-                                 for _ in range(int(self.epoch_length / self.random_freq) + 1)]
+        self.const_batch_list = [
+            {k: v() for k, v in self.const_batch_param_gen.items()}
+            for _ in range(int(self.epoch_length / self.random_freq) + 1)
+        ]
+
     def change_gen(self, new_gen):
         only_key = [k for k in self.param_gen.keys()][0]
         self.param_gen[only_key] = new_gen
@@ -94,18 +107,21 @@ def import_param(k, v):
 
 class Database():
     def __init__(self, config, train_freq, val_freq):
-         #first we import our generator
-
-        gen_module = importlib.import_module('process_generators.' + config['ts_type'] + '_gen')
+        #first we import our generator
+        gen_module = importlib.import_module(f"process_generators.{config['ts_type']}_gen")
         generator = gen_module.gen
-        new_config = {k: import_param(k, v) for k, v in config.items()
-                                      if k != 'ts_type'}
-        train_pairs = TSPairs(**new_config, random_freq = train_freq,
-                                                           ts_gen = generator)
-        val_pairs = TSPairs(**new_config, random_freq = train_freq,
-                                                           ts_gen = generator)
+        new_config = {k: import_param(k, v) for k, v in config.items() if k != 'ts_type'}
+        train_pairs = TSPairs(
+            **new_config,
+            random_freq = train_freq,
+            ts_gen = generator
+        )
+        val_pairs = TSPairs(
+            **new_config,
+            random_freq = val_freq,
+            ts_gen = generator
+        )
         self.database = (train_pairs, val_pairs)
-
 
 '''
 cfg = {

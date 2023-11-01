@@ -1,5 +1,5 @@
 import os, importlib
-import sys, argparse
+import argparse
 import torch
 
 import copy
@@ -7,7 +7,6 @@ import cfg_parser
 import numpy as np
 import random
 import time
-import torch
 
 import yaml
 from torch.utils import data
