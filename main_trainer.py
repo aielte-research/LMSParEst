@@ -1,4 +1,5 @@
 import os, importlib
+import sys,argparse
 import torch
 
 import copy
@@ -7,11 +8,10 @@ import numpy as np
 import random
 import time
 import torch
+
 import yaml
 from torch.utils import data
 from helper_functions import pretty_time, string_import
-
-from metrics.loss import Loss
 
 import neptune
 
@@ -444,8 +444,8 @@ class BatchTrainer(MetaTrainer):
             batch_label = batch_label.view(extra_batch_size * label_batch_size, -1)
 
         if not hasattr(self.model, 'baseline') or not self.model.baseline:
-            batch_input = batch_input.to(device)
-            batch_label = batch_label.to(device)
+            batch_input = to_cuda(batch_input)
+            batch_label = to_cuda(batch_label)
 
         inferred_label = self.model(batch_input)
 
@@ -486,17 +486,16 @@ class BatchTrainer(MetaTrainer):
 #                             HELPER FUNCTIONS
 #-----------------------------------------------------------------------------
 
+def to_cuda(var):
+    if torch.cuda.is_available():
+        return var.cuda()
+    return var
+
 def import_lib(location,fname):
     spec = importlib.util.spec_from_file_location("lib", os.path.join(location,fname))
     lib = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(lib)
     return lib
-
-use_cuda = torch.cuda.is_available()
-def to_cuda(var):
-    if use_cuda:
-        return var.cuda()
-    return var
 
 def import_metric(metric_names):
     if not metric_names:
@@ -543,14 +542,23 @@ class CalcDistr():
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
 
-print('Pytorch version: ' + str(torch.__version__))
+# parse command line arguments
+def main(argv):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--configfile', required=True, help="configfile")
 
+    args = parser.parse_args()
+    
+    print('Pytorch version: ' + str(torch.__version__))
+    if torch.cuda.is_available():
+        n = torch.cuda.device_count()
+        device = torch.cuda.current_device()
+        print(f"Using {n} {torch.cuda.get_device_name(device)}{('s' if n > 1 else '')}")
+    else:
+        device="cpu"
+        print('Warning: GPU device not found, using CPU!')
 
-if use_cuda:
-    n = torch.cuda.device_count()
-    device = torch.cuda.current_device()
-    print(f"Using {n} {torch.cuda.get_device_name(device)}{('s' if n > 1 else '')}")
-
-else:
-    device="cpu"
-    print('Warning: GPU device not found, using CPU!')
+    SessionTrainer(args.configfile).run()
+    
+if __name__ == "__main__":
+    main(sys.argv[1:])

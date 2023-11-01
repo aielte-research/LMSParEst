@@ -79,13 +79,13 @@ We introduce a pure deep neural network-based methodology for the estimation of 
 ## Training
 
 ```sh
-   CUDA_VISIBLE_DEVICES=0 python run.py -c configs/<config_name>.yaml
+   CUDA_VISIBLE_DEVICES=0 python main_trainer.py -c configs/<config_name>.yaml
 ```
 
 E.g.
 
 ```sh
-   CUDA_VISIBLE_DEVICES=0 python run.py -c configs/FBM/save_models_n/800.yaml
+   CUDA_VISIBLE_DEVICES=0 python main_trainer.py -c configs/FBM/save_models_n/800.yaml
 ```
 
 You can specify the save destination in the `train_params/checkpoint_save_path` field of the config file.
@@ -100,7 +100,7 @@ You can also evaluate the trained model on your own sequences.
 E.g.
 
 ```sh
-   CUDA_VISIBLE_DEVICES=0 python run.py -c configs/FBM/fBm_Hurst_LSTM_eval_from_csv.yaml
+   CUDA_VISIBLE_DEVICES=0 python main_trainer.py -c configs/FBM/fBm_Hurst_LSTM_eval_from_csv.yaml
 ```
 
 See the `data_params` field of the `fBm_Hurst_LSTM_eval_from_csv.yaml` config filr for more information on input csv format.

@@ -1,4 +1,4 @@
 #!/bin/bash
 for filename in ./configs/Integrity_tests/*.yaml; do
-    python run.py -c $filename
+    python main_trainer.py -c $filename
 done
