@@ -93,7 +93,7 @@ You can specify the save destination in the `train_params/checkpoint_save_path` 
 ## Inference
 
 You can also evaluate on your own sequences in a `.csv`,
-```csv
+```tsv
 0.14667,0.0,0.23876,0.22432,...,-0.73709
 0.36946,0.0,0.07471,0.07089,...,-2.16548
 ...
