@@ -140,13 +140,12 @@ class SessionTrainer(MetaTrainer):
 
     highest_level = True
 
-    def __init__(self, config_fname):
-
+    def __init__(self, orig_cfg, config_fpath):
         super().__init__(d = {}, child_class = ExperimentTrainer)
 
         torch.manual_seed(0)
 
-        self.serialized_cfg, self.orig_cfg = cfg_parser.parse(config_fname)
+        self.serialized_cfg = cfg_parser.parse(orig_cfg)
         self.parallel = self.serialized_cfg[0]['train_params'].get('parallel', False)
         self.running_log = self.serialized_cfg[0]['train_params']['running_logs']['session']
         self.metric_level = self.serialized_cfg[0]['train_params']['metrics']['session']
@@ -176,7 +175,7 @@ class SessionTrainer(MetaTrainer):
             self.neptune_experiment = MagicMock()
 
         self.neptune_experiment["parameters"] = str(self.serialized_cfg)
-        self.neptune_experiment["yaml/"+config_fname].upload(config_fname)
+        self.neptune_experiment["yaml/"+config_fpath].upload(config_fpath)
         self.neptune_experiment.sync()
 
         #---------------------------------------------------------------------
@@ -559,4 +558,5 @@ if __name__ == "__main__":
         device="cpu"
         print('Warning: GPU device not found, using CPU!')
 
-    SessionTrainer(args.configfile).run()
+    orig_cfg = cfg_parser.read_file(args.configfile)
+    SessionTrainer(orig_cfg, args.configfile).run()
