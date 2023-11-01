@@ -1,7 +1,7 @@
 experiment_name: ""
-experiment_name_base: fbm_hurst #base name for the experiments
-experiment_name_extension: !!python/tuple ['model_fname','model_params/lstm/hidden_size','data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
-experiment_tags: !!python/tuple ["FBM","LSTM","hurst"]
+experiment_name_base: fBm_Hurst_LSTM #base name for the experiments
+experiment_name_extension: !!python/tuple ['model_params/lstm/hidden_size','data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
+experiment_tags: !!python/tuple ["fBm","Hurst","LSTM"]
 #+-------------+
 #| DATA PARAMS |
 #+-------------+
@@ -198,7 +198,7 @@ train_params:
     
     num_epochs: 100
     train_batch_size: 32
-    val_batch_size: 128
+    val_batch_size: 32
     skip_train: false
     skip_val: true
 
@@ -206,7 +206,7 @@ train_params:
     metric_names:
     change_seed: true
     num_cores: 16
-    checkpoint_save_path: null #model_checkpoints/fBm/fBm_Hurst_LSTM_n-3200.pt
+    checkpoint_save_path: null
 
     metrics:
         session:
@@ -228,7 +228,7 @@ train_params:
                 child_metric: exp_loss
                 metric_func: general_line_plot
                 metric_params:
-                    title: FBM hurst losses
+                    title: fBm Hurst losses
 
             mse_plot: 
                 child_metric: exp_real_inferred
