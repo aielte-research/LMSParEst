@@ -1,16 +1,11 @@
 experiment_name: ""
-experiment_name_base: fbm_hurst_lstm_csv #base name for the experiments
+experiment_name_base: fBm_Hurst_LSTM_inference #base name for the experiments
 experiment_name_extension: !!python/tuple ['data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
-experiment_tags: !!python/tuple ["FBM", "csv", "LSTM", "hurst"]
+experiment_tags: !!python/tuple ["fBm","Hurst","LSTM","inference"]
 #
 #+-------------+
 #| DATA PARAMS |
 #+-------------+
-#
-#CSV FORMATTING REQUIREMENTS:
-#delimited by space
-#one row = one seq
-#row format: params, seq
 data_fname: time_series_from_file.py
 data_params:
     fpath: null #.csv, .tsv, or .json
@@ -27,7 +22,7 @@ data_params:
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_checkpoint_path: model_checkpoints/fBm/fBm_Hurst_fine_tuning_model_fname-LSTM_n-200.pt
+model_checkpoint_path: model_checkpoints/fBm/fBm_Hurst_LSTM_n-6400.pt
 model_fname: LSTM.py
 model_params:
     diff: true       #work on the increments, instead of the original series
@@ -65,7 +60,7 @@ model_params:
 #+--------------+
 #| TRAIN PARAMS |
 #+--------------+
-train_params:  
+train_params:
     shuffle: false
     freeze_list: !!python/tuple []
     lr: 0.0001
@@ -74,7 +69,7 @@ train_params:
     
     num_epochs: 1
     train_batch_size: 32
-    val_batch_size: 128
+    val_batch_size: 32
     skip_train: true
     skip_val: false
 
@@ -82,10 +77,17 @@ train_params:
     metric_names:
     change_seed: true
     num_cores: 16
-    checkpoint_save_path: /home/kdavid/saved_models/proba2.pt
+    checkpoint_save_path: null
 
     metrics:
         session:
+            export_results: 
+                child_metric: exp_real_inferred
+                metric_func: export_results
+                metric_params: 
+                    fpath: inference_output_data/tst_output.tsv
+                    export_targets: true
+
             scatter_plot: 
                 child_metric: exp_real_inferred
                 metric_func: scatter_plot
@@ -104,7 +106,7 @@ train_params:
                 child_metric: exp_loss
                 metric_func: general_line_plot
                 metric_params:
-                    title: FBM hurst losses
+                    title: fBm Hurst losses
 
             mse_plot: 
                 child_metric: exp_real_inferred

@@ -1,14 +1,7 @@
 import os
 import torch
-import numpy as np
 import pandas as pd
 import json
-
-
-#df = pd.read_csv('process_generators/fbm.csv', delim_whitespace=True)
-#df = df.to_numpy()
-#df = torch.FloatTensor(df)
-#print(df.size())
 
 class TSPairs(torch.utils.data.dataset.Dataset):  
     def __init__(self, params):
@@ -48,5 +41,5 @@ class TSPairs(torch.utils.data.dataset.Dataset):
 
 class Database():
     def __init__(self, config, train_freq, val_freq):
-        train_pairs = TSPairs(config)
-        self.database = (train_pairs, train_pairs)
+        pairs = TSPairs(config)
+        self.database = (pairs, pairs)

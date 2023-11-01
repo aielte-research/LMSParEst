@@ -1,6 +1,7 @@
 import math
 from pathlib import Path
 import importlib
+import os
 
 def string_import(s):
     parts = s.split('.')
@@ -11,6 +12,12 @@ def string_import(s):
     module = importlib.import_module(module)
 
     return getattr(module, attr)
+
+def my_open(fpath,mode="w"):
+    dirname=os.path.dirname(fpath)
+    if len(dirname)>0 and not os.path.exists(dirname):
+        os.makedirs(dirname)
+    return open(fpath, mode)
 
 def human_format(num, digits=4, kilo = 1000):
     magnitude = 0
