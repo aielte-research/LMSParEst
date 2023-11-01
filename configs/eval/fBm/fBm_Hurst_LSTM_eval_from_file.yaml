@@ -85,8 +85,9 @@ train_params:
                 child_metric: exp_real_inferred
                 metric_func: export_results
                 metric_params: 
-                    fpath: inference_output_data/tst_output.tsv
+                    fpath: inference_output_data/tst_output.json
                     export_targets: true
+                    precision: 17
 
             scatter_plot: 
                 child_metric: exp_real_inferred
