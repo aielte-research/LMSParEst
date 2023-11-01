@@ -1,5 +1,5 @@
 import os, importlib
-import sys,argparse
+import sys, argparse
 import torch
 
 import copy
@@ -542,10 +542,11 @@ class CalcDistr():
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
 
-# parse command line arguments
-def main(argv):
+#if run as a script
+if __name__ == "__main__":
+    #parse command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--configfile', required=True, help="configfile")
+    parser.add_argument('-c', '--configfile', required=True, help="File path for configfile .yaml")
 
     args = parser.parse_args()
     
@@ -559,6 +560,3 @@ def main(argv):
         print('Warning: GPU device not found, using CPU!')
 
     SessionTrainer(args.configfile).run()
-    
-if __name__ == "__main__":
-    main(sys.argv[1:])
