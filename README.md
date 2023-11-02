@@ -129,7 +129,7 @@ usage: inference.py [-h] -i INPUTFILE -o OUTPUTFILE [-s SERIESTYPE] [-m MODELTYP
 optional arguments:
   -h, --help            show this help message and exit
   -s SERIESTYPE, --seriestype SERIESTYPE
-                        Type of the predicted time series. Options: 'fBm' (Hurst), 'fOU' (Hurst) and 'ARFIMA' (d). (default: fBm)
+                        Type of the predicted sequence. Options: 'fBm' (Hurst), 'fOU' (Hurst) and 'ARFIMA' (d). (default: fBm)
   -m MODELTYPE, --modeltype MODELTYPE
                         Type of the prediction model. Options: 'LSTM' and 'conv1D'. (default: lstm)
   -w WEIGHTSFILE, --weightsfile WEIGHTSFILE
