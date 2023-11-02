@@ -7,13 +7,13 @@ if __name__ == "__main__":
     #parse command line arguments
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     required = parser.add_argument_group('required arguments')
-    required.add_argument('-i', '--inputfile', required=True, default=None, type=str, help="File path for the input '.csv', '.tsv' or '.json' file.")
-    required.add_argument('-o', '--outputfile', required=True, default=None, type=str, help="File path for the output '.csv', '.tsv' or '.json' file.")
-    parser.add_argument('-s', '--seriestype', required=False, default="fBm", type=str, help="Type of the predicted time series. Options: 'fBm' (Hurst), 'fOU' (Hurst) and 'ARFIMA' (d).")
-    parser.add_argument('-m', '--modeltype', required=False, default="lstm", type=str, help="Type of the prediction model. Options: 'LSTM' and 'conv1D'.")
-    parser.add_argument('-w', '--weightsfile', required=False, default=None, type=str, help="File path for the trained model weights. If desired to change the default which comes from the model and sequence selection.")
+    required.add_argument('-i', '--inputfile', required=True, default=None, type=str, help="File path of the input '.csv', '.tsv' or '.json' file.")
+    required.add_argument('-o', '--outputfile', required=True, default=None, type=str, help="File path of the '.csv', '.tsv' or '.json' file the outputs will be saved in.")
+    parser.add_argument('-s', '--seriestype', required=False, default="fBm", type=str, help="Type of the predicted sequence. Options: 'fBm' (Hurst), 'fOU' (Hurst) and 'ARFIMA' (d).")
+    parser.add_argument('-m', '--modeltype', required=False, default="LSTM", type=str, help="Type of the prediction model. Options: 'LSTM' and 'conv1D'.")
+    parser.add_argument('-w', '--weightsfile', required=False, default=None, type=str, help="File path of the trained model weights. If desired to change the default which comes from the model and sequence selection.")
     parser.add_argument('-b', '--batchsize', required=False, default=32, type=int, help="Inference batch size.")
-    parser.add_argument('-c', '--configfile', required=False, default=None, type=str, help="File path for configfile '.yaml'. Only if desired to overwrite the default which comes from the model and sequence selection.")
+    parser.add_argument('-c', '--configfile', required=False, default=None, type=str, help="File path of the configfile '.yaml'. If desired to overwrite the default which comes from the model and sequence selection.")
     args = parser.parse_args()
 
     if args.configfile is None:

@@ -69,7 +69,7 @@ model_params:
 #| TRAIN PARAMS |
 #+--------------+
 train_params:
-    parallel: false #if true: use torch.nn.DataParallel for multigpu training
+    parallel: true #if true: use torch.nn.DataParallel for multigpu training
 
     load_previous: !!python/tuple [] #loads the previous model with matching model params and additional train params specified in this tuple
     auto_save_naming: true  #names the saved state dict automatically using the experiment_name_extensions

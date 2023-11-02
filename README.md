@@ -131,7 +131,7 @@ optional arguments:
   -s SERIESTYPE, --seriestype SERIESTYPE
                         Type of the predicted sequence. Options: 'fBm' (Hurst), 'fOU' (Hurst) and 'ARFIMA' (d). (default: fBm)
   -m MODELTYPE, --modeltype MODELTYPE
-                        Type of the prediction model. Options: 'LSTM' and 'conv1D'. (default: lstm)
+                        Type of the prediction model. Options: 'LSTM' and 'conv1D'. (default: LSTM)
   -w WEIGHTSFILE, --weightsfile WEIGHTSFILE
                         File path of the trained model weights. If desired to change the default which comes from the model and sequence selection. (default: None)
   -b BATCHSIZE, --batchsize BATCHSIZE
