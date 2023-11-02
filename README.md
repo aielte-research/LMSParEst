@@ -152,8 +152,6 @@ Example usage:
    CUDA_VISIBLE_DEVICES=0 python inference.py -i inference_input_data/tst.csv -o inference_output_data/tst.tsv
 ```
 
-See the `data_params` field of the `fBm_Hurst_LSTM_eval_from_csv.yaml` config filr for more information on input csv format.
-
 ## Known Issues
 This issue was happening in our testing environment.
 If getting the following error:
