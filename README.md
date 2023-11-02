@@ -124,24 +124,26 @@ python inference.py -h
 to display the options for the script.
 
 ```sh
+usage: inference.py [-h] -i INPUTFILE -o OUTPUTFILE [-s SERIESTYPE] [-m MODELTYPE] [-w WEIGHTSFILE] [-b BATCHSIZE] [-c CONFIGFILE]
+
 optional arguments:
   -h, --help            show this help message and exit
   -s SERIESTYPE, --seriestype SERIESTYPE
                         Type of the predicted time series. Options: 'fBm' (Hurst), 'fOU' (Hurst) and 'ARFIMA' (d). (default: fBm)
   -m MODELTYPE, --modeltype MODELTYPE
-                        Type of the prediction model. Options: 'LSTM' and 'conv1D'. (default: LSTM)
+                        Type of the prediction model. Options: 'LSTM' and 'conv1D'. (default: lstm)
   -w WEIGHTSFILE, --weightsfile WEIGHTSFILE
-                        File path for the trained model weights. If desired to change the default which comes from the model and sequence selection. (default: None)
+                        File path of the trained model weights. If desired to change the default which comes from the model and sequence selection. (default: None)
   -b BATCHSIZE, --batchsize BATCHSIZE
                         Inference batch size. (default: 32)
   -c CONFIGFILE, --configfile CONFIGFILE
-                        File path for configfile '.yaml'. Only if desired to overwrite the default which comes from the model and sequence selection. (default: None)
+                        File path of the configfile '.yaml'. If desired to overwrite the default which comes from the model and sequence selection. (default: None)
 
 required arguments:
   -i INPUTFILE, --inputfile INPUTFILE
-                        File path for the input '.csv', '.tsv' or '.json' file. (default: None)
+                        File path of the input '.csv', '.tsv' or '.json' file. (default: None)
   -o OUTPUTFILE, --outputfile OUTPUTFILE
-                        File path for the output '.csv', '.tsv' or '.json' file. (default: None)
+                        File path of the '.csv', '.tsv' or '.json' file the outputs will be saved in. (default: None)
 ```
 
 Example usage:
