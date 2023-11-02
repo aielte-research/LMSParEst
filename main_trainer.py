@@ -149,7 +149,7 @@ class SessionTrainer(MetaTrainer):
         self.running_log = self.serialized_cfg[0]['train_params']['running_logs']['session']
         self.metric_level = self.serialized_cfg[0]['train_params']['metrics']['session']
 
-        auto_naming = self.serialized_cfg[0]['train_params'].get('auto_save_naming', False)
+        auto_naming = self.serialized_cfg[0]['train_params'].get('auto_save_path_naming', False)
         auto_save_folder = self.serialized_cfg[0]['train_params'].get('auto_save_folder', self.serialized_cfg[0]['train_params']['checkpoint_save_path'])
         if auto_naming:
             serialized_cfg = []

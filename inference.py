@@ -23,7 +23,7 @@ if __name__ == "__main__":
             if modeltype=="lstm":
                 config_fpath="configs/eval/fBm/fBm_Hurst_LSTM_eval_from_file.yaml"
             elif modeltype=="conv1d":
-                raise ValueError(f"Option '{modeltype}' not implemented for '{seriestype}' yet!")
+                config_fpath="configs/eval/fBm/fBm_Hurst_conv1D_eval_from_file.yaml"
             else:
                 raise ValueError(f"Model type '{args.modeltype}' not recognized! Available options: 'LSTM' and 'conv1D'")  
         elif seriestype=="fou":

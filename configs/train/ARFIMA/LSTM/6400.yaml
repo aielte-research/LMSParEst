@@ -1,7 +1,7 @@
 experiment_name: ""
-experiment_name_base: arfima d #base name for the experiments
-experiment_name_extension: !!python/tuple ['model_fname','data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
-experiment_tags: !!python/tuple ["ARFIMA","LSTM","d"]
+experiment_name_base: ARFIMA_d_LSTM #base name for the experiments
+experiment_name_extension: !!python/tuple ['data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
+experiment_tags: !!python/tuple ["ARFIMA","d","LSTM"]
 #+-------------+
 #| DATA PARAMS |
 #+-------------+
@@ -15,7 +15,7 @@ data_params:
         a: -0.5
         b: 0.5
     epoch_length: 100000
-    n: 3200
+    n: 6400
     inference: !!python/tuple ['d']
 
 #+--------------+
@@ -79,7 +79,7 @@ train_params:
     num_cores: 16
     auto_save_path_naming: false
     load_previous: !!python/tuple []
-    checkpoint_save_path: model_checkpoints/ARFIMA/ARFIMA_d_LSTM_n-3200.pt
+    checkpoint_save_path: model_checkpoints/ARFIMA/ARFIMA_d_LSTM_n-6400.pt
 
     metrics:
         session:

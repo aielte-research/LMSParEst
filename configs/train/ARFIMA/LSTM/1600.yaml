@@ -1,43 +1,36 @@
 experiment_name: ""
-experiment_name_base: fBm_Hurst_LSTM_finetune_until #base name for the experiments
+experiment_name_base: ARFIMA_d_LSTM #base name for the experiments
 experiment_name_extension: !!python/tuple ['data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
-experiment_tags: !!python/tuple ["fBm","Hurst","LSTM","finetune"]
+experiment_tags: !!python/tuple ["ARFIMA","d","LSTM"]
 #+-------------+
 #| DATA PARAMS |
 #+-------------+
 #the following parameters will be read by the database file (in this case time_series.py)
 data_fname: time_series.py
 data_params:
-    ts_type: fbm          
-    hurst: 
+    ts_type: arfima
+    warmup: 0
+    d: 
         gen: random.uniform
-        a: 0
-        b: 1
+        a: -0.5
+        b: 0.5
     epoch_length: 100000
-    n: 
-        - 200
-        - 400
-        - 800
-        - 1600
-        - 3200
-        - 6400
-        - 12800
-    lambd: 1                              
-    inference: !!python/tuple ['hurst']
-    method: fft
+    n: 1600
+    inference: !!python/tuple ['d']
 
 #+--------------+
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_checkpoint_path: model_checkpoints/fBm/fBm_Hurst_LSTM_n-100.pt
+model_checkpoint_path: null
 model_fname: LSTM.py
 model_params:
-    diff: true       #work on the increments, instead of the original series
-    standardize: true
+    diff: false       #work on the increments, instead of the original series
+    standardize: false
     invariant_nu_layer: null
     additive_nu_layer: null
     init_hom: null
+
     embedding: null
         #bias: false
         #channels: !!python/tuple [1, 128, 256, 256, 128]
@@ -51,17 +44,16 @@ model_params:
     lstm:
         input_size: 1
         hidden_size: 128
-        num_layers: 2 
-        bidirectional: false 
+        num_layers: 2
+        bidirectional: false # if true the input channel size of the mlp needs to be double of the lstm hidden size!
         residual: false
 
     adaptive_out_length: 1
-
     mlp:
         bias: true
         channels: !!python/tuple [128, 64, 1]
         batch_norm: false # Add batch normalization between the output mlp layers (but not after the last)
-        dropout: 0 # Add batch normalization between the output mlp layers (but not after the last)
+        dropout: 0
         activation:
             name: PReLU
 
@@ -69,20 +61,15 @@ model_params:
 #| TRAIN PARAMS |
 #+--------------+
 train_params:
-    parallel: true #if true: use torch.nn.DataParallel for multigpu training
-
-    load_previous: !!python/tuple [] #loads the previous model with matching model params and additional train params specified in this tuple
-    auto_save_path_naming: true  #names the saved state dict automatically using the experiment_name_extensions
-    auto_save_folder: model_checkpoints/fBm/
     shuffle: false
     freeze_list: !!python/tuple []
     lr: 0.0001
     optimizer_class: torch.optim.AdamW
     loss_fun_class: torch.nn.MSELoss
     
-    num_epochs: 10
+    num_epochs: 200
     train_batch_size: 32
-    val_batch_size: 32
+    val_batch_size: 128
     skip_train: false
     skip_val: true
 
@@ -90,7 +77,9 @@ train_params:
     metric_names:
     change_seed: true
     num_cores: 16
-    checkpoint_save_path: null
+    auto_save_path_naming: false
+    load_previous: !!python/tuple []
+    checkpoint_save_path: model_checkpoints/ARFIMA/ARFIMA_d_LSTM_n-1600.pt
 
     metrics:
         session:
@@ -98,7 +87,7 @@ train_params:
                 child_metric: exp_real_inferred
                 metric_func: scatter_plot
                 metric_params:
-                    title: hurst
+                    title: d
 
             deviation_plot: 
                 child_metric: exp_real_inferred
@@ -107,18 +96,19 @@ train_params:
                     plot_limit: 50000
                     measure_interval: 0.025
                     steps: 1000
+                    title: d
 
             loss_plot: 
                 child_metric: exp_loss
                 metric_func: general_line_plot
                 metric_params:
-                    title: fBm Hurst losses
+                    title: ARFIMA d losses
 
             mse_plot: 
                 child_metric: exp_real_inferred
                 metric_func: mse
                 metric_params:
-                    title: hurst
+                    title: d
                 
         experiment:
             exp_real_inferred:

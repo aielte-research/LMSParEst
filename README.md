@@ -13,6 +13,7 @@ We introduce a pure deep neural network-based methodology for the estimation of 
     - [Installation](#installation)
 - [Training](#training)
 - [Inference](#inference)
+- [Known Issues](#known-issues)
 - [Contributing](#contributing)
 - [License](#license)
 - [Acknowledgements](#acknowledgements)
@@ -166,5 +167,3 @@ And for Anaconda:
 ```sh
 export LD_LIBRARY_PATH=/home/<USERNAME>/anaconda3/envs/PEwDL/lib
 ```
-
-If so, you can put this in your `.bashrc` file.

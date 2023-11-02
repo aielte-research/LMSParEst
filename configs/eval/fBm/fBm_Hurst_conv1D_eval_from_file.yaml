@@ -1,62 +1,43 @@
 experiment_name: ""
-experiment_name_base: fBm_Hurst_LSTM_finetune_until #base name for the experiments
+experiment_name_base: fBm_Hurst_conv1D_inference #base name for the experiments
 experiment_name_extension: !!python/tuple ['data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
-experiment_tags: !!python/tuple ["fBm","Hurst","LSTM","finetune"]
+experiment_tags: !!python/tuple ["fBm","Hurst","conv1D","inference"]
 #+-------------+
 #| DATA PARAMS |
 #+-------------+
-#the following parameters will be read by the database file (in this case time_series.py)
-data_fname: time_series.py
+data_fname: time_series_from_file.py
 data_params:
-    ts_type: fbm          
-    hurst: 
-        gen: random.uniform
+    fpath: null #.csv, .tsv, or .json
+    epoch_length: 9999   #should not be greater than num_rows in csv
+    n: 200               #seq len, should not be greater than (num_cols - num_params)
+    target_param_idx: 0  #the target param is at this index in every row
+    seq_start_idx: 1     #the seq starts at this index in every row.    
+    #name of the target param and its range (for logging purposes)
+    hurst:
         a: 0
         b: 1
-    epoch_length: 100000
-    n: 
-        - 200
-        - 400
-        - 800
-        - 1600
-        - 3200
-        - 6400
-        - 12800
-    lambd: 1                              
-    inference: !!python/tuple ['hurst']
-    method: fft
 
 #+--------------+
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_checkpoint_path: model_checkpoints/fBm/fBm_Hurst_LSTM_n-100.pt
-model_fname: LSTM.py
+model_checkpoint_path: model_checkpoints/fBm/fBm_Hurst_conv1D_finetune_until_n-12800.pt
+model_fname: base.py
 model_params:
-    diff: true       #work on the increments, instead of the original series
+    diff: true
     standardize: true
     invariant_nu_layer: null
     additive_nu_layer: null
-    init_hom: null
-    embedding: null
-        #bias: false
-        #channels: !!python/tuple [1, 128, 256, 256, 128]
-        #kernel_sizes: 4 
-        #activation:
-            #name: PReLU
-        #leave_last_layer_bare: true
-
-    vec_hom: null
-
-    lstm:
-        input_size: 1
-        hidden_size: 128
-        num_layers: 2 
-        bidirectional: false 
-        residual: false
-
+    #base_type: polynomial
+    #base_dim: 0
+    embedding:
+        bias: true
+        channels: !!python/tuple [1, 64, 64, 128, 128, 128, 128]
+        kernel_sizes: 4 
+        activation:
+            name: PReLU
     adaptive_out_length: 1
-
+    vec_hom: null
     mlp:
         bias: true
         channels: !!python/tuple [128, 64, 1]
@@ -64,27 +45,28 @@ model_params:
         dropout: 0 # Add batch normalization between the output mlp layers (but not after the last)
         activation:
             name: PReLU
+        
+    avg_base: null
+    nu_estimator: false
+    simple_nu_estimator: false
+    rs: null
+    init_hom: null
 
 #+--------------+
 #| TRAIN PARAMS |
 #+--------------+
 train_params:
-    parallel: true #if true: use torch.nn.DataParallel for multigpu training
-
-    load_previous: !!python/tuple [] #loads the previous model with matching model params and additional train params specified in this tuple
-    auto_save_path_naming: true  #names the saved state dict automatically using the experiment_name_extensions
-    auto_save_folder: model_checkpoints/fBm/
     shuffle: false
     freeze_list: !!python/tuple []
     lr: 0.0001
     optimizer_class: torch.optim.AdamW
     loss_fun_class: torch.nn.MSELoss
     
-    num_epochs: 10
+    num_epochs: 1
     train_batch_size: 32
     val_batch_size: 32
-    skip_train: false
-    skip_val: true
+    skip_train: true
+    skip_val: false
 
     #? if should be in trainer
     metric_names:
@@ -94,6 +76,14 @@ train_params:
 
     metrics:
         session:
+            export_results: 
+                child_metric: exp_real_inferred
+                metric_func: export_results
+                metric_params: 
+                    fpath: null
+                    export_targets: true
+                    precision: 17
+
             scatter_plot: 
                 child_metric: exp_real_inferred
                 metric_func: scatter_plot
