@@ -22,7 +22,7 @@ data_params:
 #| MODEL PARAMS |
 #+--------------+
 #this is the way to specify which model to train:
-model_checkpoint_path: model_checkpoints/fBm/fBm_Hurst_LSTM_n-6400.pt
+model_checkpoint_path: model_checkpoints/fBm/fBm_Hurst_LSTM_finetune_until_n-12800.pt
 model_fname: LSTM.py
 model_params:
     diff: true       #work on the increments, instead of the original series
@@ -53,7 +53,7 @@ model_params:
         bias: true
         channels: !!python/tuple [128, 64, 1]
         batch_norm: false # Add batch normalization between the output mlp layers (but not after the last)
-        dropout: 0 # Add batch normalization between the output mlp layers (but not after the last)
+        dropout: 0
         activation:
             name: PReLU
 

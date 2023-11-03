@@ -41,7 +41,7 @@ data_params:
 model_checkpoint_path: model_checkpoints/fOU/fOU_Hurst_LSTM_n-100.pt
 model_fname: LSTM.py
 model_params:
-    diff: false
+    diff: false #work on the increments, instead of the original series
     standardize: true
     #base_type: polynomial
     #base_dim: 0
@@ -114,7 +114,7 @@ train_params:
                 child_metric: exp_loss
                 metric_func: general_line_plot
                 metric_params:
-                    title: fOU hurst losses
+                    title: fOU Hurst losses
 
             mse_plot: 
                 child_metric: exp_real_inferred

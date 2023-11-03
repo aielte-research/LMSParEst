@@ -19,29 +19,30 @@ if __name__ == "__main__":
     if args.configfile is None:
         seriestype = args.seriestype.lower()
         modeltype = args.modeltype.lower()
+
+        if (seriestype=="fou" or seriestype=="arfima") and modeltype=="conv1d":
+            raise ValueError(f"Option '{modeltype}' not implemented for '{seriestype}' yet!")
+
         if seriestype=="fbm":
-            if modeltype=="lstm":
-                config_fpath="configs/eval/fBm/fBm_Hurst_LSTM_eval_from_file.yaml"
-            elif modeltype=="conv1d":
-                config_fpath="configs/eval/fBm/fBm_Hurst_conv1D_eval_from_file.yaml"
-            else:
-                raise ValueError(f"Model type '{args.modeltype}' not recognized! Available options: 'LSTM' and 'conv1D'")  
+            seriestype = "fBm"
+            param_name = "Hurst"
         elif seriestype=="fou":
-            if modeltype=="lstm":
-                raise ValueError(f"Option '{modeltype}' not implemented for '{seriestype}' yet!")
-            elif modeltype=="conv1d":
-                raise ValueError(f"Option '{modeltype}' not implemented for '{seriestype}' yet!")
-            else:
-                raise ValueError(f"Model type '{args.modeltype}' not recognized! Available options: 'LSTM' and 'conv1D'")
+            seriestype = "fOU"
+            param_name = "Hurst"
         elif seriestype=="arfima":
-            if modeltype=="lstm":
-                raise ValueError(f"Option '{modeltype}' not implemented for '{seriestype}' yet!")
-            elif modeltype=="conv1d":
-                raise ValueError(f"Option '{modeltype}' not implemented for '{seriestype}' yet!")
-            else:
-                raise ValueError(f"Model type '{args.modeltype}' not recognized! Available options: 'LSTM' and 'conv1D'")
+            seriestype = "ARFIMA"
+            param_name = "d"
         else:
             raise ValueError(f"Series type '{args.seriestype}' not recognized! Available options: 'fBm', 'fOU' and 'ARFIMA'")        
+        
+        if modeltype=="lstm":
+            modeltype = "LSTM"
+        elif modeltype=="conv1d":
+            modeltype = "conv1D"
+        else:
+            raise ValueError(f"Model type '{args.modeltype}' not recognized! Available options: 'LSTM' and 'conv1D'")    
+
+        config_fpath=f"configs/eval/{seriestype}/{seriestype}_{param_name}_{modeltype}_eval_from_file.yaml"       
     else:
         config_fpath=args.configfile
 
