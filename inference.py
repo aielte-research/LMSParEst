@@ -17,51 +17,42 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.configfile is None:
-        seriestype = args.seriestype.lower()
-        modeltype = args.modeltype.lower()
+        seriestype = args.seriestype.upper().replace("FBM", "fBm").replace("FOU", "fOU")
+        modeltype = args.modeltype.upper().replace("CONV1D", "conv1D")
 
-        if (seriestype=="fou" or seriestype=="arfima") and modeltype=="conv1d":
-            raise ValueError(f"Option '{modeltype}' not implemented for '{seriestype}' yet!")
-
-        if seriestype=="fbm":
-            seriestype = "fBm"
+        if seriestype in ["fBm", "fOU"]:
             param_name = "Hurst"
-        elif seriestype=="fou":
-            seriestype = "fOU"
-            param_name = "Hurst"
-        elif seriestype=="arfima":
-            seriestype = "ARFIMA"
+        elif seriestype=="ARFIMA":
             param_name = "d"
         else:
             raise ValueError(f"Series type '{args.seriestype}' not recognized! Available options: 'fBm', 'fOU' and 'ARFIMA'")        
         
-        if modeltype=="lstm":
-            modeltype = "LSTM"
-        elif modeltype=="conv1d":
-            modeltype = "conv1D"
-        else:
-            raise ValueError(f"Model type '{args.modeltype}' not recognized! Available options: 'LSTM' and 'conv1D'")    
+        if not modeltype in ["LSTM", "conv1D"]:
+            raise ValueError(f"Model type '{args.modeltype}' not recognized! Available options: 'LSTM' and 'conv1D'")
+        
+        if (seriestype=="fOU" or seriestype=="ARFIMA") and modeltype=="conv1D":
+            raise ValueError(f"Option '{modeltype}' not implemented for '{seriestype}' yet!")
 
         config_fpath=f"configs/eval/{seriestype}/{seriestype}_{param_name}_{modeltype}_eval_from_file.yaml"       
     else:
         config_fpath=args.configfile
 
     orig_cfg = cfg_parser.read_file(config_fpath)
-    if type(orig_cfg) is dict:
-        orig_cfg["data_params"]["fpath"]=args.inputfile
-        orig_cfg["train_params"]["metrics"]["session"]["export_results"]["metric_params"]["fpath"]=args.outputfile
-        orig_cfg["data_params"]["train_batch_size"]=args.batchsize
-        orig_cfg["data_params"]["val_batch_size"]=args.batchsize
+
+    def set_params_in_config(cfg, args):
+        cfg["data_params"]["fpath"]=args.inputfile
+        cfg["train_params"]["metrics"]["session"]["export_results"]["metric_params"]["fpath"]=args.outputfile
+        cfg["data_params"]["train_batch_size"]=args.batchsize
+        cfg["data_params"]["val_batch_size"]=args.batchsize
         if args.weightsfile is not None:
-            orig_cfg["model_checkpoint_path"]=args.weightsfile
+            cfg["model_checkpoint_path"]=args.weightsfile
+        return cfg
+
+    if type(orig_cfg) is dict:
+        orig_cfg=set_params_in_config(orig_cfg, args)
     elif type(orig_cfg) is list:
         for experiment in orig_cfg:
-            experiment["data_params"]["fpath"]=args.inputfile
-            experiment["train_params"]["metrics"]["session"]["export_results"]["metric_params"]["fpath"]=args.outputfile
-            experiment["data_params"]["train_batch_size"]=args.batchsize
-            experiment["data_params"]["val_batch_size"]=args.batchsize
-            if args.weightsfile is not None:
-                experiment["model_checkpoint_path"]=args.weightsfile
+            experiment=set_params_in_config(experiment, args)
     else:
         raise ValueError(f"Unrecognized config format!")
 
