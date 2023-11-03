@@ -42,8 +42,8 @@ if __name__ == "__main__":
     def set_params_in_config(cfg, args):
         cfg["data_params"]["fpath"]=args.inputfile
         cfg["train_params"]["metrics"]["session"]["export_results"]["metric_params"]["fpath"]=args.outputfile
-        cfg["data_params"]["train_batch_size"]=args.batchsize
-        cfg["data_params"]["val_batch_size"]=args.batchsize
+        cfg["train_params"]["train_batch_size"]=args.batchsize
+        cfg["train_params"]["val_batch_size"]=args.batchsize
         if args.weightsfile is not None:
             cfg["model_checkpoint_path"]=args.weightsfile
         return cfg
