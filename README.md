@@ -1,6 +1,6 @@
 # Parameter Estimation of Long Memory Stochastic Processes with Deep Neural Networks
 
-> This paper is currently under double-blind review.
+This repository contains the code for the ICLR 2024 submission titled ["Parameter Estimation of Long Memory Stochastic Processes with Deep Neural Networks"](https://openreview.net/forum?id=lLhEQWQYtb).
 
 ## Introduction
 
@@ -17,7 +17,6 @@ We introduce a pure deep neural network-based methodology for the estimation of 
 - [Contributing](#contributing)
 - [License](#license)
 - [Acknowledgements](#acknowledgements)
-- [References](#references)
 ---
 
 ## Getting Started
@@ -167,3 +166,12 @@ And for Anaconda:
 ```sh
 export LD_LIBRARY_PATH=/home/<USERNAME>/anaconda3/envs/PEwDL/lib
 ```
+
+## Contributing
+> This paper is currently under double-blind review.
+
+## License
+> TBD
+
+## Acknowledgements
+> This paper is currently under double-blind review.
