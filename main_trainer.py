@@ -14,7 +14,8 @@ from helper_functions import pretty_time, string_import
 
 import neptune
 
-from tqdm import trange as trange
+from tqdm import tqdm
+import math
 
 from unittest.mock import MagicMock
 
@@ -44,16 +45,12 @@ class MetaTrainer():
 
         self.child_class = child_class
 
-    def d(self, to_child):
-
-        non_passable_attr = 'child child_class metric_level metric_res running_log'.split()
-
-        if (not to_child and hasattr(self, 'neptune_barrier') and self.neptune_barrier) or (
-                to_child and hasattr(self.child_class, 'neptune_barrier') and
-                self.child_class.neptune_barrier):
-
-            non_passable_attr.append('neptune_experiment')
-
+    def d(self):
+        non_passable_attr = ['child','child_class','metric_level','metric_res','running_log']
+        return {k: v for k, v in self.__dict__.items() if k not in non_passable_attr}
+    
+    def d_to_child(self):
+        non_passable_attr = ['child','child_class','metric_level','metric_res','running_log']
         return {k: v for k, v in self.__dict__.items() if k not in non_passable_attr}
 
     #run is the solver method that needs to be called
@@ -61,11 +58,10 @@ class MetaTrainer():
     #it calls the run (solver) method of child_class several times 
     #while appropriatelly handling and logging the results
 
-    def run(self):
-        
+    def run(self):        
         self.start_signal()
 
-        d = self.d(to_child = True)
+        d = self.d_to_child()
 
         #the main part of the solving process is the following
         #we have an iterator that yields lower level attributes,
@@ -83,11 +79,11 @@ class MetaTrainer():
 
             if self.running_log:
 
-                self.__dict__.update(self.child.d(to_child = False))
+                self.__dict__.update(self.child.d())
                 self.log()
 
         if not self.running_log:
-            self.__dict__.update(self.child.d(to_child = False))
+            self.__dict__.update(self.child.d())
             self.log()
 
         self.end_signal()
@@ -163,10 +159,13 @@ class SessionTrainer(MetaTrainer):
         #--------------------CREATING THE SESSION LEVEL NEPTUNE OBJECT---------------
         with open('neptune_cfg.yaml') as file: 
             self.neptune_cfg = yaml.load(file, Loader = yaml.FullLoader)
-        if os.getenv('NEPTUNE_API_TOKEN',self.neptune_cfg['NEPTUNE_API_TOKEN']) is not None:
+
+        self.NEPTUNE_API_TOKEN = os.getenv('NEPTUNE_API_TOKEN',self.neptune_cfg['NEPTUNE_API_TOKEN'])
+
+        if self.NEPTUNE_API_TOKEN is not None:
             self.neptune_experiment = neptune.init_run(
                 project = self.neptune_cfg['project_qualified_name'],
-                api_token = os.getenv('NEPTUNE_API_TOKEN',self.neptune_cfg['NEPTUNE_API_TOKEN']),
+                api_token = self.NEPTUNE_API_TOKEN,
                 name = "Session: "+self.serialized_cfg[0]["experiment_name_base"],
                 tags = list(self.serialized_cfg[0]["experiment_tags"])
             )
@@ -179,16 +178,22 @@ class SessionTrainer(MetaTrainer):
 
         #---------------------------------------------------------------------
 
+    def d_to_child(self):
+        non_passable_attr = ['child','child_class','metric_level','metric_res','running_log']
+        if len(self.serialized_cfg)>1:
+            non_passable_attr.append('neptune_experiment')
+        return {k: v for k, v in self.__dict__.items() if k not in non_passable_attr}    
 
     def child_attr_iter(self):
         for exp_idx, experiment_cfg in enumerate(self.serialized_cfg):
 
-            print('+--------------+')
-            print('| EXPERIMENT {} |'.format(exp_idx+1))
-            print('+--------------+')
+            if len(self.serialized_cfg)>1:
+                print( "+--------------+")
+                print(f"| EXPERIMENT {exp_idx+1} |")
+                print( "+--------------+")
 
             #Import data class
-            print('Loading database {} ...'.format(experiment_cfg["data_fname"]))
+            print(f"Loading database {experiment_cfg['data_fname']} ...")
             data_lib = import_lib("process_generators",experiment_cfg["data_fname"])
 
             #we may want to train with random sequence length
@@ -241,6 +246,11 @@ class SessionTrainer(MetaTrainer):
             yield dict(**experiment_cfg['train_params'], **trick,
                        extra_batch_size = extra, model = model,
                        exp_idx = exp_idx, database = database)
+            
+        if self.NEPTUNE_API_TOKEN is not None:
+            print('Stopping neptune session experiment...')
+            self.neptune_experiment.stop()
+            print('Neptune session experiment stoped.')
         
 #------------------------------------------------------------------------------
 #                             EXPERIMENT LEVEL
@@ -258,9 +268,6 @@ class SessionTrainer(MetaTrainer):
 
 #let's start with the experiment level
 class ExperimentTrainer(MetaTrainer):
-
-    neptune_barrier = True
-
     def __init__(self, d):
         #as mentioned earlier, the child_class is EpochTrainer
         super().__init__(d = d, child_class = EpochTrainer)
@@ -288,33 +295,44 @@ class ExperimentTrainer(MetaTrainer):
             self.neptune_cfg = yaml.load(file, Loader = yaml.FullLoader)
         self.exp_name = self.serialized_cfg[self.exp_idx]["experiment_name"]
 
-        if os.getenv('NEPTUNE_API_TOKEN',self.neptune_cfg['NEPTUNE_API_TOKEN']) is not None:
-            self.neptune_experiment = neptune.init_run(
-                project = self.neptune_cfg['project_qualified_name'],
-                api_token = os.getenv('NEPTUNE_API_TOKEN',self.neptune_cfg['NEPTUNE_API_TOKEN']),
-                name = "Experiment {}: {}".format(self.exp_idx+1, self.exp_name),
-                tags = list(self.serialized_cfg[self.exp_idx]["experiment_tags"])
-            )
-        else:
-            self.neptune_experiment = MagicMock()
+        if len(self.serialized_cfg)>1:
+            if self.NEPTUNE_API_TOKEN is not None: 
+                self.neptune_experiment = neptune.init_run(
+                    project = self.neptune_cfg['project_qualified_name'],
+                    api_token = self.NEPTUNE_API_TOKEN,
+                    name = f"Experiment {self.exp_idx+1}: {self.exp_name}",
+                    tags = list(self.serialized_cfg[self.exp_idx]["experiment_tags"])
+                )
+            else:
+                self.neptune_experiment = MagicMock()
         
         self.neptune_experiment["parameters"] = str(self.serialized_cfg[self.exp_idx])
         #------------------------------------------------------------------
 
     def start_signal(self):
-
         self.start_time = time.time()
-        print('the experiment has started')
+        print('The experiment has started...')
 
-        self.progressbar=trange(self.num_epochs)
+        if not self.skip_train:
+            self.progressbar=tqdm(range(self.num_epochs))
 
     def end_signal(self):
         time_ellapsed = time.time() - self.start_time
-        print('the experiment has ended')
-        self.neptune_experiment.stop()
-        #print('time_ellapsed:' + str(time_ellapsed))
+        print('The experiment has ended.')
+        if len(self.serialized_cfg)>1 and self.NEPTUNE_API_TOKEN is not None:
+            print('Stopping neptune experiment...')
+            self.neptune_experiment.stop()
+            print('Neptune experiment stoped.')
+        
         print(pretty_time(time_ellapsed))
+        if not self.skip_train:
+            self.progressbar.close()
 
+    def d(self):
+        non_passable_attr = ['child','child_class','metric_level','metric_res','running_log']
+        if len(self.serialized_cfg)>1:
+            non_passable_attr.append('neptune_experiment')
+        return {k: v for k, v in self.__dict__.items() if k not in non_passable_attr}
 
     #the iterated child attribute is the epoch number and the train bool
     #this corresponds to the fact the lower level solver operates on epochs
@@ -369,11 +387,10 @@ class EpochTrainer(MetaTrainer):
             #print('training:')
 
             self.progressbar.update()
-            
-
         else:
-            print('validation:')
-            self.epoch_progressbar=trange(int(self.serialized_cfg[self.exp_idx]["data_params"]["epoch_length"]/self.serialized_cfg[self.exp_idx]["train_params"]["val_batch_size"]))
+            print('Validation:')
+            num_batches=math.ceil(self.serialized_cfg[self.exp_idx]["data_params"]["epoch_length"] / self.serialized_cfg[self.exp_idx]["train_params"]["val_batch_size"])
+            self.epoch_progressbar=tqdm(range(num_batches))
             
 
     def end_signal(self):
@@ -390,6 +407,9 @@ class EpochTrainer(MetaTrainer):
             new_distr = CalcDistr(self.metric_res['ep_real_inferred'][-1],
                                local_radius = self.local_radius)
             self.train_pairs.change_gen(new_distr)
+
+        if not self.train:
+            self.epoch_progressbar.close()
 
     #for the initial update we mainly need to set the model to the correct mode
     #we pass the batches down to the next level because the lower level solver
