@@ -30,7 +30,7 @@ We introduce a pure deep neural network-based methodology for the estimation of 
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/aielte-research/LMSParEst.git
+   git clone <repo_URL>
    ```
 
 2. Navigate to the project directory:
