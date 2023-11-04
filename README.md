@@ -1,6 +1,6 @@
 # Parameter Estimation of Long Memory Stochastic Processes with Deep Neural Networks
 
-This repository contains the code for the ICLR 2024 submission titled ["Parameter Estimation of Long Memory Stochastic Processes with Deep Neural Networks"](https://openreview.net/forum?id=lLhEQWQYtb), currently under double-blind review.
+This repository contains the code for the ICLR 2024 submission titled ["Parameter Estimation of Long Memory Stochastic Processes with Deep Neural Networks"](https://openreview.net/forum?id=lLhEQWQYtb).
 
 ## Introduction
 
