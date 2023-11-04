@@ -205,6 +205,7 @@ class Plotter():
             self.neptune_experiment["png/"+self.fname+suffix].upload(self.get_full_path("png",suffix))
             self.neptune_experiment["svg/"+self.fname+suffix].upload(self.get_full_path("svg",suffix))
             self.neptune_experiment.sync()
+        plt.close()
 
     def get_full_path(self,extension="html",suffix=""):
         if not os.path.isdir(os.path.join(self.dirname,extension)):
