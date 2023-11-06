@@ -6,8 +6,7 @@ import json
 class TSPairs(torch.utils.data.dataset.Dataset):  
     def __init__(self, params):
         self.target_param_idx = params.get('target_param_idx', None)
-        self.seq_start_idx = params.get('seq_start_idx', 0)
-        self.seq_end_idx = self.seq_start_idx + params.get('n')
+        self.seq_start_idx = params.get('seq_start_idx', 0)        
 
         fpath = params.get('fpath')
         extension = os.path.splitext(fpath)[1].strip(".")
@@ -22,7 +21,12 @@ class TSPairs(torch.utils.data.dataset.Dataset):
                 data = json.loads(f.read())
         else:
             raise ValueError(f"Config extension unrecognized: '.{extension}'. Must be '.csv', '.tsv' or '.json'!")
-
+        
+        params["epoch_length"]=len(data)
+        if params.get('n') is None:
+            params["n"] = min(len(seq)-self.seq_start_idx for seq in data)
+        self.seq_end_idx = self.seq_start_idx + params.get('n')
+        
         self.data_tensor = torch.FloatTensor(data)
                       
     def __getitem__(self, idx):

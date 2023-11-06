@@ -7,13 +7,12 @@ experiment_tags: !!python/tuple ["ARFIMA","d","LSTM","inference"]
 #+-------------+
 data_fname: time_series_from_file.py
 data_params:
-    fpath: null #.csv, .tsv, or .json
-    epoch_length: 9999   #should not be greater than num_rows in csv
-    n: 200               #seq len, should not be greater than (num_cols - num_params)
-    target_param_idx: 0  #the target param is at this index in every row
-    seq_start_idx: 1     #the seq starts at this index in every row.    
-    #name of the target param and its range (for logging purposes)
-    hurst:
+    fpath: null         #The input '.csv', '.tsv', or '.json' file.
+    epoch_length: null  #Set by the data contained in the file specified in 'fpath'.
+    n: null             #If left 'null' it is determined as the minimum sequence length in data contained in the file specified in 'fpath'. All data will be truncated to this length. Should be less or equal to the minimum sequence lenght provided in the input. 
+    target_param_idx: 0 #The target param is at this index in every row. Set to 'null' when no target param is given in the input.
+    seq_start_idx: 1    #The sequence starts at this index in every row.
+    hurst:              #name of the target param and its range (for logging purposes)
         a: 0
         b: 1
 
