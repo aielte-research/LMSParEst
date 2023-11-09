@@ -202,9 +202,7 @@ class SessionTrainer(MetaTrainer):
             val_batch_size = experiment_cfg['train_params']['val_batch_size']
 
             data_params = experiment_cfg['data_params']
-            dataset = data_lib.Database(data_params,
-                                         train_freq = train_batch_size,
-                                         val_freq = val_batch_size)
+            dataset = data_lib.Database(data_params, train_freq = train_batch_size, val_freq = val_batch_size)
             database = dataset.database
 
             extra = data_params.get('extra_batch_size', 1)
@@ -217,15 +215,13 @@ class SessionTrainer(MetaTrainer):
             #Load model
             
             state_dict_path = experiment_cfg["model_checkpoint_path"]
-            load_previous = experiment_cfg['train_params'].get('load_previous', None)
             
+            load_previous = experiment_cfg['train_params'].get('load_previous', None)
             if load_previous is not None:
                 previous_cfgs = self.serialized_cfg[:exp_idx]
                 for cfg in previous_cfgs:
-                    filtered_train_params = {k: v for k, v in cfg['train_params'].items()
-                                             if k in load_previous}
-                    filtered_exp_train_params = {k: v for k, v in experiment_cfg['train_params'].items()
-                                                 if k in load_previous}
+                    filtered_train_params = {k: v for k, v in cfg['train_params'].items() if k in load_previous}
+                    filtered_exp_train_params = {k: v for k, v in experiment_cfg['train_params'].items() if k in load_previous}
                     train_param_cond = filtered_train_params == filtered_exp_train_params
                     model_param_cond = cfg['model_params'] == experiment_cfg['model_params']
                     #print(cfg['model_params'],experiment_cfg['model_params'])
@@ -237,15 +233,19 @@ class SessionTrainer(MetaTrainer):
 
             model_lib = import_lib("models",experiment_cfg["model_fname"])
                     
-            model = to_cuda(model_lib.Model(experiment_cfg["model_params"],
-                                            state_dict_path))
+            model = to_cuda(model_lib.Model(experiment_cfg["model_params"], state_dict_path))
             if self.parallel:
                 model = torch.nn.DataParallel(model)
 
             #Train model on data
-            yield dict(**experiment_cfg['train_params'], **trick,
-                       extra_batch_size = extra, model = model,
-                       exp_idx = exp_idx, database = database)
+            yield dict(
+                **experiment_cfg['train_params'],
+                **trick,
+                extra_batch_size = extra,
+                model = model,
+                exp_idx = exp_idx,
+                database = database
+            )
             
         if self.NEPTUNE_API_TOKEN is not None:
             print('Stopping neptune session experiment...')
@@ -452,7 +452,10 @@ class BatchTrainer(MetaTrainer):
         if not self.train:
             self.epoch_progressbar.update()
         self.batch_count += 1
-        batch_input, batch_label = self.batch
+        if len(self.batch)==2:
+            batch_input, batch_label = self.batch
+        else:
+            batch_input, batch_label = self.batch, None
 
         if self.extra_batch_size > 1:
             extra_batch_size = self.extra_batch_size
@@ -463,27 +466,31 @@ class BatchTrainer(MetaTrainer):
 
         if not hasattr(self.model, 'baseline') or not self.model.baseline:
             batch_input = to_cuda(batch_input)
-            batch_label = to_cuda(batch_label)
+            if batch_label is not None:
+                batch_label = to_cuda(batch_label)
 
         inferred_label = self.model(batch_input)
 
-        if not hasattr(self, 'inference_trick'):
-            k = batch_label.size(1)
-        else:
-            k = self.inference_trick
+        if batch_label is not None:
+            if not hasattr(self, 'inference_trick'):
+                k = batch_label.size(1)
+            else:
+                k = self.inference_trick
 
-        loss = self.loss_fun(batch_label[:, :k], inferred_label)
+            loss = self.loss_fun(batch_label[:, :k], inferred_label)
                
-        if self.train:
-            self.optimizer.zero_grad()
-            loss.mean().backward()
-            self.optimizer.step()
+            if self.train:
+                self.optimizer.zero_grad()
+                loss.mean().backward()
+                self.optimizer.step()
 
-        if 'batch_loss' in self.metric_res.keys():
-            self.metric_res['batch_loss'] += [loss.item()]
+            if 'batch_loss' in self.metric_res.keys():
+                self.metric_res['batch_loss'] += [loss.item()]
+            else:
+                self.metric_res['batch_loss'] = [loss.item()]
 
-        else:
-            self.metric_res['batch_loss'] = [loss.item()]
+        elif self.train:
+            raise ValueError(f"Training is not possible without target labels!")
 
         for metric_name, metric_dict in self.metric_level.items():
 

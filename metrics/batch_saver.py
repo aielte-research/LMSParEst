@@ -14,8 +14,7 @@ class Batch_saver():
         self.__dict__ = params
 
         if self.train:
-            self.batch_size = self.train_batch_size
-        
+            self.batch_size = self.train_batch_size        
         else:
             self.batch_size = self.val_batch_size
 
@@ -23,6 +22,9 @@ class Batch_saver():
         to_be_saved = self.batch_size * self.batch_count >= self.start_count
 
         if to_be_saved:
-            return [[x[self.real_param_idx].item(), y[self.inferred_param_idx].item()] for x, y in zip(batch_label, inferred_label)]
+            if batch_label is None:
+                return [[None, y[self.inferred_param_idx].item()] for y in inferred_label]
+            else:
+                return [[x[self.real_param_idx].item(), y[self.inferred_param_idx].item()] for x, y in zip(batch_label, inferred_label)]
         else:
             return []

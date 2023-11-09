@@ -34,11 +34,13 @@ class TSPairs(torch.utils.data.dataset.Dataset):
         #it will be called several million times during the training session
         #each call will return a random series and an appropriate label
 
-        #get random values from the generators
-        label = self.data_tensor[idx, self.target_param_idx].unsqueeze(0)
         series = self.data_tensor[idx, self.seq_start_idx:self.seq_end_idx]
 
-        return series, label
+        if self.target_param_idx is None:
+            return series
+        else:
+            label = self.data_tensor[idx, self.target_param_idx].unsqueeze(0)
+            return series, label        
 
     def __len__(self):
         return self.data_tensor.size(0)

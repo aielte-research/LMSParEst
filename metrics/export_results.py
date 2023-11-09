@@ -19,22 +19,29 @@ class Export_results():
                     f.write(f"result,target,diff,SE\n")
                     f.write("\n".join([f"{y:.{self.prec}f},{x:.{self.prec}f},{y-x:.{self.prec}f},{(y-x)**2:.{self.prec}f}" for x,y in zip(targets,results)]))
                 else:
-                    f.write("\n".join([str(y) for y in results]))
+                    f.write(f"result\n")
+                    f.write("\n".join([f"{y:.{self.prec}f}" for y in results]))
         elif extension == 'tsv':        
             with my_open(self.fpath, "w") as f:
                 if self.export_targets:
                     f.write(f"result\ttarget\tdiff\tSE\n")
                     f.write("\n".join([f"{y:.{self.prec}f}\t{x:.{self.prec}f}\t{y-x:.{self.prec}f}\t{(y-x)**2:.{self.prec}f}" for x,y in zip(targets,results)]))
                 else:
-                    f.write("\n".join([str(y) for y in results]))
+                    f.write(f"result\n")
+                    f.write("\n".join([f"{y:.{self.prec}f}" for y in results]))
         elif extension == 'json':
             with my_open(self.fpath, "w") as f:
-                res={
-                    "results":results,
-                    "targets":targets,
-                    "diff":[y-x for x,y in zip(targets,results)],
-                    "SE":[(y-x)**2 for x,y in zip(targets,results)]
-                }                
+                if self.export_targets:
+                    res={
+                        "results":results,
+                        "targets":targets,
+                        "diff":[y-x for x,y in zip(targets,results)],
+                        "SE":[(y-x)**2 for x,y in zip(targets,results)]
+                    }
+                else:
+                    res={
+                        "results":results
+                    }                
                 f.write(json.dumps(json.loads(json.dumps(res), parse_float=lambda x: round(float(x), self.prec)), indent=4))
         else:
             raise ValueError(f"Config extension unrecognized: '.{extension}'. Must be '.csv', '.tsv' or '.json'!")

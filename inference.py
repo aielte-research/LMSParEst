@@ -9,6 +9,7 @@ if __name__ == "__main__":
     required = parser.add_argument_group('required arguments')
     required.add_argument('-i', '--inputfile', required=True, default=None, type=str, help="File path of the input '.csv', '.tsv' or '.json' file.")
     required.add_argument('-o', '--outputfile', required=True, default=None, type=str, help="File path of the '.csv', '.tsv' or '.json' file the outputs will be saved in.")
+    parser.add_argument('-t', '--targetcolumn', required=False, default=False, type=bool, help="If set to 'True', column 0 of the input file is expected to contain the trur values of the target parameter.")
     parser.add_argument('-s', '--seriestype', required=False, default="fBm", type=str, help="Type of the predicted sequence. Options: 'fBm' (Hurst), 'fOU' (Hurst) and 'ARFIMA' (d).")
     parser.add_argument('-m', '--modeltype', required=False, default="LSTM", type=str, help="Type of the prediction model. Options: 'LSTM' and 'conv1D'.")
     parser.add_argument('-w', '--weightsfile', required=False, default=None, type=str, help="File path of the trained model weights. If desired to change the default which comes from the model and sequence selection.")
@@ -44,6 +45,25 @@ if __name__ == "__main__":
         cfg["train_params"]["metrics"]["session"]["export_results"]["metric_params"]["fpath"]=args.outputfile
         cfg["train_params"]["train_batch_size"]=args.batchsize
         cfg["train_params"]["val_batch_size"]=args.batchsize
+        if args.targetcolumn:
+            cfg["data_params"]["target_param_idx"]=0
+            cfg["data_params"]["seq_start_idx"]=1
+        else:
+            cfg["data_params"]["target_param_idx"]=None
+            cfg["data_params"]["seq_start_idx"]=0
+            cfg["train_params"]["metrics"]["session"]["export_results"]["metric_params"]["export_targets"]=False
+            cfg["train_params"]["metrics"]["session"]={
+                "export_results": cfg["train_params"]["metrics"]["session"]["export_results"]
+            }
+            cfg["train_params"]["metrics"]["experiment"]={
+                "exp_real_inferred": cfg["train_params"]["metrics"]["experiment"]["exp_real_inferred"]
+            }
+            cfg["train_params"]["metrics"]["epoch"]={
+                "ep_real_inferred": cfg["train_params"]["metrics"]["epoch"]["ep_real_inferred"]
+            }
+            cfg["train_params"]["metrics"]["batch"]={
+                "batch_real_inferred": cfg["train_params"]["metrics"]["batch"]["batch_real_inferred"]
+            }
         if args.weightsfile is not None:
             cfg["model_checkpoint_path"]=args.weightsfile
         return cfg
