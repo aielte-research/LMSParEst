@@ -117,17 +117,16 @@ or `.json`
 ```
 format.
 
-Run
-```sh
-python inference.py -h
-```
-to display the options for the script.
+The script can either run in pure inference or in evaluation mode: if the first number in each row of the input data contains the target parameter value and the `targetcolumn` flag is set, the loss metrics and evaluation plots will be created.
+Be aware, that all rows will be truncated to the minimum sequence length in the input data. 
 
+The options for the script are the following:
 ```sh
-usage: inference.py [-h] -i INPUTFILE -o OUTPUTFILE [-s SERIESTYPE] [-m MODELTYPE] [-w WEIGHTSFILE] [-b BATCHSIZE] [-c CONFIGFILE]
+usage: inference.py [-h] -i INPUTFILE -o OUTPUTFILE [-t] [-s SERIESTYPE] [-m MODELTYPE] [-w WEIGHTSFILE] [-b BATCHSIZE] [-c CONFIGFILE]
 
 optional arguments:
   -h, --help            show this help message and exit
+  -t, --targetcolumn    If the flag is present, column 0 of the input file is expected to contain the already known values of the target parameter. (default: False)
   -s SERIESTYPE, --seriestype SERIESTYPE
                         Type of the predicted sequence. Options: 'fBm' (Hurst), 'fOU' (Hurst) and 'ARFIMA' (d). (default: fBm)
   -m MODELTYPE, --modeltype MODELTYPE
@@ -149,7 +148,7 @@ required arguments:
 Example usage:
 
 ```sh
-   CUDA_VISIBLE_DEVICES=0 python inference.py -i inference_input_data/tst.csv -o inference_output_data/tst.tsv
+   CUDA_VISIBLE_DEVICES=0 python python inference.py -i inference_input_data/fBm_tst_100_n-1600.csv -o inference_output_data/fBm_tst_100_n-1600.tsv -t
 ```
 
 ## Known Issues

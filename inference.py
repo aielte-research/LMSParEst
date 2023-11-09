@@ -9,7 +9,7 @@ if __name__ == "__main__":
     required = parser.add_argument_group('required arguments')
     required.add_argument('-i', '--inputfile', required=True, default=None, type=str, help="File path of the input '.csv', '.tsv' or '.json' file.")
     required.add_argument('-o', '--outputfile', required=True, default=None, type=str, help="File path of the '.csv', '.tsv' or '.json' file the outputs will be saved in.")
-    parser.add_argument('-t', '--targetcolumn', required=False, default=False, type=bool, help="If set to 'True', column 0 of the input file is expected to contain the trur values of the target parameter.")
+    parser.add_argument('-t', '--targetcolumn', required=False, default=False, action='store_true', help="If the flag is present, column 0 of the input file is expected to contain the already known values of the target parameter.")
     parser.add_argument('-s', '--seriestype', required=False, default="fBm", type=str, help="Type of the predicted sequence. Options: 'fBm' (Hurst), 'fOU' (Hurst) and 'ARFIMA' (d).")
     parser.add_argument('-m', '--modeltype', required=False, default="LSTM", type=str, help="Type of the prediction model. Options: 'LSTM' and 'conv1D'.")
     parser.add_argument('-w', '--weightsfile', required=False, default=None, type=str, help="File path of the trained model weights. If desired to change the default which comes from the model and sequence selection.")
