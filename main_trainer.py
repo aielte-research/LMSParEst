@@ -216,18 +216,9 @@ class SessionTrainer(MetaTrainer):
             
             state_dict_path = experiment_cfg["model_checkpoint_path"]
             
-            load_previous = experiment_cfg['train_params'].get('load_previous', None)
-            if load_previous is not None:
-                previous_cfgs = self.serialized_cfg[:exp_idx]
-                for cfg in previous_cfgs:
-                    filtered_train_params = {k: v for k, v in cfg['train_params'].items() if k in load_previous}
-                    filtered_exp_train_params = {k: v for k, v in experiment_cfg['train_params'].items() if k in load_previous}
-                    train_param_cond = filtered_train_params == filtered_exp_train_params
-                    model_param_cond = cfg['model_params'] == experiment_cfg['model_params']
-                    #print(cfg['model_params'],experiment_cfg['model_params'])
-                    
-                    if True:#model_param_cond and train_param_cond:
-                        state_dict_path = cfg['train_params']["checkpoint_save_path"]
+            if experiment_cfg['train_params'].get('load_previous', False) and exp_idx>0:
+                previous_cfg = self.serialized_cfg[exp_idx-1]
+                state_dict_path = previous_cfg['train_params']["checkpoint_save_path"]
 
             print(f'Loading model {experiment_cfg["model_fname"]} (pretrained weights {state_dict_path})...')
 

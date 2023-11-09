@@ -69,7 +69,7 @@ model_params:
 train_params:
     parallel: false #if true: use torch.nn.DataParallel for multigpu training
 
-    load_previous: null #loads the previous model with matching model params and additional train params specified in this tuple
+    load_previous: false
     auto_save_path_naming: true  #names the saved state dict automatically using the experiment_name_extensions
     auto_save_folder: model_checkpoints/fBm/
     shuffle: false
