@@ -122,4 +122,3 @@ def gen(ar_params = [], d = 0, ma_params = [], n = 200, sigma = 1, noise_alpha =
     series = __arma_model(ar_params, frac_ma)
     return series[-n:]
 
-#print(gen([0.5, 0.5, 0.3, 0.9], 0.5, [0.5, 0.5, 0.3, 23, 3,3,333], 100, 1, 1, 0).shape)

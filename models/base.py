@@ -24,15 +24,14 @@ class Permute(nn.Module):
         return x.permute(*self.perm)
 
 def activation_Function(name="ReLU",params=None):
-    #print(name,params)
-    if name==None:
+    if name is None:
         return nn.Identity()
     elif name in ["ELU","Hardshrink","Hardsigmoid","Hardtanh","Hardswish",
                   "LeakyReLU","LogSigmoid","MultiheadAttention","PReLU","ReLU",
                   "ReLU6","RReLU","SELU","CELU","GELU","Sigmoid","SiLU","Mish",
                   "Softplus","Softshrink","Softsign","Tanh","Tanhshrink",
                   "Threshold","GLU", "Identity"]:
-        if params==None:
+        if params is None:
             return getattr(nn, name)()
         return getattr(nn, name)(*params)
     raise ValueError("Unknown activation function!",name)
@@ -196,20 +195,12 @@ class BaseRegressor(nn.Module):
             s = x.std(dim = 1, keepdim = True)
             x = (x - m) / s
 
-        #print("x",x_p.size())
         x = x.unsqueeze(dim = 1)
-        #print("x = x.unsqueeze(dim = 1)",x.size())
         x = self.emb(x)
-        #print("x = self.emb(x)",x.size())
         x = self.seq2seq(x)
-        #print("x = self.seq2seq(x)",x.size())
         x = self.avg(x)
-        #print("x = self.avg(x)",x.size())
-        #x = x.view(-1, x.size(1) * x.size(2))
-        #print("x = x.view(-1, x.size(1))",x.size())
         x = self.flatten(x)
         out = self.mlp(x)
-        #print("out = self.mlp(x",out.size())
 
         if size_cond:
             out = out.view(-1, 2)

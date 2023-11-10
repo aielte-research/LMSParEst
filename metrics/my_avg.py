@@ -6,8 +6,6 @@ class My_avg():
 
     def __call__(self, seq):
         a = sum(seq) / len(seq)
-
-        #print(self.message + ': ' + str(a))
         
         self.neptune_experiment[os.path.join('metrics', self.message)].log(a)
 

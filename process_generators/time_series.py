@@ -122,21 +122,3 @@ class Database():
             ts_gen = generator
         )
         self.database = (train_pairs, val_pairs)
-
-'''
-cfg = {
-        'inference': ('hurst'),
-        'epoch_length': 10000, 
-        'ts_type': 'fou',
-        'series_length': 1500,
-        'hurst': {'gen': 'random.uniform', 'a': 0, 'b': 1},
-        'time_scale': 1,
-        'sigma': 0.3,
-        'alpha': -0.1,
-        'initial_value': 0
-        }
-
-Proba = Database(cfg, 64, 64)
-print(Proba.database[0][0][1].size())
-
-'''

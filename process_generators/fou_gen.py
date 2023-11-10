@@ -65,8 +65,6 @@ def fou(n, hurst, alpha, sigma, initial_value):
 
     weights = integrand_setter(sigma,alpha,time_grid)
 
-    #print('weights', weights.shape)
-    #print('fbm_incs', fbm_incs.shape)
     mtx = weights @ fbm_incs
     return np.array([initial_value, *[np.exp(-alpha*time_grid[i]) * initial_value +
                              mtx[i-1] for i in range(1, len(time_grid))]])
