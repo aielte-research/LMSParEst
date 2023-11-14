@@ -89,10 +89,8 @@ class MetaTrainer():
         self.end_signal()
 
     def log(self):
-
         #self.metric_classes is shared between levels
         #self.metric_level is level-specific
-
         for metric_name, metric_dict in self.metric_level.items():
             metric_func = self.metric_classes[metric_dict['metric_func']](
                 dict(**metric_dict['metric_params'], **self.__dict__),
@@ -207,10 +205,7 @@ class SessionTrainer(MetaTrainer):
 
             extra = data_params.get('extra_batch_size', 1)
 
-            if 'inference' in data_params.keys():
-                trick = {'inference_trick': len(data_params['inference'])} 
-            else:
-                trick = {}
+            self.inference = data_params.get('inference', False)
             
             #Load model
             
@@ -231,7 +226,7 @@ class SessionTrainer(MetaTrainer):
             #Train model on data
             yield dict(
                 **experiment_cfg['train_params'],
-                **trick,
+                inference = self.inference,
                 extra_batch_size = extra,
                 model = model,
                 exp_idx = exp_idx,
@@ -374,12 +369,12 @@ class EpochTrainer(MetaTrainer):
 
     def start_signal(self):
         if self.train:
-            #print('epoch: ' + str(int(self.curr_epoch / 2)), '/',self.num_epochs)
-            #print('training:')
-
             self.progressbar.update()
         else:
-            print('Validation:')
+            if self.inference:
+                print('Inference:')
+            else:
+                print('Evaluation:')
             num_batches=math.ceil(self.serialized_cfg[self.exp_idx]["data_params"]["epoch_length"] / self.serialized_cfg[self.exp_idx]["train_params"]["val_batch_size"])
             self.epoch_progressbar=tqdm(range(num_batches))
             
@@ -401,6 +396,9 @@ class EpochTrainer(MetaTrainer):
 
         if not self.train:
             self.epoch_progressbar.close()
+
+        if not self.inference:
+            print(f"Loss={self.metric_res['epoch_loss'][-1]:06.8f}")
 
     #for the initial update we mainly need to set the model to the correct mode
     #we pass the batches down to the next level because the lower level solver
@@ -457,17 +455,13 @@ class BatchTrainer(MetaTrainer):
 
         if not hasattr(self.model, 'baseline') or not self.model.baseline:
             batch_input = to_cuda(batch_input)
-            if batch_label is not None:
+            if not self.inference:
                 batch_label = to_cuda(batch_label)
 
         inferred_label = self.model(batch_input)
 
-        if batch_label is not None:
-            if not hasattr(self, 'inference_trick'):
-                k = batch_label.size(1)
-            else:
-                k = self.inference_trick
-
+        if not self.inference:
+            k = batch_label.size(1)
             loss = self.loss_fun(batch_label[:, :k], inferred_label)
                
             if self.train:

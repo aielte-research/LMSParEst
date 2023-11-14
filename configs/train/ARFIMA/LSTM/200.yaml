@@ -16,7 +16,7 @@ data_params:
         b: 0.5
     epoch_length: 100000
     n: 200                            
-    inference: !!python/tuple ['d']
+    target_param: !!python/tuple ['d']
 
 #+--------------+
 #| MODEL PARAMS |

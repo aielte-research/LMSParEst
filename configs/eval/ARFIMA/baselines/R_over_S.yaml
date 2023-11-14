@@ -24,7 +24,7 @@ data_params:
         - 3200
         - 6400
         - 12800
-    inference: !!python/tuple ['d']
+    target_param: !!python/tuple ['d']
 
 #+--------------+
 #| MODEL PARAMS |

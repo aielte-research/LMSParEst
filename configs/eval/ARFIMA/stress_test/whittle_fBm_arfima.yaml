@@ -17,7 +17,7 @@ data_params:
     epoch_length: 10000
     n: 3200
     lambd: 1                              
-    inference: !!python/tuple ['d']
+    target_param: !!python/tuple ['d']
     method: fft
 
 #+--------------+

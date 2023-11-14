@@ -39,7 +39,7 @@ data_params:
     a: -1
     b: 1
                             
-  inference: !!python/tuple ['alpha']     
+  target_param: !!python/tuple ['alpha']     
 
 #+--------------+
 #| MODEL PARAMS |

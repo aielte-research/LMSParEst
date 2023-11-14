@@ -11,13 +11,13 @@ from helper_functions import string_import
 #we declare fixed params simply by giving them value: e.g. n = 1500
 #and random params by giving the key the '_gen' suffix and giving the generator itself
 #e.g. hurst_gen = lamba: n_gen = lambda: random.randrange(3000, 10000)
-#moreover if we dont want to infer a random value we can put its name to the no_inference list
+#moreover if we dont want to infer a random value we can put its name to the no_target_param list
 class TSPairs(torch.utils.data.dataset.Dataset):
     def __init__(
         self,
         epoch_length,
         ts_gen,
-        inference = [],
+        target_param = [],
         extra_params = [],
         const_in_batch = [],
         random_freq = 64,
@@ -29,7 +29,7 @@ class TSPairs(torch.utils.data.dataset.Dataset):
 
         self.epoch_length = epoch_length
         self.ts_gen = ts_gen
-        self.inference = inference
+        self.target_param = target_param
         self.extra_params = extra_params
         self.const_in_batch = const_in_batch
         self.random_freq = random_freq
@@ -74,7 +74,7 @@ class TSPairs(torch.utils.data.dataset.Dataset):
         rand_params.update(const_batch_params)
         all_params = dict(**self.fixed_params, **rand_params)
 
-        label_list = ([all_params[k] for k in self.inference]
+        label_list = ([all_params[k] for k in self.target_param]
                     + [all_params[k] for k in self.extra_params])
 
         label = torch.FloatTensor(label_list)

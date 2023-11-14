@@ -19,7 +19,7 @@ data_params:
         - 3200
         - 6400
     lambd: 1                              
-    inference: !!python/tuple ['hurst']
+    target_param: !!python/tuple ['hurst']
     method: fft
 
 #+--------------+

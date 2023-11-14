@@ -34,7 +34,7 @@ data_params:
         gen: numpy.random.normal
         loc: 0
         scale: 1
-    inference: !!python/tuple ['hurst']
+    target_param: !!python/tuple ['hurst']
 
 #+--------------+
 #| MODEL PARAMS |

@@ -48,9 +48,11 @@ if __name__ == "__main__":
         if args.targetcolumn:
             cfg["data_params"]["target_param_idx"]=0
             cfg["data_params"]["seq_start_idx"]=1
+            cfg["data_params"]["inference"]=False
         else:
             cfg["data_params"]["target_param_idx"]=None
             cfg["data_params"]["seq_start_idx"]=0
+            cfg["data_params"]["inference"]=True
             cfg["train_params"]["metrics"]["session"]["export_results"]["metric_params"]["export_targets"]=False
             cfg["train_params"]["metrics"]["session"]={
                 "export_results": cfg["train_params"]["metrics"]["session"]["export_results"]

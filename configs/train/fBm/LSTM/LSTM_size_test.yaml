@@ -16,7 +16,7 @@ data_params:
     epoch_length: 100000
     n: 1600
     lambd: 1                              
-    inference: !!python/tuple ['hurst']
+    target_param: !!python/tuple ['hurst']
     method: fft
 
 #+--------------+

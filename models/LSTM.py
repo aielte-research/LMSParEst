@@ -47,7 +47,6 @@ class LSTM(Res_LSTM):
 
     def forward(self, x):
         return super().forward(x.permute(2, 0, 1)).permute(1, 2, 0)
-        
     
 class Model(Base):
     def __init__(self, params, state_dict):

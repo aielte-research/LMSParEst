@@ -24,7 +24,7 @@ data_params:
         loc: 0
         scale: 1
     mu: 0
-    inference: !!python/tuple ['alpha']  
+    target_param: !!python/tuple ['alpha']  
 
 #+--------------+
 #| MODEL PARAMS |
