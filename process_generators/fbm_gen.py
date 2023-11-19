@@ -4,7 +4,6 @@ import cmath
 from scipy.fftpack import fft
 from fbm import FBM
 
-
 def fbm(hurst=0.7, n=2000, method="fft", length = 1):
 
     """
@@ -65,7 +64,7 @@ def fbm(hurst=0.7, n=2000, method="fft", length = 1):
     else:
         pass
 
-def gen(hurst = 0.7, n = 2000, method = 'fft', lambd = 1, d=None):
+def gen(hurst = 0.7, n = 2000, method = 'fft', lambd = 1, d=None, **params):
     if d is not None:
         hurst=d+0.5
     m = n - 1

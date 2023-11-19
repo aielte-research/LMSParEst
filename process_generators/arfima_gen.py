@@ -90,7 +90,7 @@ def __frac_diff(x, d):
     return np.real(dx[0:n])
 
 
-def gen(ar_params = [], d = 0, ma_params = [], n = 200, sigma = 1, noise_alpha = 2, warmup = 0, hurst=None):
+def gen(ar_params = [], d = 0, ma_params = [], n = 200, sigma = 1, noise_alpha = 2, warmup = 0, hurst=None, **params):
     if hurst is not None:
         d = hurst - 0.5
     """Generate series from ARFIMA process.

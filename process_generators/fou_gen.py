@@ -70,7 +70,7 @@ def fou(n, hurst, alpha, sigma, initial_value):
                              mtx[i-1] for i in range(1, len(time_grid))]])
 
 
-def gen(n = 200, dt = 1, hurst = 0.5, alpha = 0.5, sigma = 1, gamma = 0, mu = 0):
+def gen(n = 200, dt = 1, hurst = 0.5, alpha = 0.5, sigma = 1, gamma = 0, mu = 0, **params):
     path = fou(
         n = n,
         initial_value = gamma,

@@ -77,6 +77,6 @@ class AlphaStabSymLevy():
 #levy_t = AlphaStabSymLevy(times,1.3,switch="times")
 #plt.plot(levy_t())
 
-def gen(n, alpha=1):
+def gen(n, alpha=1, **params):
     generator=AlphaStabSymLevy(alpha=alpha,n=n)
     return generator()

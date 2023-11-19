@@ -1,6 +1,6 @@
 import numpy as np
 
-def gen(n, alpha=1, distr={"name":"uniform", "low":0, "high":1}):
+def gen(n, alpha=1, distr={"name":"uniform", "low":0, "high":1}, **params):
     if distr["name"]=="uniform":
         S = np.random.uniform(low=distr["low"], high=distr["high"], size=n)
     elif distr["name"]=="normal":

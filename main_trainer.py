@@ -218,7 +218,9 @@ class SessionTrainer(MetaTrainer):
             print(f'Loading model {experiment_cfg["model_fname"]} (pretrained weights {state_dict_path})...')
 
             model_lib = import_lib("models",experiment_cfg["model_fname"])
-                    
+            
+            if experiment_cfg["model_params"] is None:
+                experiment_cfg["model_params"] = {}
             model = to_cuda(model_lib.Model(experiment_cfg["model_params"], state_dict_path))
             if self.parallel:
                 model = torch.nn.DataParallel(model)
