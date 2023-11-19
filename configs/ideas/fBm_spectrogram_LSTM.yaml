@@ -1,13 +1,13 @@
 experiment_name: ""
-experiment_name_base: fBm_Hurst_spectrogram_MLP #base name for the experiments
+experiment_name_base: fBm_Hurst_spectrogram_LSTM #base name for the experiments
 experiment_name_extension: !!python/tuple ['data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
-experiment_tags: !!python/tuple ["fBm","Hurst","MLP"]
+experiment_tags: !!python/tuple ["fBm","Hurst","LSTM"]
 #+-------------+
 #| DATA PARAMS |
 #+-------------+
 #the following parameters will be read by the database file (in this case time_series.py)
 data_fname: time_series.py
-data_params: &data_params
+data_params:
     ts_type: fbm          
     hurst: 
         gen: random.uniform
@@ -26,22 +26,30 @@ data_params: &data_params
 #+--------------+
 #this is the way to specify which model to train:
 model_checkpoint_path: null
-model_fname: base.py
+model_fname: LSTM.py
 model_params:
     diff: true
     standardize: true
     invariant_nu_layer: null
     additive_nu_layer: null
-    #base_type: polynomial
-    #base_dim: 0
+    init_hom: null
     embedding:
         type: spectrogram
         output_dim: 64
     adaptive_out_length: 1
     vec_hom: null
+    lstm:
+        input_size: 64
+        hidden_size: 128
+        num_layers: 2 
+        bidirectional: false 
+        residual: false
+
+    adaptive_out_length: 1
+
     mlp:
         bias: true
-        channels: !!python/tuple [64, 128, 64, 1]
+        channels: !!python/tuple [128, 64, 1]
         batch_norm: false # Add batch normalization between the output mlp layers (but not after the last)
         dropout: 0
         activation:
@@ -51,7 +59,6 @@ model_params:
     nu_estimator: false
     simple_nu_estimator: false
     rs: null
-    init_hom: null
 
 #+--------------+
 #| TRAIN PARAMS |
