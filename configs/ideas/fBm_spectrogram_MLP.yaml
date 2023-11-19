@@ -63,7 +63,7 @@ train_params:
     optimizer_class: torch.optim.AdamW
     loss_fun_class: torch.nn.MSELoss
     
-    num_epochs: 200
+    num_epochs: 100
     train_batch_size: 32
     val_batch_size: 128
     skip_train: false
@@ -73,7 +73,7 @@ train_params:
     metric_names:
     change_seed: true
     num_cores: 16
-    checkpoint_save_path: model_checkpoints/fBm/fBm_Hurst_conv1D_n-100.pt
+    checkpoint_save_path: null
 
     metrics:
         session:
