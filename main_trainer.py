@@ -399,8 +399,8 @@ class EpochTrainer(MetaTrainer):
         if not self.train:
             self.epoch_progressbar.close()
 
-        if not self.inference:
-            print(f"Loss={self.metric_res['epoch_loss'][-1]:06.8f}")
+            if not self.inference:
+                print(f"Loss={self.metric_res['epoch_loss'][-1]:06.8f}")
 
     #for the initial update we mainly need to set the model to the correct mode
     #we pass the batches down to the next level because the lower level solver
