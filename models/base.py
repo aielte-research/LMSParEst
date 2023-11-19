@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as f
+import torchaudio
 
 def get_state_dict(state_dict):
     if torch.cuda.is_available():
@@ -117,6 +118,15 @@ class MLConv1d(nn.Sequential):
 
 #------------------------------------------------------------------------------
 
+class Spectrogram(nn.Module):
+    def __init__(self, output_dim=128):
+        super().__init__()
+
+        self.transform = torchaudio.transforms.Spectrogram(n_fft=2*output_dim-1)
+
+    def forward(self, x):
+        return self.transform(x.squeeze(dim = 1))
+
 class BaseRegressor(nn.Module):
     def __init__(self, params):
         super().__init__()
@@ -160,7 +170,11 @@ class BaseRegressor(nn.Module):
 
         #then a 1D pooling/embedding layer to increase the dimension of our input
         if params["embedding"] is not None:
-            self.emb = MLConv1d(**params["embedding"])
+            emb_typ = params["embedding"].get('type', "conv1d").lower()
+            if emb_typ == "conv1d":
+                self.emb = MLConv1d(**params["embedding"])
+            elif emb_typ == "spectrogram":
+                self.emb = Spectrogram(output_dim=params["embedding"]["output_dim"])
         else:
             self.emb = nn.Identity()
 
