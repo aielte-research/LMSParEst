@@ -9,7 +9,7 @@ dependencies:
   - pandas
   - tqdm 
   - bokeh
-  - matplotlib #=3.5.1
+  - matplotlib=3.5.1
   - plotly
   - colorcet
   - jupyter
