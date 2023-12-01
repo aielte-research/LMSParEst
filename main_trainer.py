@@ -444,27 +444,27 @@ class BatchTrainer(MetaTrainer):
             self.epoch_progressbar.update()
         self.batch_count += 1
         if len(self.batch)==2:
-            batch_input, batch_label = self.batch
+            batch_input, true_params = self.batch
         else:
-            batch_input, batch_label = self.batch, None
+            batch_input, true_params = self.batch, None
 
         if self.extra_batch_size > 1:
             extra_batch_size = self.extra_batch_size
             input_batch_size = batch_input.size(0)
-            label_batch_size = batch_label.size(0)
+            label_batch_size = true_params.size(0)
             batch_input = batch_input.view(extra_batch_size * input_batch_size, -1)
-            batch_label = batch_label.view(extra_batch_size * label_batch_size, -1)
+            true_params = true_params.view(extra_batch_size * label_batch_size, -1)
 
         if not hasattr(self.model, 'baseline') or not self.model.baseline:
             batch_input = to_cuda(batch_input)
             if not self.inference:
-                batch_label = to_cuda(batch_label)
+                true_params = to_cuda(true_params)
 
-        inferred_label = self.model(batch_input)
+        inferred_params = self.model(batch_input)
 
         if not self.inference:
-            k = batch_label.size(1)
-            loss = self.loss_fun(batch_label[:, :k], inferred_label)
+            k = true_params.size(1)
+            loss = self.loss_fun(true_params[:, :k], inferred_params)
                
             if self.train:
                 self.optimizer.zero_grad()
@@ -480,13 +480,12 @@ class BatchTrainer(MetaTrainer):
             raise ValueError(f"Training is not possible without target labels!")
 
         for metric_name, metric_dict in self.metric_level.items():
-
             metric_func_name = metric_dict['metric_func']
             metric_params = metric_dict['metric_params']
 
             metric_func = self.metric_classes[metric_func_name](dict(**metric_params, **self.__dict__), self.neptune_experiment)
 
-            metric_res = metric_func(batch_label, inferred_label)
+            metric_res = metric_func(true_params, inferred_params, batch_input)
 
             #important: the way of accumulating the res is a simple +=
             if metric_name in self.metric_res.keys():

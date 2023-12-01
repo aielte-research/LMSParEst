@@ -4,8 +4,8 @@ class Loss():
         self.loss_fun = loss_fun
         self.train = train
 
-    def update(self, batch_label, inferred_label):
-        self.new_loss = self.loss_fun(batch_label, inferred_label)
+    def update(self, true_params, inferred_params):
+        self.new_loss = self.loss_fun(true_params, inferred_params)
         self.loss += self.new_loss
 
     def backward(self):

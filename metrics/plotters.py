@@ -699,6 +699,51 @@ class ScatterPlotter(Plotter):
 
             super().save_matplotlib_figure(suffix+color_settings["suffix"],color_settings["bg_transparent"])
 
+class SpectrumPlotter(Plotter):
+    def __init__(self, params, neptune_experiment=None):
+        super().__init__(neptune_experiment) 
+        default_params={
+            #spectrum <-- no default, list of lists
+            "fname": "spectrogram",
+            "dirname": "",
+            "title": "",
+            "xlabel": "Window",
+            "ylabel": "Spectrum",
+            "xscale": "linear",
+            "yscale": "linear",
+            "matplotlib":{ # for png and svg
+                "width": 16,
+                "height": 9,
+                "style": "seaborn-poster", #"seaborn-poster", "seaborn-talk"
+                "png_dpi": 240 #use 240 for 4k resolution on 16x9 image
+            }     
+        }
+        for key in default_params:
+            params[key] = params.get(key, default_params[key])
+        for key in ["matplotlib"]:
+            for key2 in default_params[key]:
+                params[key][key2] = params[key].get(key2, default_params[key][key2])
+        self.params = params
+        for k, v in params.items():
+            setattr(self, k, v)
+
+        if self.dirname!="" and not os.path.isdir(self.dirname):
+            os.makedirs(self.dirname)
+
+    def export_all(self,dark=False):
+        super().export_json()
+        self.export_matplotlib(self.spectrum)
+
+    ##############
+    # matplotlib #
+    ##############
+    def export_matplotlib(self, spectrum):
+        ax = super().init_matplotlib_figure()
+        img = ax.imshow(spectrum, cmap="viridis", origin="lower", aspect="auto")
+        
+        super().save_matplotlib_figure("")
+
+
 class PCAPlotter(Plotter):
     def __init__(self, params, neptune_experiment=None):
         super().__init__(neptune_experiment) 
