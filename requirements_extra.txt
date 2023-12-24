@@ -1,0 +1,2 @@
+torchaudio
+signatory==1.2.6.1.9.0
