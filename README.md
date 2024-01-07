@@ -151,6 +151,12 @@ Example usage:
    CUDA_VISIBLE_DEVICES=0 python python inference.py -i inference_input_data/fBm_tst_100_n-1600.csv -o inference_output_data/fBm_tst_100_n-1600.tsv -t
 ```
 
+Alternatively, you can also use `main_trainer.py` directly using a config file of your choosing:
+
+```sh
+   CUDA_VISIBLE_DEVICES=0 python python main_trainer.py -c configs/Integrity_tests/Integrity_test_fBm.yaml
+```
+
 ## Known Issues
 This issue was happening in our testing environment.
 If getting the following error:
