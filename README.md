@@ -135,8 +135,6 @@ optional arguments:
                         File path of the trained model weights. If desired to change the default which comes from the model and sequence selection. (default: None)
   -b BATCHSIZE, --batchsize BATCHSIZE
                         Inference batch size. (default: 32)
-  -c CONFIGFILE, --configfile CONFIGFILE
-                        File path of the configfile '.yaml'. If desired to overwrite the default which comes from the model and sequence selection. (default: None)
 
 required arguments:
   -i INPUTFILE, --inputfile INPUTFILE
