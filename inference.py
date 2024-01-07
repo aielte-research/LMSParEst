@@ -14,29 +14,25 @@ if __name__ == "__main__":
     parser.add_argument('-m', '--modeltype', required=False, default="LSTM", type=str, help="Type of the prediction model. Options: 'LSTM' and 'conv1D'.")
     parser.add_argument('-w', '--weightsfile', required=False, default=None, type=str, help="File path of the trained model weights. If desired to change the default which comes from the model and sequence selection.")
     parser.add_argument('-b', '--batchsize', required=False, default=32, type=int, help="Inference batch size.")
-    #parser.add_argument('-c', '--configfile', required=False, default=None, type=str, help="File path of the configfile '.yaml'. If desired to overwrite the default which comes from the model and sequence selection.")
     args = parser.parse_args()
 
-    if args.configfile is None:
-        seriestype = args.seriestype.upper().replace("FBM", "fBm").replace("FOU", "fOU")
-        modeltype = args.modeltype.upper().replace("CONV1D", "conv1D")
+    seriestype = args.seriestype.upper().replace("FBM", "fBm").replace("FOU", "fOU")
+    modeltype = args.modeltype.upper().replace("CONV1D", "conv1D")
 
-        if seriestype in ["fBm", "fOU"]:
-            param_name = "Hurst"
-        elif seriestype=="ARFIMA":
-            param_name = "d"
-        else:
-            raise ValueError(f"Series type '{args.seriestype}' not recognized! Available options: 'fBm', 'fOU' and 'ARFIMA'")        
-        
-        if not modeltype in ["LSTM", "conv1D"]:
-            raise ValueError(f"Model type '{args.modeltype}' not recognized! Available options: 'LSTM' and 'conv1D'")
-        
-        if (seriestype=="fOU" or seriestype=="ARFIMA") and modeltype=="conv1D":
-            raise ValueError(f"Option '{modeltype}' not implemented for '{seriestype}' yet!")
-
-        config_fpath=f"configs/eval/{seriestype}/{seriestype}_{param_name}_{modeltype}_eval_from_file.yaml"       
+    if seriestype in ["fBm", "fOU"]:
+        param_name = "Hurst"
+    elif seriestype=="ARFIMA":
+        param_name = "d"
     else:
-        config_fpath=args.configfile
+        raise ValueError(f"Series type '{args.seriestype}' not recognized! Available options: 'fBm', 'fOU' and 'ARFIMA'")        
+    
+    if not modeltype in ["LSTM", "conv1D"]:
+        raise ValueError(f"Model type '{args.modeltype}' not recognized! Available options: 'LSTM' and 'conv1D'")
+    
+    if (seriestype=="fOU" or seriestype=="ARFIMA") and modeltype=="conv1D":
+        raise ValueError(f"Option '{modeltype}' not implemented for '{seriestype}' yet!")
+
+    config_fpath=f"configs/eval/{seriestype}/{seriestype}_{param_name}_{modeltype}_eval_from_file.yaml"       
 
     orig_cfg = cfg_parser.read_file(config_fpath)
 
