@@ -102,8 +102,7 @@ class MetaTrainer():
             #important: the way of accumulating the res is a simple +=
             #(which can mean anything depending on how we implement the metric)
 
-            overwrite_last = metric_dict['metric_params'].get('overwrite_last',
-                                                              False)
+            overwrite_last = metric_dict['metric_params'].get('overwrite_last',False)
             if not (hasattr(self, 'highest_level') and self.highest_level):
                 if metric_name in self.metric_res.keys() and not overwrite_last:
                     try:
@@ -161,10 +160,15 @@ class SessionTrainer(MetaTrainer):
         self.NEPTUNE_API_TOKEN = os.getenv('NEPTUNE_API_TOKEN',self.neptune_cfg['NEPTUNE_API_TOKEN'])
 
         if self.NEPTUNE_API_TOKEN is not None:
+            if len(self.serialized_cfg)>1:
+                name = f'Session: {self.serialized_cfg[0]["experiment_name_base"]}'
+            else:
+                name = f'Experiment: {self.serialized_cfg[0]["experiment_name"]}'
+
             self.neptune_experiment = neptune.init_run(
                 project = self.neptune_cfg['project_qualified_name'],
                 api_token = self.NEPTUNE_API_TOKEN,
-                name = "Session: "+self.serialized_cfg[0]["experiment_name_base"],
+                name = name,
                 tags = list(self.serialized_cfg[0]["experiment_tags"])
             )
         else:
