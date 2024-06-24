@@ -64,11 +64,13 @@ def fbm(hurst=0.7, n=2000, method="fft", length = 1):
     else:
         pass
 
-def gen(hurst = 0.7, n = 2000, method = 'fft', lambd = 1, d=None, **params):
+def gen(hurst = 0.7, n = 2000, method = 'fft', lambd = 1.0, d=None, scaled=True, **params):
     if d is not None:
         hurst=d+0.5
     m = n - 1
-    scale = lambd * (m ** hurst)
+    if scaled:
+        scale = lambd * (m ** hurst)
+    else:
+        scale = lambd
 
-    #return lambd * base_gen(hurst = hurst, n = m, method = method, length = 1)
     return scale * fbm(hurst = hurst, n = m, method = method, length = 1)
