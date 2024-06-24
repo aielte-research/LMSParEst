@@ -1,7 +1,7 @@
 experiment_name: ""
 experiment_name_base: fBm_Hurst_LSTM #base name for the experiments
-experiment_name_extension: !!python/tuple ['model_params/standardize', 'data_params/n'] # Eg using this experiment_name: example_metrics_a-0_b-1
-experiment_tags: !!python/tuple ["fBm","Hurst","LSTM","invariancy"]
+experiment_name_extension: !!python/tuple ['data_params/n','model_params/standardize'] # Eg using this experiment_name: example_metrics_a-0_b-1
+experiment_tags: !!python/tuple ["fBm","Hurst","LSTM"]
 #+-------------+
 #| DATA PARAMS |
 #+-------------+
@@ -14,8 +14,14 @@ data_params:
         a: 0
         b: 1
     epoch_length: 100000
-    n: 12800
-    lambd: 1                              
+    n: 
+        - 100
+        - 200
+        - 400
+        - 800
+        - 1600
+    lambd: 1
+    scaled: false
     target_param: !!python/tuple ['hurst']
     method: fft
 
@@ -27,9 +33,7 @@ model_checkpoint_path: null
 model_fname: LSTM.py
 model_params:
     diff: true       #work on the increments, instead of the original series
-    standardize: 
-        - false
-        - true
+    standardize: false
     invariant_nu_layer: null
     additive_nu_layer: null
     init_hom: null
@@ -64,12 +68,11 @@ model_params:
 #| TRAIN PARAMS |
 #+--------------+
 train_params:
-    parallel: true #if true: use torch.nn.DataParallel for multigpu training
+    parallel: false #if true: use torch.nn.DataParallel for multigpu training
 
     load_previous: false
     auto_save_path_naming: false  #names the saved state dict automatically using the experiment_name_extensions
     auto_save_folder: null
-
     shuffle: false
     freeze_list: !!python/tuple []
     lr: 0.0001
@@ -78,7 +81,7 @@ train_params:
     
     num_epochs: 100
     train_batch_size: 32
-    val_batch_size: 32
+    val_batch_size: 128
     skip_train: false
     skip_val: true
 
