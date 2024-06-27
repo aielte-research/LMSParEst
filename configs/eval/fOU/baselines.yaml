@@ -67,7 +67,7 @@ train_params:
     skip_val: false
 
     #metric_names:
-    change_seed: true
+
     num_cores: 16
     checkpoint_save_path: null
 

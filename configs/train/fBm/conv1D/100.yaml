@@ -72,7 +72,7 @@ train_params:
 
     #? if should be in trainer
     metric_names:
-    change_seed: true
+
     num_cores: 16
     checkpoint_save_path: model_checkpoints/fBm/fBm_Hurst_conv1D_n-100.pt
 

@@ -7,6 +7,7 @@ import cfg_parser
 import numpy as np
 import random
 import time
+from datetime import datetime
 
 import yaml
 from torch.utils import data
@@ -129,13 +130,9 @@ class MetaTrainer():
 #                             SESSION LEVEL
 #------------------------------------------------------------------------------
 class SessionTrainer(MetaTrainer):
-
     highest_level = True
-
     def __init__(self, orig_cfg, config_fpath):
         super().__init__(d = {}, child_class = ExperimentTrainer)
-
-        torch.manual_seed(0)
 
         self.serialized_cfg = cfg_parser.parse(orig_cfg)
         self.parallel = self.serialized_cfg[0]['train_params'].get('parallel', False)
@@ -264,6 +261,10 @@ class ExperimentTrainer(MetaTrainer):
         #as mentioned earlier, the child_class is EpochTrainer
         super().__init__(d = d, child_class = EpochTrainer)
 
+        random.seed(getattr(self, 'seed', int(datetime.now().timestamp())))
+        torch.manual_seed(getattr(self, 'seed', int(datetime.now().timestamp())))
+        np.random.seed(getattr(self, 'seed', int(datetime.now().timestamp())))
+
         self.running_log = self.running_logs['experiment']
         self.metric_level = self.metrics["experiment"]
         self.train_pairs = self.database[0]
@@ -354,9 +355,6 @@ class EpochTrainer(MetaTrainer):
         self.batch_count = 0
         self.running_log = self.running_logs['epoch']
         self.metric_level = self.metrics["epoch"]
-
-        if self.change_seed:
-            np.random.seed(random.randrange(2**32))
 
         #set whether to calculate grads
         for p in self.model.parameters():

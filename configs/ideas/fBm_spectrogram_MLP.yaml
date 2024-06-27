@@ -71,7 +71,7 @@ train_params:
 
     #? if should be in trainer
     metric_names:
-    change_seed: true
+
     num_cores: 16
     checkpoint_save_path: null
 

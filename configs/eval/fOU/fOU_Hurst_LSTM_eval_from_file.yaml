@@ -8,11 +8,11 @@ experiment_tags: !!python/tuple ["fOU","Hurst","LSTM","inference"]
 #+-------------+
 data_fname: time_series_from_file.py
 data_params:
-    fpath: null         #The input '.csv', '.tsv', or '.json' file.
+    fpath: inference_input_data/fBm_tst_10_n-1600.json         #The input '.csv', '.tsv', or '.json' file.
     epoch_length: null  #Set by the data contained in the file specified in 'fpath'.
     n: null             #If left 'null' it is determined as the minimum sequence length in data contained in the file specified in 'fpath'. All data will be truncated to this length. Should be less or equal to the minimum sequence lenght provided in the input.
-    target_param_idx: 0 #The target param is at this index in every row. Set to 'null' when no target param is given in the input.
-    seq_start_idx: 1    #The sequence starts at this index in every row.
+    target_param_idx: 1 #The target param is at this index in every row. Set to 'null' when no target param is given in the input.
+    seq_start_idx: 2    #The sequence starts at this index in every row.
     inference: false    #If true only inference is done, set to True only when 'target_param_idx: null'
     hurst:              #name of the target param and its range (for logging purposes)
         a: 0
@@ -75,7 +75,7 @@ train_params:
 
     #? if should be in trainer
     metric_names:
-    change_seed: true
+
     num_cores: 16
     checkpoint_save_path: null
 
@@ -85,7 +85,7 @@ train_params:
                 child_metric: exp_real_inferred
                 metric_func: export_results
                 metric_params: 
-                    fpath: null
+                    fpath: tst.csv
                     export_targets: true
                     precision: 17
 
