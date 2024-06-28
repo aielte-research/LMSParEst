@@ -1,6 +1,4 @@
-import sys
-sys.path.append('../metrics')
-from plotters import ScatterPlotter
+from plotters import scatter_plot
 
 # OU
 
@@ -16,9 +14,9 @@ sp_params={
     "xlabel": "Speed of Mean Reversion (α)",
     "ylabel": "Inferred Value",
     "title": "",
-    "fname": "scatter_FBM_LSTM_stress_test_OU",
+    "fname": "scatter_fBm_LSTM_stress_test_OU",
     "dirname": "./plots",
-    "circle_size": 10,
+    "circle_size": 7,
     "x_jitter": 0,
     "opacity": 0,
     "heatmap": False,
@@ -28,15 +26,12 @@ sp_params={
 #         "location": "top_right"
 #     },
     "matplotlib": {
-        "width": 12,
-        "height": 7,
-        "style": "seaborn-poster",
-        "png_dpi": 240
+        "width": 9,
+        "height": 4.75,
+        "style": "default"
     },
-    "colors": None,
-    "bokeh": {
-        "width": None,
-        "height": None
+    "color_settings":{
+        "bg_transparent": False
     }
 }
-ScatterPlotter(sp_params).export_all()
+scatter_plot(sp_params)

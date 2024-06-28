@@ -1,6 +1,4 @@
-import sys
-sys.path.append('../metrics')
-from plotters import ScatterPlotter
+from plotters import scatter_plot
 
 # Lévy
 
@@ -18,11 +16,11 @@ sp_params={
     "xlabel": "Stability Parameter (α)",
     "ylabel": "Inferred Value",
     "title": "",
-    "fname": "scatter_FBM_LSTM_stress_test_levy",
+    "fname": "scatter_fBm_LSTM_stress_test_levy",
     "dirname": "./plots",
-    "circle_size": 10,
+    "circle_size": 7,
     "x_jitter": 0,
-    "opacity": 0,
+    "opacity": 0.5,
     "heatmap": False,
     "line45_color": None,
     "legend": {
@@ -30,15 +28,12 @@ sp_params={
         "location": "bottom_right"
     },
     "matplotlib": {
-        "width": 16,
-        "height": 11,
-        "style": "seaborn-poster",
-        "png_dpi": 240
+        "width": 6,
+        "height": 3.5,
+        "style": "default"
     },
-    "colors": None,
-    "bokeh": {
-        "width": None,
-        "height": None
+    "color_settings":{
+        "bg_transparent": False
     }
 }
-ScatterPlotter(sp_params).export_all()
+scatter_plot(sp_params)

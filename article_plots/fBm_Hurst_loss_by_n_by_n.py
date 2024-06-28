@@ -1,6 +1,4 @@
-import sys
-sys.path.append('../metrics')
-from plotters import GeneralPlotter
+from plotters import general_plot
 
 ## Comparing models trained on different n-s
 #PEFBM-4965 - PEFBM-5013
@@ -33,11 +31,13 @@ FBM_nxn_Ys=[
 
 gp_params={
     "Ys": [Y[1:] for Y in FBM_nxn_Ys[4:]],
-    "x": [100,200,400,800,1600,3200,6400],
+    "Xs": [100,200,400,800,1600,3200,6400],
     "xlabel": "Sequence Length (n)",
+    "xscale": "log",
     "ylabel": "MSE Loss",
+    "yscale": "log",
     "title": "", #"Performance of models trained on different sequence lengths",
-    "fname": "fbm_hurst_loss_by_n_by_n",
+    "fname": "fBm_Hurst_loss_by_n_by_n_loglog",
     "dirname": "./plots",
     "markers": None,
     "legend": {
@@ -48,33 +48,15 @@ gp_params={
     },
     "matplotlib": {
         "calc_xtics": False,
-        "width": 12,
-        "height": 7,
-        "style": "seaborn-poster",
-        "png_dpi": 240
+        "width": 6.75,
+        "height": 4.025,
+        "style": "default"
     },
     "colors": ["red","red","red","red","#003193","#0053A8","#007185","#009658","#00BA2D","#00D40E","black"][4:],
     #"colors": ["red","red","#FED303","#FFF54E","#B2E782","#8FD79F","#70C4BC","#4292B9"],
     "dashes": ["solid","dashdot","dashed","dotted","solid","solid","solid","solid","solid","solid","solid"][4:],
-    "line45_color": None,
-    "baselines": {
-        "labels": [],
-        "values": [],
-        "colors": ["grey"],
-        "dashes": ["dotted"]
-    },
-    "histogram": {
-        "labels": [],
-        "Xs": [],
-        "colors": None
-    },
-    "bokeh": {
-        "width": None,
-        "height": None
+    "color_settings":{
+        "bg_transparent": False
     }
 }
-#GeneralPlotter(gp_params).export_all()
-gp_params["xscale"]="log"
-gp_params["yscale"]="log"
-gp_params["fname"]+="_loglog"
-GeneralPlotter(gp_params).export_all()
+general_plot(gp_params)

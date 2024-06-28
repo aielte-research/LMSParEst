@@ -1,6 +1,4 @@
-import sys
-sys.path.append('../metrics')
-from plotters import ScatterPlotter
+from plotters import scatter_plot
 
 # A+B
 
@@ -22,9 +20,9 @@ sp_params={
     "xlabel": "H₂",
     "ylabel": "Inferred Hurst",
     "title": "",
-    "fname": "scatter_from_fbm_to_fbm_sum_lstm",
+    "fname": "scatter_from_fBm_to_fBm_sum_LSTM",
     "dirname": "./plots",
-    "circle_size": 10,
+    "circle_size": 7,
     "x_jitter": 0,
     "opacity": 0,
     "heatmap": False,
@@ -35,15 +33,12 @@ sp_params={
         "markerscale": 2.
     },
     "matplotlib": {
-        "width": 12,
-        "height": 7,
-        "style": "seaborn-poster",
-        "png_dpi": 240
+        "width": 6,
+        "height": 4.5,
+        "style": "default"
     },
-    "colors": None,
-    "bokeh": {
-        "width": None,
-        "height": None
+    "color_settings":{
+        "bg_transparent": False
     }
 }
-ScatterPlotter(sp_params).export_all()
+scatter_plot(sp_params)
