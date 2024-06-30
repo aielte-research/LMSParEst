@@ -1,6 +1,6 @@
 import torch
 import sys
-sys.path.append('../../')
+sys.path.append('../')
 from models.baselines.R_over_S import Model as R_over_S
 from models.baselines.variogram import Model as Variogram
 from models.baselines.higuchi import Model as Higuchi
@@ -13,8 +13,7 @@ def to_cuda(var):
         return var.cuda()
     return var
 
-def load_models():
-    diff=True
+def load_models(diff=True, cuda=True):
     r_over_s=R_over_S({'diff':diff},None)
     variogram=Variogram({'diff':diff},None)
     higuchi=Higuchi({'diff':diff},None)
@@ -45,8 +44,10 @@ def load_models():
         }
     }
 
-    state_dict_path="../../model_checkpoints/fBm/fBm_Hurst_LSTM_finetune_until_n-12800.pt"
-    lstm = to_cuda(LSTM(model_params, state_dict_path))
+    state_dict_path="../model_checkpoints/fBm/fBm_Hurst_LSTM_finetune_until_n-12800.pt"
+    lstm = LSTM(model_params, state_dict_path)
+    if cuda:
+        lstm = to_cuda(lstm)
     lstm.eval()
 
     model_params={
@@ -83,8 +84,11 @@ def load_models():
         }
     }
 
-    state_dict_path="../../model_checkpoints/fBm/fBm_Hurst_conv1D_finetune_until_n-12800.pt"
-    conv1d = to_cuda(Conv1d(model_params, state_dict_path))
+    state_dict_path="../model_checkpoints/fBm/fBm_Hurst_conv1D_finetune_until_n-12800.pt"
+    
+    conv1d = Conv1d(model_params, state_dict_path)
+    if cuda:
+        conv1d = to_cuda(conv1d)
     conv1d.eval()
     
     return r_over_s, variogram, higuchi, whittle, lstm, conv1d

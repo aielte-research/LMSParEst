@@ -1,12 +1,13 @@
 from bokeh.palettes import Category10
 import numpy as np
 import torch
-import yfinance as yf
 import pandas as pd
-from load_models import load_models, to_cuda
 import sys
 sys.path.append('../')
 from plotters import general_plot
+sys.path.append('../../')
+from load_models import load_models, to_cuda
+
 
 # data = pd.read_csv('SnP500-15m.csv', sep=';', names=['Date', 'Time', 'Open', 'High', 'Low', 'Close', 'Volume'])
 

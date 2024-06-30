@@ -448,15 +448,23 @@ class GeneralPlotter(Plotter):
         if len(self.params["baselines"]["values"]) > 0:
             for name, value, color, dash in zip(*[self.params["baselines"][k] for k in ["labels","values","colors","dashes"]]):
                 if self.params["baselines"]["vertical"]:
+                    try:
+                        yrange = [self.params["min_y"]-1,self.params["max_y"]+1]
+                    except:
+                        yrange = [self.params["min_y"],self.params["max_y"]]
                     src = ColumnDataSource(data = {
                         "x": [value,value],
-                        "y": [self.params["min_y"]-1,self.params["max_y"]+1],
+                        "y": yrange,
                         "maxim": [value,value],
                         "label": [name,name]
                     })
                 else: 
+                    try:
+                        xrange = [self.params["min_x"]-1,self.params["max_x"]+1]
+                    except:
+                        xrange = [self.params["min_x"],self.params["max_x"]]
                     src = ColumnDataSource(data = {
-                        "x": [self.params["min_x"]-1,self.params["max_x"]+1],
+                        "x": xrange,
                         "y": [value,value],
                         "maxim": [value,value],
                         "label": [name,name]
@@ -501,9 +509,17 @@ class GeneralPlotter(Plotter):
         if len(self.params["baselines"]["values"]) > 0:
             for label, value, color, dash in zip(*[self.params["baselines"][k] for k in ["labels","values","colors","dashes"]]):
                 if self.params["baselines"]["vertical"]:
-                    ax.plot([value,value], [self.params["min_y"]-1, self.params["max_y"]+1], matplotlib_dashes[dash], label = label, color = color, zorder = 20)
+                    try:
+                        yrange = [self.params["min_y"]-1,self.params["max_y"]+1]
+                    except:
+                        yrange = [self.params["min_y"],self.params["max_y"]]
+                    ax.plot([value,value], yrange, matplotlib_dashes[dash], label = label, color = color, zorder = 20)
                 else:
-                    ax.plot([self.params["min_x"]-1, self.params["max_x"]+1], [value,value], matplotlib_dashes[dash], label = label, color = color, zorder = 20)
+                    try:
+                        xrange = [self.params["min_x"]-1,self.params["max_x"]+1]
+                    except:
+                        xrange = [self.params["min_x"],self.params["max_x"]]
+                    ax.plot(xrange, [value,value], matplotlib_dashes[dash], label = label, color = color, zorder = 20)
 
         for x,y,dash,color,label,marker,hist in zip(self.params["Xs"],self.params["Ys"],self.params["dashes"],self.params["colors"],self.params["legend"]["labels"],self.params["markers"], self.params["histogram"]):
             if hist:

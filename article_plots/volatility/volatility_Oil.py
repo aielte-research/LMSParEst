@@ -2,10 +2,12 @@ from bokeh.palettes import Category10
 import numpy as np
 import torch
 import yfinance as yf
-from load_models import load_models, to_cuda
 import sys
 sys.path.append('../')
 from plotters import general_plot
+sys.path.append('../../')
+from load_models import load_models, to_cuda
+
 
 data = yf.download("CL=F", start="2000-01-01", end="2024-05-31")
 print(data)
