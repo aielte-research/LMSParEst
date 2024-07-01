@@ -1,5 +1,5 @@
 import numpy as np
-from metrics.plotters import GeneralPlotter
+from metrics.plotters import general_plot
 
 def calc_mse(values):
     if len(values) == 0:
@@ -36,7 +36,7 @@ class Mse():
         range_b = max([cfg["data_params"][self.title]["b"] for cfg in self.serialized_cfg])
 
         mse_lst = []
-        x_range = np.linspace(range_a, range_b, num=self.steps)
+        x_range = list(np.linspace(range_a, range_b, num=self.steps))
         for X, Y in zip(goals, results):
             mse = []
             
@@ -48,10 +48,10 @@ class Mse():
                 mse.append(calc_mse(values))
 
             mse_lst.append(mse)
-        
-        params={
+
+        general_plot({
             "Ys": mse_lst,
-            "x": x_range,
+            "Xs": x_range,
             "xlabel": self.title,
             "ylabel": "MSE",
             "title": "FBM MSE (steps: {}, interval:+-{})".format(self.steps,self.measure_interval),
@@ -64,7 +64,6 @@ class Mse():
             },
             "matplotlib":{ # for png and svg
                 "calc_xtics": False
-            }
-        }
-
-        GeneralPlotter(params, neptune_experiment=self.neptune_experiment).export_all()
+            },
+            "neptune_experiment":self.neptune_experiment
+        })

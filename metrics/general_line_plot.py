@@ -1,4 +1,4 @@
-from metrics.plotters import GeneralPlotter
+from metrics.plotters import general_plot
 
 class General_line_plot():
     def __init__(self, params, neptune_experiment):
@@ -20,9 +20,9 @@ class General_line_plot():
         self.neptune_experiment=neptune_experiment
 
     def __call__(self, data):
-        params={
+        general_plot({
             "Ys": data,
-            "x": self.x_range,
+            "Xs": self.x_range,
             "xlabel": self.xlabel,
             "ylabel": self.ylabel,
             "title": self.title,
@@ -31,7 +31,6 @@ class General_line_plot():
             "legend":{
                 "location": self.legend_location, # "top_left", "top_right", "bottom_left", "bottom_right", None
                 "labels": [cfg["experiment_name"] for cfg in self.serialized_cfg]
-            }
-        }
-
-        GeneralPlotter(params, neptune_experiment=self.neptune_experiment).export_all()
+            },
+            "neptune_experiment":self.neptune_experiment
+        })

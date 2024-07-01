@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from metrics.plotters import GeneralPlotter
+from metrics.plotters import general_plot
 
 def tap_szoras(values):
     if len(values)==0:
@@ -41,7 +41,7 @@ class Deviation():
         biases_lst = []
         deviation_aucs = []
         bias_aucs = []
-        x_range = np.linspace(range_a, range_b, num=self.steps)
+        x_range = list(np.linspace(range_a, range_b, num=self.steps))
         for X, Y in zip(goals, results):
             deviations=[]
             biases=[]
@@ -70,10 +70,9 @@ class Deviation():
             biases_lst.append(biases)
 
         legend_labels = [f'{cfg["experiment_name"]} (AUC:{auc})' for cfg,auc in zip(self.serialized_cfg,deviation_aucs)]
-
-        params={
+        general_plot({
             "Ys": deviations_lst,
-            "x": x_range,
+            "Xs": x_range,
             "xlabel": self.title,
             "ylabel": "deviation",
             "title": "Deviations (steps: {}, interval:+-{})".format(self.steps,self.measure_interval),
@@ -86,15 +85,14 @@ class Deviation():
             },
             "matplotlib":{ # for png and svg
                 "calc_xtics": False
-            }
-        }
-
-        GeneralPlotter(params, neptune_experiment=self.neptune_experiment).export_all()
+            },
+            "neptune_experiment":self.neptune_experiment
+        })
 
         legend_labels = [f'{cfg["experiment_name"]} (AUC:{auc})' for cfg,auc in zip(self.serialized_cfg,bias_aucs)]        
-        params={
+        general_plot({
             "Ys": biases_lst,
-            "x": x_range,
+            "Xs": x_range,
             "xlabel": self.title,
             "ylabel": "bias",
             "title":  "Biases (steps: {}, interval:+-{})".format(self.steps,self.measure_interval),
@@ -107,7 +105,6 @@ class Deviation():
             },
             "matplotlib":{ # for png and svg
                 "calc_xtics": False
-            }
-        }
-
-        GeneralPlotter(params, neptune_experiment=self.neptune_experiment).export_all()
+            },
+            "neptune_experiment":self.neptune_experiment
+        })

@@ -1,4 +1,4 @@
-from metrics.plotters import ScatterPlotter
+from metrics.plotters import scatter_plot
 
 class Scatter_plot():
     def __init__(self, params, neptune_experiment):
@@ -31,7 +31,7 @@ class Scatter_plot():
         #         if math.isnan(results[seq_idx][i]):
         #             results[seq_idx][i]="NaN"
 
-        params={
+        scatter_plot({
             "Xs": goals,
             "Ys": results,
             "xlabel": self.xlabel,
@@ -51,7 +51,6 @@ class Scatter_plot():
             "matplotlib":{ # for png and svg
                 "width": 12.5,
                 "height": 15,
-            } 
-        }
-
-        ScatterPlotter(params, neptune_experiment=self.neptune_experiment).export_all()
+            },
+            "neptune_experiment":self.neptune_experiment
+        })

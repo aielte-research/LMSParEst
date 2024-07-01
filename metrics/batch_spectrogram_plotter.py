@@ -1,5 +1,5 @@
 from models.base import BaseRegressor as Base
-from metrics.plotters import SpectrumPlotter
+from metrics.plotters import spectrum_plot
 
 class GetSpectrum(Base):
     def forward(self, x):
@@ -48,13 +48,13 @@ class Batch_spectrogram_plotter():
         if self.batch_size * self.batch_count <= self.limit:
             specs = self.spectrum_model(batch_input.cpu())
             for idx, (spec, param) in enumerate(zip(specs,true_params.cpu().numpy())):
-                params={
+                spectrum_plot({
                     "spectrum": spec,
                     "title": f"param: {param[0]}",
                     "fname": f"spectrogram_{idx}",
-                    "dirname": "./plots"
-                }
-                SpectrumPlotter(params, neptune_experiment=self.neptune_experiment).export_all()
+                    "dirname": "./plots",
+                    "neptune_experiment":self.neptune_experiment
+                })
             #input()
         else:
             return []
