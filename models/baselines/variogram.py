@@ -68,7 +68,10 @@ class Model():
         x = x.cpu()
         if not self.diff:
             x=[np.cumsum(s) for s in x]
-        with Pool(self.num_cores) as p:
-            est = [2 - fd + self.shift for fd in p.map(variogram, x)]
+        if self.num_cores>1:
+            with Pool(self.num_cores) as p:
+                est = [2 - fd + self.shift for fd in p.map(variogram, x)]
+        else:
+            est = [2 - variogram(s) + self.shift for s in x]
         est = torch.FloatTensor(est)
         return torch.unsqueeze(est, 1)
