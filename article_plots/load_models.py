@@ -15,9 +15,9 @@ def to_cuda(var):
 
 def load_models(diff=True, cuda=True):
     r_over_s=R_over_S({'diff':diff},None)
-    variogram=Variogram({'diff':diff},None)
+    variogram=Variogram({'diff':diff,'num_cores':1},None)
     higuchi=Higuchi({'diff':diff},None)
-    whittle=Whittle({'diff':diff},None)
+    whittle=Whittle({'diff':diff,'num_cores':1},None)
 
     model_params={
         "diff": True,
