@@ -17,6 +17,7 @@ dependencies:
   - pip:
     - neptune
     - torch==1.9.0
+    - torchaudio
     - fbm
     - transformers
     - antropy

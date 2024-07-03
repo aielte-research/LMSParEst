@@ -1,12 +1,43 @@
-import math
 import numpy as np
 from metrics.plotters import general_plot
 
-def tap_szoras(values):
-    if len(values)==0:
-        return 0
-    avg=sum(values)/len(values)
-    return math.sqrt(1/len(values)*sum([val**2-avg**2 for val in values]))
+def calc_dev(goals, results, range_a, range_b, steps, measure_interval):
+    deviations_lst = []
+    biases_lst = []
+    deviation_aucs = []
+    bias_aucs = []
+    x_range = list(np.linspace(range_a, range_b, num=steps))
+
+    for X_, Y_ in zip(goals, results):
+        permut = np.argsort(X_)
+        X = np.array(X_)[permut]
+        Y = np.array(Y_)[permut]
+        deviations=[]
+        biases=[]
+        deviation_aucs.append(0)
+        bias_aucs.append(0)
+        
+        zero_centered=[i-t for t,i in zip(X,Y)]
+
+        for xval in  x_range:
+            values=zero_centered[np.searchsorted(X, xval-measure_interval):np.searchsorted(X, xval+measure_interval,side='right')]
+
+            dev=np.std(values)
+            deviations.append(dev)
+            deviation_aucs[-1]+=abs(dev)
+
+            if len(values)==0:
+                avg = 0
+            else:
+                avg = sum(values)/len(values)
+            biases.append(avg)
+            bias_aucs[-1]+=abs(avg)
+        deviation_aucs[-1]*=x_range[1]-x_range[0]
+        bias_aucs[-1]*=x_range[1]-x_range[0]
+
+        deviations_lst.append(deviations)
+        biases_lst.append(biases)
+    return x_range, deviations_lst, biases_lst, deviation_aucs, bias_aucs
 
 class Deviation():
     def __init__(self, params, neptune_experiment):
@@ -28,46 +59,13 @@ class Deviation():
         goals=[]
         results=[]
         for pair in data:
-            goal=pair[0][-self.plot_limit:]
-            result=pair[1][-self.plot_limit:]
-            permut = np.argsort(goal)
-            goals.append(np.array(goal)[permut])
-            results.append(np.array(result)[permut])
+            goals.append(pair[0][-self.plot_limit:])
+            results.append(pair[1][-self.plot_limit:])
 
         range_a = min([cfg["data_params"][self.title]["a"] for cfg in self.serialized_cfg])
         range_b = max([cfg["data_params"][self.title]["b"] for cfg in self.serialized_cfg])
 
-        deviations_lst = []
-        biases_lst = []
-        deviation_aucs = []
-        bias_aucs = []
-        x_range = list(np.linspace(range_a, range_b, num=self.steps))
-        for X, Y in zip(goals, results):
-            deviations=[]
-            biases=[]
-            deviation_aucs.append(0)
-            bias_aucs.append(0)
-            
-            zero_centered=[i-t for t,i in zip(X,Y)]
-
-            for xval in  x_range:
-                values=zero_centered[np.searchsorted(X, xval-self.measure_interval):np.searchsorted(X, xval+self.measure_interval,side='right')]
-
-                dev=tap_szoras(values)
-                deviations.append(dev)
-                deviation_aucs[-1]+=abs(dev)
-
-                if len(values)==0:
-                    avg = 0
-                else:
-                    avg = sum(values)/len(values)
-                biases.append(avg)
-                bias_aucs[-1]+=abs(avg)
-            deviation_aucs[-1]*=x_range[1]-x_range[0]
-            bias_aucs[-1]*=x_range[1]-x_range[0]
-
-            deviations_lst.append(deviations)
-            biases_lst.append(biases)
+        x_range, deviations_lst, biases_lst, deviation_aucs, bias_aucs = calc_dev(goals, results, range_a, range_b, self.steps, self.measure_interval)
 
         legend_labels = [f'{cfg["experiment_name"]} (AUC:{auc})' for cfg,auc in zip(self.serialized_cfg,deviation_aucs)]
         general_plot({
