@@ -16,8 +16,8 @@
         "location": "bottom_right"
     },
     "matplotlib": {
-        "width": 9,
-        "height": 4.75,
+        "width": 6,
+        "height": 3.5,
         "style": "default"
     },
     "color_settings": {

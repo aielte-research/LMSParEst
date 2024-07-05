@@ -1,12 +1,12 @@
 import random
 import torch
 import numpy as np
-from plotters import general_plot
 from bokeh.palettes import Category10
 from tqdm import tqdm
 
 import sys
 sys.path.append('..')
+from metrics.plotters import general_plot
 from process_generators.fbm_gen import gen as fbm_gen
 from models.LSTM import Model as LSTM
 from models.baselines.R_over_S import Model as R_over_S
@@ -93,7 +93,7 @@ for window in tqdm(Xs):
     Ys_higuchi.append(np.square(np.asarray(orig) - np.asarray(est_higuchi)).mean())
     Ys_whittle.append(np.square(np.asarray(orig) - np.asarray(est_whittle)).mean())
 
-gp_params={
+general_plot({
     "Ys": [Ys,Ys_r_over_s,Ys_variogram,Ys_higuchi,Ys_whittle],
     "Xs": Xs,
     "xlabel": "window",
@@ -119,5 +119,4 @@ gp_params={
     "color_settings":{
         "bg_transparent": False
     }
-}
-general_plot(gp_params)
+})

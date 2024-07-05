@@ -1,10 +1,12 @@
-from plotters import general_plot
-import bokeh
+from bokeh.palettes import Category10
+import sys
+sys.path.append('../')
+from metrics.plotters import general_plot
 
 ## Comparing different model performances by sequence length
 # PEFBM-4788 - PEFBM-4860
 
-gp_params={
+general_plot({
     "Ys": [
         [0.0276449, 0.0189365, 0.0138884, 0.0108062, 0.00862036, 0.00673888, 0.00557211, 0.00469968],
         [0.00930144, 0.00505078, 0.00291788, 0.00174502, 0.00109185, 0.000723842, 0.000502304, 0.000365104],
@@ -32,11 +34,10 @@ gp_params={
         "height": 3.85,
         "style": "default"
     },
-    "colors": ["red","red","red","red"]+[bokeh.palettes.Category10[10][1],bokeh.palettes.Category10[10][0]],
+    "colors": ["red","red","red","red"]+[Category10[10][1],Category10[10][0]],
     "dashes": ["dotted","dashdot","dashed","solid","solid","solid"],
     "line45_color": None,
     "color_settings":{
         "bg_transparent": False
     }
-}
-general_plot(gp_params)
+})

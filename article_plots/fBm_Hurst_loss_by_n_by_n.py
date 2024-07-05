@@ -1,4 +1,6 @@
-from plotters import general_plot
+import sys
+sys.path.append('../')
+from metrics.plotters import general_plot
 
 ## Comparing models trained on different n-s
 #PEFBM-4965 - PEFBM-5013
@@ -29,7 +31,7 @@ FBM_nxn_Ys=[
     [None, 0.00478357, 0.00205344, 0.000942329, 0.000451415, 0.000221565, 0.000109246, 0.000056241]
 ]
 
-gp_params={
+general_plot({
     "Ys": [Y[1:] for Y in FBM_nxn_Ys[4:]],
     "Xs": [100,200,400,800,1600,3200,6400],
     "xlabel": "Sequence Length (n)",
@@ -58,5 +60,4 @@ gp_params={
     "color_settings":{
         "bg_transparent": False
     }
-}
-general_plot(gp_params)
+})

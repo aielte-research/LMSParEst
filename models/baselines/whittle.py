@@ -56,7 +56,7 @@ def fspec_fgn(hest, nbpoints):
     return fspec
 
 def fspec_arfima(hest, nbpoints):
-    """This is the spectral density of a fGN of Hurst exponent hest
+    """This is the spectral density of an ARFIMA of Hurst exponent hest
     """
     d=hest-0.5
     nhalfm = int((nbpoints - 1) / 2)
