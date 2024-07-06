@@ -143,7 +143,7 @@ general_plot({
     "fname": "d_scatter_lstm_arfima_H_deviations",
     "dirname": "./plots",
     "markers": None,
-    "colors": ["black"]*4+["red"]+[Category10[10][0]],
+    "colors": ["grey"]*4+["red"]+[Category10[10][0]],
     "dashes": ["dotted","dashdot","dashed","solid","solid","solid"],
     "legend":{
         "location": "top_left", # "top_left", "top_right", "bottom_left", "bottom_right", None
@@ -169,7 +169,7 @@ general_plot({
     "fname": "d_scatter_lstm_arfima_H_biases",
     "dirname": "./plots",
     "markers": None,
-    "colors": ["black"]*4+["red"]+[Category10[10][0]],
+    "colors": ["grey"]*4+["red"]+[Category10[10][0]],
     "dashes": ["dotted","dashdot","dashed","solid","solid","solid"],
     "legend":{
         "location": "top_left", # "top_left", "top_right", "bottom_left", "bottom_right", None
