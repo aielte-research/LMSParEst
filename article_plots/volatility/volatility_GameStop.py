@@ -3,7 +3,7 @@ from plot_volatility import plot_volatility
 import numpy as np
 
 for overlap in [True, False]:
-    vol, dates = get_volatility(key="GME", overlap=overlap, start="2014-01-01", end="2024-06-30")
+    vol, dates = get_volatility(key="GME", overlap=overlap, start="2007-01-01", end="2024-06-30")
 
     name="GameStop"
     if overlap:
