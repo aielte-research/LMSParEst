@@ -1,13 +1,13 @@
 import sys
 sys.path.append('..')
-from plotters import general_grid_plot
 sys.path.append('../..')
+from metrics.plotters import general_grid_plot
 from process_generators.fbm_gen import gen as fbm_gen
 
 plot_params={
     "fname": "fBm_realizations",
     "markers": None,
-    "dirname": "../plots",
+    "dirname": "plots",
     "matplotlib":{
         "calc_xtics": False,
         "width": 10,

@@ -21,6 +21,8 @@ def to_cuda(var):
         return var.cuda()
     return var
 
+print(torch.cuda.is_available())
+
 model_params={
     "diff": False,
     "standardize": False,
@@ -52,7 +54,7 @@ lstm = to_cuda(lstm)
 lstm.eval()
 models = {"lstm": lstm}
 
-hursts = np.random.uniform(0, 1, 10000)
+hursts = np.random.uniform(0, 1, 5000)
 
 print("Generating process realizations...")
 processes = [np.diff(fbm_gen(hurst = H, n = 12800)) for H in tqdm(hursts)]
@@ -100,8 +102,8 @@ labels = ["R/S", "variogram", "Higuchi", "Whittle fBm", "Whittle ARFIMA", "LSTM"
 
 Xs = list(hursts - 0.5)
 scatter_plot({
-    "Xs": [Xs]*2,
-    "Ys": Ys[-2:],
+    "Xs": [Xs],#*2,
+    "Ys": Ys[-1],
     "xlabel": "H - 1/2",
     "ylabel": "Inferred Value",
     "title": "",
@@ -111,16 +113,16 @@ scatter_plot({
     "x_jitter": 0,
     "opacity": 0,
     "heatmap": False,
-    "colors": [Category10[10][3],Category10[10][0]],
+    # "colors": [Category10[10][3],Category10[10][0]],
     "line45_color": "black",
-    "legend": {
-        "labels": ["Whittle", "LSTM"], #labels[-2:],
-        "location": "top_left",
-        "markerscale": 2.
-    },
+    # "legend": {
+    #     "labels": ["Whittle", "LSTM"], #labels[-2:],
+    #     "location": "top_left",
+    #     "markerscale": 2.
+    # },
     "matplotlib": {
-        "width": 6,
-        "height": 3.5,
+        "width": 6.7,
+        "height": 3.6,
         "style": "default"
     },
     "color_settings":{
@@ -150,8 +152,8 @@ general_plot({
         "labels": legend_labels
     },
     "matplotlib": {
-        "width": 6,
-        "height": 3.5,
+        "width": 6.7,
+        "height": 3.6,
         "style": "default"
     },
     "color_settings":{
@@ -176,8 +178,8 @@ general_plot({
         "labels": legend_labels
     },
     "matplotlib": {
-        "width": 9,
-        "height": 4.75,
+        "width": 6.7,
+        "height": 3.6,
         "style": "default"
     },
     "color_settings":{

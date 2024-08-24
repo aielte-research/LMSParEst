@@ -222,15 +222,19 @@ class Plotter():
                 self.neptune_experiment[f"yaml/{self.fname}"].upload(self.get_full_path("yaml"))
                 self.neptune_experiment.sync()
 
-    def save_matplotlib_figure(self, dpi=240, bg_transparent=True, png=True, svg=True):
+    def save_matplotlib_figure(self, dpi=240, bg_transparent=True, png=True, svg=True, pdf=True):
         if png:
-            plt.savefig(self.get_full_path("png"), transparent=bg_transparent, dpi=dpi)
+            plt.savefig(self.get_full_path("png"), transparent=bg_transparent, dpi=dpi, bbox_inches='tight')
             if not self.neptune_experiment is None:
                 self.neptune_experiment[f"png/{self.fname}"].upload(self.get_full_path("png"))
         if svg:
-            plt.savefig(self.get_full_path("svg"), transparent=bg_transparent)
+            plt.savefig(self.get_full_path("svg"), transparent=bg_transparent, bbox_inches='tight')
             if not self.neptune_experiment is None:
                 self.neptune_experiment[f"svg/{self.fname}"].upload(self.get_full_path("svg"))
+        if pdf:
+            plt.savefig(self.get_full_path("pdf"), transparent=bg_transparent, bbox_inches='tight')
+            if not self.neptune_experiment is None:
+                self.neptune_experiment[f"pdf/{self.fname}"].upload(self.get_full_path("pdf"))
         if not self.neptune_experiment is None:
             self.neptune_experiment.sync()
         plt.close()
@@ -550,7 +554,7 @@ class GeneralPlotter(Plotter):
 
         if self.params["legend"]["location"]!=None and (len(self.params["legend"]["labels"])>0 or len(self.params["baselines"]["labels"]) > 0 or len(self.params["histogram_distr"]["labels"]) > 0):
             legend = ax.legend(loc=matlotlib_legend_loc(self.params["legend"]["location"]))
-            legend.set_zorder(40)
+            legend.set_zorder(25)
             frame = legend.get_frame()
             frame.set_facecolor(self.params["color_settings"].get("face_color", "white"))
             frame.set_edgecolor(self.params["color_settings"].get("grid_color", "0.9"))
@@ -565,7 +569,7 @@ class GeneralPlotter(Plotter):
         #     ax.set_xticks([float(str(x[:self.params["x_len"]][i])[:6]) for i in range(self.params["x_len"]) if i % max(int(min(x_max,6) * self.params["x_len"] / (4*matplotlib["width"])),1)==0])
 
         
-def general_plot(params, export_types=["json","html","png","svg"]):
+def general_plot(params, export_types=["json","html","png","pdf"]):
     plotter = GeneralPlotter(**params)
     if "json" in export_types:
         plotter.export_json(params)
@@ -578,10 +582,10 @@ def general_plot(params, export_types=["json","html","png","svg"]):
         "style": "seaborn-poster"
     }))
     plotter.make_matplotlib_plot(ax)
-    plotter.save_matplotlib_figure(deep_get(params,"matplotlib.png_dpi",240), deep_get(params,"color_settings.bg_transparent",True), png="png" in export_types, svg="svg" in export_types)
+    plotter.save_matplotlib_figure(deep_get(params,"matplotlib.png_dpi",240), deep_get(params,"color_settings.bg_transparent",True), png="png" in export_types, svg="svg" in export_types, pdf="pdf" in export_types)
     return fig
 
-def general_grid_plot(params_list: list, width: int=2, export_types=["json","html","png","svg"]):
+def general_grid_plot(params_list: list, width: int=2, export_types=["json","html","png","pdf"]):
     if len(params_list)==1:
         return general_plot(params_list[0], export_types=export_types)
     
@@ -607,7 +611,7 @@ def general_grid_plot(params_list: list, width: int=2, export_types=["json","htm
         grid = gridplot(bokeh_grid, sizing_mode= 'stretch_both')# type: ignore #, width=deep_get(params,"matplotlib.width",16)*width, height=deep_get(params,"matplotlib.height",9)*height)
         plotter.save_bokeh_figure(grid)
     plt.tight_layout()
-    plotter.save_matplotlib_figure(deep_get(params,"matplotlib.png_dpi",240), deep_get(params,"color_settings.bg_transparent",True), png="png" in export_types, svg="svg" in export_types)
+    plotter.save_matplotlib_figure(deep_get(params,"matplotlib.png_dpi",240), deep_get(params,"color_settings.bg_transparent",True), png="png" in export_types, svg="svg" in export_types, pdf="pdf" in export_types)
     return fig
 
 class ScatterPlotter(Plotter):
@@ -866,7 +870,7 @@ class ScatterPlotter(Plotter):
 
         matplotlib_setcolors(ax, **self.params["color_settings"])
         
-def scatter_plot(params, export_types=["json","html","png","svg"]):
+def scatter_plot(params, export_types=["json","html","png","pdf"]):
     plotter = ScatterPlotter(**params)
     Xs, Ys = plotter.params["Xs"], plotter.params["Ys"]
     labels = plotter.params["legend"]["labels"]
@@ -891,11 +895,11 @@ def scatter_plot(params, export_types=["json","html","png","svg"]):
                 plotter.save_bokeh_figure(p, suffix)
             fig, ax = init_matplotlib_figure(**plotter.params["matplotlib"])
             plotter.make_matplotlib_plot(ax,[x],[y],[lbl],["black"],heatmap=True)
-            plotter.save_matplotlib_figure(deep_get(params,"matplotlib.png_dpi",240), deep_get(params,"color_settings.bg_transparent",True), png="png" in export_types, svg="svg" in export_types)
+            plotter.save_matplotlib_figure(deep_get(params,"matplotlib.png_dpi",240), deep_get(params,"color_settings.bg_transparent",True), png="png" in export_types, svg="svg" in export_types, pdf="pdf" in export_types)
 
     fig, ax = init_matplotlib_figure(**plotter.params["matplotlib"])
     plotter.make_matplotlib_plot(ax, Xs, Ys, labels, colors)
-    plotter.save_matplotlib_figure(deep_get(params,"matplotlib.png_dpi",240), deep_get(params,"color_settings.bg_transparent",True), png="png" in export_types, svg="svg" in export_types)
+    plotter.save_matplotlib_figure(deep_get(params,"matplotlib.png_dpi",240), deep_get(params,"color_settings.bg_transparent",True), png="png" in export_types, svg="svg" in export_types, pdf="pdf" in export_types)
     return fig
 
 class SpectrumPlotter(Plotter):
@@ -930,7 +934,7 @@ class SpectrumPlotter(Plotter):
         
         super().save_matplotlib_figure("")
 
-def spectrum_plot(params, export_types=["json","png","svg"]):
+def spectrum_plot(params, export_types=["json","png","pdf"]):
     plotter = SpectrumPlotter(**params)
     spectrum = plotter.params["spectrum"]
 
@@ -939,5 +943,5 @@ def spectrum_plot(params, export_types=["json","png","svg"]):
 
     fig, ax = init_matplotlib_figure(**plotter.params["matplotlib"])
     plotter.make_matplotlib_plot(ax, spectrum)
-    plotter.save_matplotlib_figure(deep_get(params,"matplotlib.png_dpi",240), deep_get(params,"color_settings.bg_transparent",True), png="png" in export_types, svg="svg" in export_types)
+    plotter.save_matplotlib_figure(deep_get(params,"matplotlib.png_dpi",240), deep_get(params,"color_settings.bg_transparent",True), png="png" in export_types, svg="svg" in export_types, pdf="pdf" in export_types)
     return fig

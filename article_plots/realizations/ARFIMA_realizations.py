@@ -1,13 +1,13 @@
 import sys
 sys.path.append('..')
-from plotters import general_grid_plot
 sys.path.append('../..')
+from metrics.plotters import general_grid_plot
 from process_generators.arfima_gen import gen as arfima_gen
 
 plot_params={
     "fname": "ARFIMA_realizations",
     "markers": None,
-    "dirname": "../plots",
+    "dirname": "plots",
     "matplotlib":{
         "calc_xtics": False,
         "width": 10,

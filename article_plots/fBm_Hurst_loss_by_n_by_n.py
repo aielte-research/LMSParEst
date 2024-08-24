@@ -44,14 +44,14 @@ general_plot({
     "markers": None,
     "legend": {
         "location": "bottom_left",
-        "labels": ["R/S","variogram","Higuchi","Whittle","LSTM trained on n=100",
-                   "LSTM trained on n=200","LSTM trained on n=400","LSTM trained on n=800",
-                   "LSTM trained on n=1600","LSTM trained on n=3200","LSTM fine-tuned until n=12800"][4:]#,"Our model with transformer encoder"]
+        "labels": ["R/S","variogram","Higuchi","Whittle","trained on n=100",
+                   "trained on n=200","trained on n=400","trained on n=800",
+                   "trained on n=1600","trained on n=3200","fine-tuned until n=12800"][4:]#,"Our model with transformer encoder"]
     },
     "matplotlib": {
         "calc_xtics": False,
-        "width": 6.75,
-        "height": 4.025,
+        "width": 6.7,
+        "height": 3.6,
         "style": "default"
     },
     "colors": ["red","red","red","red","#003193","#0053A8","#007185","#009658","#00BA2D","#00D40E","black"][4:],

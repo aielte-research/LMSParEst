@@ -22,7 +22,7 @@ models = {est:model for est,model in zip([
 ],load_models(cuda=True))}
 models["whittle_arfima"] = Whittle({'num_cores':1, 'spec_name': "arfima"},None)
 
-ds = np.random.uniform(-0.5, 0.5, 10000)
+ds = np.random.uniform(-0.5, 0.5, 5000)
 
 print("Generating process realizations...")
 processes = [np.cumsum(arfima_gen(d = d, n = 12800)) for d in tqdm(ds)]
@@ -64,8 +64,8 @@ labels = ["R/S","variogram","Higuchi","Whittle fBm","Whittle ARFIMA","1D CNN","L
 Xs = list(ds+0.5)
 
 scatter_plot({
-    "Xs": [Xs]*2,
-    "Ys": Ys[-2:],
+    "Xs": [Xs],#*2,
+    "Ys": Ys[-1:],
     "xlabel": "d + 1/2",
     "ylabel": "Inferred Value",
     "title": "",
@@ -73,18 +73,18 @@ scatter_plot({
     "dirname": "./plots",
     "circle_size": 5,
     "x_jitter": 0,
-    "opacity": 0.5,
+    "opacity": 0,
     "heatmap": False,
     "line45_color": "black",
-    "colors": [Category10[10][1],Category10[10][0]],
-    "legend": {
-        "labels": labels[-2:],
-        "location": "top_left",
-        "markerscale": 2.
-    },
+    # "colors": [Category10[10][1],Category10[10][0]],
+    # "legend": {
+    #     "labels": labels[-2:],
+    #     "location": "top_left",
+    #     "markerscale": 2.
+    # },
     "matplotlib": {
-        "width": 6,
-        "height": 3.5,
+        "width": 6.7,
+        "height": 3.6,
         "style": "default"
     },
     "color_settings":{
@@ -114,8 +114,8 @@ general_plot({
         "labels": legend_labels
     },
     "matplotlib": {
-        "width": 9,
-        "height": 4.75,
+        "width": 6.7,
+        "height": 3.6,
         "style": "default"
     },
     "color_settings":{
@@ -140,8 +140,8 @@ general_plot({
         "labels": legend_labels
     },
     "matplotlib": {
-        "width": 9,
-        "height": 4.75,
+        "width": 6.7,
+        "height": 3.6,
         "style": "default"
     },
     "color_settings":{

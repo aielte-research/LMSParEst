@@ -29,8 +29,8 @@ general_plot({
     },
     "matplotlib": {
         "calc_xtics": False,
-        "width": 6,
-        "height": 3.5,
+        "width": 6.7,
+        "height": 3.6,
         "style": "default"
     },
     "colors":  ["red","red","red","red"][strt:]+[Category10[10][0]],
