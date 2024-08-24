@@ -167,7 +167,7 @@ export LD_LIBRARY_PATH=/home/<USERNAME>/miniconda3/lib
 ```
 And for Anaconda:
 ```sh
-export LD_LIBRARY_PATH=/home/<USERNAME>/anaconda3/envs/PEwDL/lib
+export LD_LIBRARY_PATH=/home/<USERNAME>/anaconda3/envs/LMSParEst/lib
 ```
 
 ## Contributing
@@ -177,4 +177,4 @@ export LD_LIBRARY_PATH=/home/<USERNAME>/anaconda3/envs/PEwDL/lib
 > TBD
 
 ## Acknowledgements
-> This paper is currently under double-blind review.
+The research was supported by the National Research, Development and Innovation Office within the framework of the Thematic Excellence Program 2021 - National Research Sub programme: “Artificial intelligence, large networks, data security: mathematical foundation and applications" and the Artificial Intelligence National Laboratory Program (MILAB), and the Hungarian National Excellence Grant 2018-1.2.1-NKP-00008.
