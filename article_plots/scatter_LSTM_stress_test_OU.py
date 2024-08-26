@@ -123,7 +123,7 @@ models["lstm_fou"] = LSTM(model_params, state_dict_path)
 models["lstm_fou"] = to_cuda(models["lstm_fou"])
 models["lstm_fou"].eval()
 
-alphas = np.random.uniform(0, 0.5, 5000)
+alphas = np.random.uniform(0, 0.5, 2500)
 
 print("Generating process realizations...")
 def gen(a):
@@ -189,7 +189,7 @@ scatter_plot({
     "title": "",
     "fname": "scatter_LSTM_stress_test_OU",
     "dirname": "./plots",
-    "circle_size": 7,
+    "circle_size": 5,
     "x_jitter": 0,
     "opacity": 0,
     "heatmap": False,

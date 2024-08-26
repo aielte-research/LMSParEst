@@ -554,7 +554,7 @@ class GeneralPlotter(Plotter):
 
         if self.params["legend"]["location"]!=None and (len(self.params["legend"]["labels"])>0 or len(self.params["baselines"]["labels"]) > 0 or len(self.params["histogram_distr"]["labels"]) > 0):
             legend = ax.legend(loc=matlotlib_legend_loc(self.params["legend"]["location"]))
-            legend.set_zorder(25)
+            legend.set_zorder(40)
             frame = legend.get_frame()
             frame.set_facecolor(self.params["color_settings"].get("face_color", "white"))
             frame.set_edgecolor(self.params["color_settings"].get("grid_color", "0.9"))

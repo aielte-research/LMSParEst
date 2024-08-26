@@ -33,7 +33,7 @@ def plot_volatility(vol,dates, name, fname, window=252, stride=63, labels=None):
         "ylabel": "Volatility and Hurst-estimate",
         "title": "",
         "fname": fname,
-        "dirname": "plots",
+        "dirname": "volatility/plots",
         "markers": None,#[None,".",".",".",".",".","."],
         "legend": {
             "location": "top_left",
@@ -48,8 +48,10 @@ def plot_volatility(vol,dates, name, fname, window=252, stride=63, labels=None):
         # },
         "matplotlib": {
             "calc_xtics": False,
-            "width": 8.1,
-            "height": 4.725,
+            # "width": 8.1,
+            # "height": 4.725,
+            "width": 6.7,
+            "height": 4,
             "style": "default"
         },
         "colors":  ["grey","red","red","red","red"]+[Category10[10][1],Category10[10][0]],
