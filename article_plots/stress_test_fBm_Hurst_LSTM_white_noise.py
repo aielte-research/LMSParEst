@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 import sys
 sys.path.append('..')
-from metrics.plotters import general_plot
+from metrics.plotters import general_plot, scatter_plot
 from process_generators.fbm_gen import gen as fbm_gen
 from models.LSTM import Model as LSTM
 from models.baselines.R_over_S import Model as R_over_S
@@ -61,6 +61,8 @@ Ys_r_over_s = []
 Ys_variogram = []
 Ys_higuchi = []
 Ys_whittle = []
+scatter_Xs = []
+
 for sigma in tqdm(Xs):
     orig=[]
     est=[]
@@ -68,10 +70,12 @@ for sigma in tqdm(Xs):
     est_variogram=[]
     est_higuchi=[]
     est_whittle=[]
-    for _ in range(1000):
+    for _ in range(5000):
         H = random.uniform(0, 1)
         orig.append(H)
-        process = fbm_gen(hurst = H, n = 256)
+        if sigma==1:
+            scatter_Xs.append(H)
+        process = fbm_gen(hurst = H, n = 800)
         input=to_cuda(torch.FloatTensor([process + np.random.normal(loc=0, scale=sigma, size=len(process))]))
         lstm_estimate = [float(val[0]) for val in lstm(input).detach().cpu()][0]
         est.append(lstm_estimate)
@@ -79,6 +83,12 @@ for sigma in tqdm(Xs):
         est_variogram.append(float(variogram(input.cpu())[0]))
         est_higuchi.append(float(higuchi(input.cpu())[0]))
         est_whittle.append(float(whittle(input.cpu())[0]))
+    if sigma==1:
+        scatter_Ys_lstm = est.copy()
+        scatter_Ys_r_over_s = est_r_over_s.copy()
+        scatter_Ys_variogram = est_variogram.copy()
+        scatter_Ys_higuchi = est_higuchi.copy()
+        scatter_Ys_whittle = est_whittle.copy()
 
     mse = np.square(np.asarray(orig) - np.asarray(est)).mean()
     Ys.append(mse)
@@ -89,7 +99,7 @@ for sigma in tqdm(Xs):
     Ys_whittle.append(np.square(np.asarray(orig) - np.asarray(est_whittle)).mean())
     
 general_plot({
-    "Ys": [Ys,Ys_r_over_s,Ys_variogram,Ys_higuchi,Ys_whittle],
+    "Ys": [Ys_r_over_s,Ys_variogram,Ys_higuchi,Ys_whittle, Ys],
     "Xs": Xs,
     "xlabel": "sigma",
     #"xscale": "log",
@@ -113,6 +123,37 @@ general_plot({
     "matplotlib": {
         "width": 6,
         "height": 3.5,
+        "style": "default"
+    },
+    "color_settings":{
+        "bg_transparent": False
+    }
+})
+
+scatter_plot({
+    "Xs": [scatter_Xs]*5,
+    "Ys": [scatter_Ys_r_over_s, scatter_Ys_variogram, scatter_Ys_higuchi, scatter_Ys_whittle, scatter_Ys_lstm],
+    "xlabel": "Hurst",
+    "ylabel": "Inferred Value",
+    "title": "",
+    "fname": "stress_test_scatter_fBm_Hurst_LSTM_white_noise",
+    "dirname": "./plots",
+    "circle_size": 5,
+    "x_jitter": 0,
+    "opacity": 0,
+    "heatmap": False,
+    "colors": [Category10[10][1],Category10[10][2],Category10[10][3],Category10[10][4],Category10[10][0]],
+    "line45_color": "black",
+    "legend": {
+        "location": "bottom_right",
+        "labels": ["R/S","variogram","Higuchi","Whittle","LSTM"],
+        "markerscale": 2.
+    },
+    "matplotlib": {
+        "width": 6.7,
+        "height": 4,
+        # "width": 9,
+        # "height": 4.75,
         "style": "default"
     },
     "color_settings":{
