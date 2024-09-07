@@ -82,7 +82,7 @@ train_params:
     optimizer_class: torch.optim.AdamW
     loss_fun_class: torch.nn.MSELoss
     
-    num_epochs: 10
+    num_epochs: 25
     train_batch_size: 32
     val_batch_size: 32
     skip_train: false
