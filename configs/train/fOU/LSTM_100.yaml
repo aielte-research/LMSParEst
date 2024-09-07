@@ -64,13 +64,14 @@ model_params:
 #| TRAIN PARAMS |
 #+--------------+
 train_params:
+    parallel: true
     shuffle: false
     freeze_list: !!python/tuple []
     lr: 0.0001
     optimizer_class: torch.optim.AdamW
     loss_fun_class: torch.nn.MSELoss
     
-    num_epochs: 100
+    num_epochs: 250
     train_batch_size: 32
     val_batch_size: 32
     skip_train: false
@@ -79,7 +80,7 @@ train_params:
     #? if should be in trainer
     metric_names:
 
-    num_cores: 16
+    num_cores: 4
     auto_save_path_naming: false
     load_previous: false
     checkpoint_save_path: model_checkpoints/fOU/fOU_Hurst_LSTM_n-100.pt
@@ -104,7 +105,7 @@ train_params:
                 child_metric: exp_loss
                 metric_func: general_line_plot
                 metric_params:
-                    title: fOU hurst losses
+                    title: fOU Hurst losses
 
             mse_plot: 
                 child_metric: exp_real_inferred
