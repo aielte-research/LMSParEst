@@ -289,7 +289,8 @@ class GeneralPlotter(Plotter):
             "height": 9,
             "style": "seaborn-poster", # https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html
             "png_dpi": 240, #use 240 for 4k resolution on 16x9 image
-            "calc_xtics": True,
+            "calc_xtics": False,
+            "xtics": None
         },
         bokeh={
             "width": None, #set this to force bokeh plot to fixed dimensions (not recommended)
@@ -553,7 +554,7 @@ class GeneralPlotter(Plotter):
                 plt.hist(y, density = self.params["histogram_distr"]["density"], bins=bins, alpha = self.params["histogram_distr"]["alpha"], color=color, label=label, zorder=10)
 
         if self.params["legend"]["location"]!=None and (len(self.params["legend"]["labels"])>0 or len(self.params["baselines"]["labels"]) > 0 or len(self.params["histogram_distr"]["labels"]) > 0):
-            legend = ax.legend(loc=matlotlib_legend_loc(self.params["legend"]["location"]))
+            legend = ax.legend(framealpha=0.9,loc=matlotlib_legend_loc(self.params["legend"]["location"]))
             legend.set_zorder(40)
             frame = legend.get_frame()
             frame.set_facecolor(self.params["color_settings"].get("face_color", "white"))
@@ -564,11 +565,12 @@ class GeneralPlotter(Plotter):
         ax.grid(True, color=self.params["color_settings"].get("grid_color", "0.9"), zorder=0)
         matplotlib_setcolors(ax, **self.params["color_settings"])
         
-        # if matplotlib["calc_xtics"]:
-        #     x_max=max([len(str(x)) for x in x[:self.params["x_len"]]])
-        #     ax.set_xticks([float(str(x[:self.params["x_len"]][i])[:6]) for i in range(self.params["x_len"]) if i % max(int(min(x_max,6) * self.params["x_len"] / (4*matplotlib["width"])),1)==0])
-
-        
+        if matplotlib.get("calc_xtics", False):
+            x_max=max([len(str(x)) for x in x[:self.params["x_len"]]])
+            ax.set_xticks([float(str(x[:self.params["x_len"]][i])[:6]) for i in range(self.params["x_len"]) if i % max(int(min(x_max,6) * self.params["x_len"] / (4*matplotlib["width"])),1)==0])
+        if matplotlib.get("xtics", None) is not None:
+            ax.set_xticks(matplotlib.get("xtics", None))
+ 
 def general_plot(params, export_types=["json","html","png","pdf"]):
     plotter = GeneralPlotter(**params)
     if "json" in export_types:
