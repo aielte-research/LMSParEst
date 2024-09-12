@@ -1,5 +1,5 @@
 experiment_name: ""
-experiment_name_base: fBm_Hurst_LSTM #base name for the experiments
+experiment_name_base: fBm_Hurst_LSTM_random_scale #base name for the experiments
 experiment_name_extension: !!python/tuple ['data_params/n','model_params/standardize'] # Eg using this experiment_name: example_metrics_a-0_b-1
 experiment_tags: !!python/tuple ["fBm","Hurst","LSTM"]
 #+-------------+
@@ -14,13 +14,10 @@ data_params:
         a: 0
         b: 1
     epoch_length: 100000
-    n: 
-        - 100
-        - 200
-        - 400
-        - 800
-        - 1600
-    lambd: 1
+    n: 1600
+    lambd:  
+        gen: numpy.random.exponential
+        scale: 1
     scaled: false
     target_param: !!python/tuple ['hurst']
     method: fft
@@ -72,7 +69,7 @@ train_params:
 
     load_previous: false
     auto_save_path_naming: true  #names the saved state dict automatically using the experiment_name_extensions
-    auto_save_folder: model_checkpoints/fBm_non_std/
+    auto_save_folder: model_checkpoints/fBm_non_std_random_scale/
     shuffle: false
     freeze_list: !!python/tuple []
     lr: 0.0001
