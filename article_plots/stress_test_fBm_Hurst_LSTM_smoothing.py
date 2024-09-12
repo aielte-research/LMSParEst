@@ -15,10 +15,11 @@ from models.baselines.higuchi import Model as Higuchi
 from models.baselines.whittle import Model as Whittle
 
 diff=True
-r_over_s=R_over_S({'diff':diff},None)
-variogram=Variogram({'diff':diff},None)
-higuchi=Higuchi({'diff':diff},None)
-whittle=Whittle({'diff':diff},None)
+num_cores=32
+r_over_s=R_over_S({'diff':diff, "num_cores": num_cores},None)
+variogram=Variogram({'diff':diff, "num_cores": num_cores},None)
+higuchi=Higuchi({'diff':diff, "num_cores": num_cores},None)
+whittle=Whittle({'diff':diff, "num_cores": num_cores},None)
 
 
 def to_cuda(var):
@@ -60,7 +61,7 @@ def moving_average(a, n=3):
     ret[n:] = ret[n:] - ret[:-n]
     return ret[n - 1:] / n
     
-Xs = list(range(1,10))
+Xs = list(range(1,11))
 Ys = []
 Ys_r_over_s = []
 Ys_variogram = []
@@ -75,25 +76,32 @@ for window in tqdm(Xs):
     est_variogram=[]
     est_higuchi=[]
     est_whittle=[]
-    for _ in range(5000):
-        H = random.uniform(0, 1)
-        orig.append(H)
+
+    for _ in range(2):
+        inputs=[]
+        for __ in range(5000):
+            H = random.uniform(0, 1)
+            orig.append(H)
+            if window==5:
+                scatter_Xs.append(H)
+
+            process = fbm_gen(hurst = H, n = 1600)
+            inputs.append(np.asarray(moving_average(process, n=window)))
+
+        input=to_cuda(torch.FloatTensor(inputs))
+
+        est += [float(val[0]) for val in lstm(input).detach().cpu()]
+        est_r_over_s += [float(val) for val in r_over_s(input.cpu())]
+        est_variogram += [float(val) for val in variogram(input.cpu())]
+        est_higuchi += [float(val) for val in higuchi(input.cpu())]
+        est_whittle += [float(val) for val in whittle(input.cpu())]
+
         if window==5:
-            scatter_Xs.append(H)
-        process = fbm_gen(hurst = H, n = 800)
-        input = to_cuda(torch.FloatTensor(np.asarray([moving_average(process, n=window)])))
-        lstm_estimate = [float(val[0]) for val in lstm(input).detach().cpu()][0]
-        est.append(lstm_estimate)
-        est_r_over_s.append(float(r_over_s(input.cpu())[0]))
-        est_variogram.append(float(variogram(input.cpu())[0]))
-        est_higuchi.append(float(higuchi(input.cpu())[0]))
-        est_whittle.append(float(whittle(input.cpu())[0]))
-    if window==5:
-        scatter_Ys_lstm = est.copy()
-        scatter_Ys_r_over_s = est_r_over_s.copy()
-        scatter_Ys_variogram = est_variogram.copy()
-        scatter_Ys_higuchi = est_higuchi.copy()
-        scatter_Ys_whittle = est_whittle.copy()
+            scatter_Ys_lstm = est.copy()
+            scatter_Ys_r_over_s = est_r_over_s.copy()
+            scatter_Ys_variogram = est_variogram.copy()
+            scatter_Ys_higuchi = est_higuchi.copy()
+            scatter_Ys_whittle = est_whittle.copy()
 
     mse = np.square(np.asarray(orig) - np.asarray(est)).mean()
     Ys.append(mse)
@@ -106,7 +114,7 @@ for window in tqdm(Xs):
 general_plot({
     "Ys": [Ys_r_over_s,Ys_variogram,Ys_higuchi,Ys_whittle,Ys],
     "Xs": Xs,
-    "xlabel": "window",
+    "xlabel": "Window size",
     #"xscale": "log",
     "ylabel": "MSE loss",
     #"yscale": "log",
@@ -123,8 +131,9 @@ general_plot({
     "line45_color": None,
     "matplotlib": {
         "width": 6,
-        "height": 3.5,
-        "style": "default"
+        "height": 3.8,
+        "style": "default",
+        "xtics": Xs
     },
     "color_settings":{
         "bg_transparent": False
@@ -135,11 +144,11 @@ scatter_plot({
     "Xs": [scatter_Xs]*5,
     "Ys": [scatter_Ys_r_over_s, scatter_Ys_variogram, scatter_Ys_higuchi, scatter_Ys_whittle, scatter_Ys_lstm],
     "xlabel": "Hurst",
-    "ylabel": "Inferred Value",
+    "ylabel": "Inferred value",
     "title": "",
     "fname": "stress_test_scatter_fBm_Hurst_LSTM_smoothing",
     "dirname": "./plots",
-    "circle_size": 5,
+    "circle_size": 4,
     "x_jitter": 0,
     "opacity": 0,
     "heatmap": False,

@@ -65,7 +65,7 @@ class Model():
         return self.fc.state_dict()
 
     def __call__(self, x):
-        x = x.cpu()
+        x = np.asarray(x.cpu())
         if not self.diff:
             x=[np.cumsum(s) for s in x]
         if self.num_cores>1:

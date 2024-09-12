@@ -16,9 +16,9 @@ from models.baselines.whittle import Model as Whittle
 
 diff=True
 r_over_s=R_over_S({'diff':diff},None)
-variogram=Variogram({'diff':diff},None)
+variogram=Variogram({'diff':diff, "num_cores": 36},None)
 higuchi=Higuchi({'diff':diff},None)
-whittle=Whittle({'diff':diff},None)
+whittle=Whittle({'diff':diff, "num_cores": 36},None)
 
 
 def to_cuda(var):
@@ -28,7 +28,7 @@ def to_cuda(var):
 
 model_params={
     "diff": True,
-    "standardize": True,
+    "standardize": False,
     "invariant_nu_layer": None,
     "additive_nu_layer": None,
     "init_hom": None,
@@ -51,6 +51,11 @@ model_params={
     }
 }
 
+state_dict_path="../model_checkpoints/fBm_non_std/fBm_Hurst_LSTM_n-1600_standardize-False.pt"
+lstm_non_std = to_cuda(LSTM(model_params, state_dict_path))
+lstm_non_std.eval()
+
+model_params["standardize"]= True
 state_dict_path="../model_checkpoints/fBm/fBm_Hurst_LSTM_finetune_until_n-12800.pt"
 lstm = to_cuda(LSTM(model_params, state_dict_path))
 lstm.eval()
@@ -60,8 +65,9 @@ def moving_average(a, n=3):
     ret[n:] = ret[n:] - ret[:-n]
     return ret[n - 1:] / n
     
-Xs = list(np.exp2(np.linspace(-20, 20, num=11)))
+Xs = list(np.exp2(np.power(np.linspace(-2, 2, num=21),3)))
 Ys = []
+Ys_non_std = []
 Ys_r_over_s = []
 Ys_variogram = []
 Ys_higuchi = []
@@ -71,32 +77,35 @@ scatter_Xs = []
 for scale in tqdm(Xs):
     orig=[]
     est=[]
+    est_non_std=[]
     est_r_over_s=[]
     est_variogram=[]
     est_higuchi=[]
     est_whittle=[]
-    for _ in range(1000):
-        H = random.uniform(0, 1)
-        orig.append(H)
-        # if window==5:
-        #     scatter_Xs.append(H)
-        process = fbm_gen(hurst = H, n = 1600, lambd=scale, scaled=False)
-        input = to_cuda(torch.FloatTensor([process]))
-        lstm_estimate = [float(val[0]) for val in lstm(input).detach().cpu()][0]
-        est.append(lstm_estimate)
-        est_r_over_s.append(float(r_over_s(input.cpu())[0]))
-        est_variogram.append(float(variogram(input.cpu())[0]))
-        est_higuchi.append(float(higuchi(input.cpu())[0]))
-        est_whittle.append(float(whittle(input.cpu())[0]))
-    # if window==5:
-    #     scatter_Ys_lstm = est.copy()
-    #     scatter_Ys_r_over_s = est_r_over_s.copy()
-    #     scatter_Ys_variogram = est_variogram.copy()
-    #     scatter_Ys_higuchi = est_higuchi.copy()
-    #     scatter_Ys_whittle = est_whittle.copy()
+    for _ in range(50):
+        inputs=[]
+        for __ in range(100):
+            H = random.uniform(0, 1)
+            orig.append(H)
+
+            process = fbm_gen(hurst = H, n = 1600, lambd=scale, scaled=False)
+            input = to_cuda(torch.FloatTensor([process]))
+            inputs.append(process)
+
+        input=to_cuda(torch.FloatTensor(inputs))
+        est += [float(val[0]) for val in lstm(input).detach().cpu()]
+        est_non_std += [float(val[0]) for val in lstm_non_std(input).detach().cpu()]
+
+        est_r_over_s += [float(val) for val in r_over_s(input.cpu())]
+        est_variogram += [float(val) for val in variogram(input.cpu())]
+        est_higuchi += [float(val) for val in higuchi(input.cpu())]
+        est_whittle += [float(val) for val in whittle(input.cpu())]
 
     mse = np.square(np.asarray(orig) - np.asarray(est)).mean()
     Ys.append(mse)
+
+    mse_non_std = np.square(np.asarray(orig) - np.asarray(est_non_std)).mean()
+    Ys_non_std.append(mse_non_std)
 
     Ys_r_over_s.append(np.square(np.asarray(orig) - np.asarray(est_r_over_s)).mean())
     Ys_variogram.append(np.square(np.asarray(orig) - np.asarray(est_variogram)).mean())
@@ -104,22 +113,22 @@ for scale in tqdm(Xs):
     Ys_whittle.append(np.square(np.asarray(orig) - np.asarray(est_whittle)).mean())
 
 general_plot({
-    "Ys": [Ys_r_over_s,Ys_variogram,Ys_higuchi,Ys_whittle,Ys],
+    "Ys": [Ys_r_over_s,Ys_variogram,Ys_higuchi,Ys_whittle,Ys,Ys_non_std],
     "Xs": Xs,
     "xlabel": "scale",
     "xscale": "log",
     "ylabel": "MSE loss",
-    #"yscale": "log",
+    "yscale": "log",
     "title": "",
     "fname": "stress_test_fBm_Hurst_LSTM_scaling",
     "dirname": "./plots",
     "legend": {
-        "location": "top_left",
-        "labels": ["R/S","variogram","Higuchi","Whittle","LSTM"]
+        "location": "bottom_left",
+        "labels": ["R/S","variogram","Higuchi","Whittle",r"$M_{LSTM}$",r"$M_{LSTM}^*$"]
     },
     "markers": None,
-    "colors":  ["red","red","red","red"]+[Category10[10][0]],
-    "dashes": ["dotted","dashdot","dashed","solid","solid"],
+    "colors":  ["red","red","red","red"]+[Category10[10][0]]+[Category10[10][1]],
+    "dashes": ["dotted","dashdot","dashed","solid","solid","solid"],
     "line45_color": None,
     "matplotlib": {
         "width": 6,
