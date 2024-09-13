@@ -13,7 +13,7 @@ data_params:
         gen: random.uniform
         a: 0
         b: 1
-    epoch_length: 100000
+    epoch_length: 1000000
     n: 1600
     lambd:  
         gen: numpy.random.exponential
@@ -77,8 +77,8 @@ train_params:
     loss_fun_class: torch.nn.MSELoss
     
     num_epochs: 100
-    train_batch_size: 32
-    val_batch_size: 128
+    train_batch_size: 128
+    val_batch_size: 512
     skip_train: false
     skip_val: true
 
