@@ -20,6 +20,7 @@ import plotly.express as px
 import math
 from functools import reduce
 from typing import Optional
+import random
 
 def deep_get(dictionary, keys, default):
     return reduce(lambda d, key: d.get(key, default) if isinstance(d, dict) else default, keys.split("."), dictionary)
@@ -835,8 +836,12 @@ class ScatterPlotter(Plotter):
         plt.grid(True, color=color_settings["grid_color"], zorder=5, alpha=0.5)
 
         for x,y,color,label in zip(Xs, Ys, colors, labels):
-            plt.scatter(x, y, marker='.', color=color, zorder=30, alpha=1-self.params["opacity"], linewidth=0, s=self.params["circle_size"]**2, label=label) # type: ignore
-            
+            for i, x_val, y_val in zip(np.random.permutation(range(10)), np.split(np.asarray(x), 10), np.split(np.asarray(y), 10)):
+                if i==0:
+                    plt.scatter(x_val, y_val, marker='.', color=color, zorder=30, alpha=1-self.params["opacity"], linewidth=0, s=self.params["circle_size"]**2, label=label) # type: ignore
+                else:
+                    plt.scatter(x_val, y_val, marker='.', color=color, zorder=30+i, alpha=1-self.params["opacity"], linewidth=0, s=self.params["circle_size"]**2, label=None) # type: ignore
+        
             if heatmap:
                 xmin = min(x)
                 xmax = max(x)

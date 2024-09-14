@@ -197,7 +197,7 @@ scatter_plot({
     "line45_color": None,
     "legend": {
         "labels": ["trained on fOU", "trained on fBm", "trained on ARFIMA"], #labels[-2:],
-        "location": "top_right",
+        "location": "bottom_left",
         "markerscale": 2.
     },
     "matplotlib": {

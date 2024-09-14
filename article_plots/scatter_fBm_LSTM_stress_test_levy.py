@@ -20,9 +20,9 @@ scatter_plot({
     "title": "",
     "fname": "scatter_fBm_LSTM_stress_test_levy",
     "dirname": "./plots",
-    "circle_size": 7,
+    "circle_size": 6,
     "x_jitter": 0,
-    "opacity": 0.5,
+    "opacity": 0,
     "heatmap": False,
     "line45_color": None,
     "legend": {
