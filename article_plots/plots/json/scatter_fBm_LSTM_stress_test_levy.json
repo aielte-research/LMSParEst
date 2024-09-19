@@ -11,13 +11,19 @@
     "opacity": 0,
     "heatmap": false,
     "line45_color": null,
+    "boundary": {
+        "functions": ["1/x if x>1.2 else None"],
+        "dashes": ["solid"],
+        "colors": ["black"],
+        "legend": ["1/\u03b1"]
+    },
     "legend": {
-        "labels": ["Model fine tuned until n=12800","Model fine tuned until n=1600","Model fine tuned until n=200"],
+        "labels": ["fine tuned until n=12800","fine tuned until n=1600","fine tuned until n=200"],
         "location": "bottom_right"
     },
     "matplotlib": {
         "width": 6,
-        "height": 3.5,
+        "height": 4.5,
         "style": "default"
     },
     "color_settings": {

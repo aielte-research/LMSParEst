@@ -25,13 +25,19 @@ scatter_plot({
     "opacity": 0,
     "heatmap": False,
     "line45_color": None,
+    "boundary": {
+        "functions": ['1/x if x>1.2 else None'],
+        "dashes": ["solid"],
+        "colors": ["black"],
+        "legend": ["1/α"],
+    },
     "legend": {
-        "labels": list(reversed(["Model fine tuned until n=200", "Model fine tuned until n=1600", "Model fine tuned until n=12800"])),
-        "location": "bottom_right"
+        "labels": list(reversed(["fine tuned until n=200", "fine tuned until n=1600", "fine tuned until n=12800"])),
+        "location": "bottom_right" #"top_left"
     },
     "matplotlib": {
         "width": 6,
-        "height": 3.5,
+        "height": 4.5,
         "style": "default"
     },
     "color_settings":{

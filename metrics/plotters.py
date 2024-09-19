@@ -645,6 +645,7 @@ class ScatterPlotter(Plotter):
             "functions": [],
             "dashes": ["dashed"], #"solid", "dashed", "dotted", "dotdash", "dashdot"
             "colors": ["red"], #"solid", "dashed", "dotted", "dotdash", "dashdot"
+            "legend": [None],
         },
         baselines={
             "labels": [],
@@ -700,6 +701,8 @@ class ScatterPlotter(Plotter):
         boundary["dashes"] = cyclic_fill(boundary["dashes"],len(boundary["functions"]))
         boundary["colors"] = boundary.get("colors",["red"])
         boundary["colors"] = cyclic_fill(boundary["colors"],len(boundary["functions"]))
+        boundary["legend"] = boundary.get("legend",[None])
+        boundary["legend"] = cyclic_fill(boundary["legend"],len(boundary["functions"]))
 
         if len(baselines["values"]) > 0:
             baselines["colors"] = cyclic_fill(baselines["colors"], len(baselines["values"]), "grey")
@@ -830,8 +833,8 @@ class ScatterPlotter(Plotter):
 
         if len(self.params["boundary"]["functions"])>0:
             x_range=np.linspace(self.params["min_x"],self.params["max_x"],100)
-            for bf,dash,color in zip(self.params["boundary"]["functions"], self.params["boundary"]["dashes"], self.params["boundary"]["colors"]):
-                plt.plot(x_range, [eval(bf) for x in x_range], matplotlib_dashes[dash], color=color, zorder=15)
+            for bf,dash,color,label in zip(self.params["boundary"]["functions"], self.params["boundary"]["dashes"], self.params["boundary"]["colors"], self.params["boundary"]["legend"]):
+                plt.plot(x_range, [eval(bf) for x in x_range], matplotlib_dashes[dash], color=color, zorder=45, label=label)
 
         plt.grid(True, color=color_settings["grid_color"], zorder=5, alpha=0.5)
 
@@ -868,7 +871,7 @@ class ScatterPlotter(Plotter):
 
         if not self.params["legend"].get("location","bottom_right") is None and len(labels)>0:
             legend = ax.legend(loc=matlotlib_legend_loc(self.params["legend"]["location"]), markerscale=self.params["legend"].get("markerscale",2.0))
-            legend.set_zorder(40)
+            legend.set_zorder(50)
             frame = legend.get_frame()
             frame.set_facecolor(self.params["color_settings"].get("face_color", "white"))
             frame.set_edgecolor(self.params["color_settings"].get("grid_color", "0.9"))

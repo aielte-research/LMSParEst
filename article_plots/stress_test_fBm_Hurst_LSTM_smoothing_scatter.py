@@ -31,8 +31,8 @@ scatter_plot({
         "markerscale": 2.0
     },
     "matplotlib": {
-        "width": 6.8,
-        "height": 4.3,
+        "width": 6,
+        "height": 4.5,
         "style": "default"
     },
     "color_settings": {

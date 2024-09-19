@@ -72,7 +72,7 @@ for sigma in tqdm(Xs):
     est_variogram=[]
     est_higuchi=[]
     est_whittle=[]
-    for _ in range(2):
+    for _ in range(5):
         inputs=[]
         for __ in range(5000):
             H = random.uniform(0, 1)
@@ -135,7 +135,7 @@ general_plot({
     "line45_color": None,
     "matplotlib": {
         "width": 6,
-        "height": 3.8,
+        "height": 4.5,
         "style": "default"
     },
     "color_settings":{
@@ -144,8 +144,8 @@ general_plot({
 })
 
 scatter_plot({
-    "Xs": [scatter_Xs]*5,
-    "Ys": [scatter_Ys_r_over_s, scatter_Ys_variogram, scatter_Ys_higuchi, scatter_Ys_whittle, scatter_Ys_lstm],
+    "Xs": [scatter_Xs[:2000]]*5,
+    "Ys": [scatter_Ys_r_over_s[:2000], scatter_Ys_variogram[:2000], scatter_Ys_higuchi[:2000], scatter_Ys_whittle[:2000], scatter_Ys_lstm[:2000]],
     "xlabel": "Hurst",
     "ylabel": "Inferred value",
     "title": "",
@@ -163,8 +163,8 @@ scatter_plot({
         "markerscale": 2.
     },
     "matplotlib": {
-        "width": 6.7,
-        "height": 4,
+        "width": 6,
+        "height": 4.5,
         # "width": 9,
         # "height": 4.75,
         "style": "default"

@@ -15,10 +15,11 @@ from models.baselines.higuchi import Model as Higuchi
 from models.baselines.whittle import Model as Whittle
 
 diff=True
-r_over_s=R_over_S({'diff':diff},None)
-variogram=Variogram({'diff':diff, "num_cores": 36},None)
-higuchi=Higuchi({'diff':diff},None)
-whittle=Whittle({'diff':diff, "num_cores": 36},None)
+num_cores = 42
+r_over_s=R_over_S({'diff':diff, "num_cores": num_cores}, None)
+variogram=Variogram({'diff':diff, "num_cores": num_cores}, None)
+higuchi=Higuchi({'diff':diff, "num_cores": num_cores}, None)
+whittle=Whittle({'diff':diff, "num_cores": num_cores}, None)
 
 
 def to_cuda(var):
@@ -55,8 +56,12 @@ state_dict_path="../model_checkpoints/fBm_non_std/fBm_Hurst_LSTM_n-1600_standard
 lstm_non_std = to_cuda(LSTM(model_params, state_dict_path))
 lstm_non_std.eval()
 
+state_dict_path="../model_checkpoints/fBm_non_std_random_scale/fBm_Hurst_LSTM_random_scale_n-1600_standardize-False.pt"
+lstm_non_std_random_scale = to_cuda(LSTM(model_params, state_dict_path))
+lstm_non_std_random_scale.eval()
+
 model_params["standardize"]= True
-state_dict_path="../model_checkpoints/fBm/fBm_Hurst_LSTM_finetune_until_n-12800.pt"
+state_dict_path="../model_checkpoints/fBm/fBm_Hurst_LSTM_n-1600.pt"
 lstm = to_cuda(LSTM(model_params, state_dict_path))
 lstm.eval()
 
@@ -68,6 +73,7 @@ def moving_average(a, n=3):
 Xs = list(np.exp2(np.power(np.linspace(-2, 2, num=21),3)))
 Ys = []
 Ys_non_std = []
+Ys_non_std_random_scale = []
 Ys_r_over_s = []
 Ys_variogram = []
 Ys_higuchi = []
@@ -78,13 +84,14 @@ for scale in tqdm(Xs):
     orig=[]
     est=[]
     est_non_std=[]
+    est_non_std_random_scale=[]
     est_r_over_s=[]
     est_variogram=[]
     est_higuchi=[]
     est_whittle=[]
-    for _ in range(50):
+    for _ in range(20):
         inputs=[]
-        for __ in range(100):
+        for __ in range(1000):
             H = random.uniform(0, 1)
             orig.append(H)
 
@@ -95,6 +102,7 @@ for scale in tqdm(Xs):
         input=to_cuda(torch.FloatTensor(inputs))
         est += [float(val[0]) for val in lstm(input).detach().cpu()]
         est_non_std += [float(val[0]) for val in lstm_non_std(input).detach().cpu()]
+        est_non_std_random_scale += [float(val[0]) for val in lstm_non_std_random_scale(input).detach().cpu()]
 
         est_r_over_s += [float(val) for val in r_over_s(input.cpu())]
         est_variogram += [float(val) for val in variogram(input.cpu())]
@@ -107,15 +115,18 @@ for scale in tqdm(Xs):
     mse_non_std = np.square(np.asarray(orig) - np.asarray(est_non_std)).mean()
     Ys_non_std.append(mse_non_std)
 
+    mse_non_std_random_scale = np.square(np.asarray(orig) - np.asarray(est_non_std_random_scale)).mean()
+    Ys_non_std_random_scale.append(mse_non_std_random_scale)
+
     Ys_r_over_s.append(np.square(np.asarray(orig) - np.asarray(est_r_over_s)).mean())
     Ys_variogram.append(np.square(np.asarray(orig) - np.asarray(est_variogram)).mean())
     Ys_higuchi.append(np.square(np.asarray(orig) - np.asarray(est_higuchi)).mean())
     Ys_whittle.append(np.square(np.asarray(orig) - np.asarray(est_whittle)).mean())
 
 general_plot({
-    "Ys": [Ys_r_over_s,Ys_variogram,Ys_higuchi,Ys_whittle,Ys,Ys_non_std],
+    "Ys": [Ys_r_over_s,Ys_variogram,Ys_higuchi,Ys_whittle,Ys,Ys_non_std,Ys_non_std_random_scale],
     "Xs": Xs,
-    "xlabel": "scale",
+    "xlabel": "λ",
     "xscale": "log",
     "ylabel": "MSE loss",
     "yscale": "log",
@@ -124,11 +135,11 @@ general_plot({
     "dirname": "./plots",
     "legend": {
         "location": "bottom_left",
-        "labels": ["R/S","variogram","Higuchi","Whittle",r"$M_{LSTM}$",r"$M_{LSTM}^*$"]
+        "labels": ["R/S","variogram","Higuchi","Whittle",r"$M_{LSTM}$",r"$M_{LSTM}^*$",r"$M_{LSTM}^{**}$"]
     },
     "markers": None,
-    "colors":  ["red","red","red","red"]+[Category10[10][0]]+[Category10[10][1]],
-    "dashes": ["dotted","dashdot","dashed","solid","solid","solid"],
+    "colors":  ["red","red","red","red"]+[Category10[10][0]]+[Category10[10][1]]+[Category10[10][2]],
+    "dashes": ["dotted","dashdot","dashed","solid","solid","solid","solid"],
     "line45_color": None,
     "matplotlib": {
         "width": 6,

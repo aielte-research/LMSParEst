@@ -15,7 +15,7 @@ from models.baselines.higuchi import Model as Higuchi
 from models.baselines.whittle import Model as Whittle
 
 diff=True
-num_cores=32
+num_cores=33
 r_over_s=R_over_S({'diff':diff, "num_cores": num_cores},None)
 variogram=Variogram({'diff':diff, "num_cores": num_cores},None)
 higuchi=Higuchi({'diff':diff, "num_cores": num_cores},None)
@@ -56,10 +56,9 @@ state_dict_path="../model_checkpoints/fBm/fBm_Hurst_LSTM_finetune_until_n-12800.
 lstm = to_cuda(LSTM(model_params, state_dict_path))
 lstm.eval()
 
-def moving_average(a, n=3):
-    ret = np.cumsum(a, dtype=float)
-    ret[n:] = ret[n:] - ret[:-n]
-    return ret[n - 1:] / n
+def moving_average(x, w, stride=1):
+    ret = np.convolve(x, np.ones(w), 'valid') / w
+    return ret[::stride]
     
 Xs = list(range(1,11))
 Ys = []
@@ -85,8 +84,8 @@ for window in tqdm(Xs):
             if window==5:
                 scatter_Xs.append(H)
 
-            process = fbm_gen(hurst = H, n = 1600)
-            inputs.append(np.asarray(moving_average(process, n=window)))
+            process = fbm_gen(hurst = H, n = 1600*window)
+            inputs.append(np.asarray(moving_average(process, window, window)))
 
         input=to_cuda(torch.FloatTensor(inputs))
 
@@ -119,7 +118,7 @@ general_plot({
     "ylabel": "MSE loss",
     #"yscale": "log",
     "title": "",
-    "fname": "stress_test_fBm_Hurst_LSTM_smoothing",
+    "fname": "stress_test_fBm_Hurst_LSTM_smoothing_no_overlap",
     "dirname": "./plots",
     "legend": {
         "location": "top_left",
@@ -146,9 +145,9 @@ scatter_plot({
     "xlabel": "Hurst",
     "ylabel": "Inferred value",
     "title": "",
-    "fname": "stress_test_scatter_fBm_Hurst_LSTM_smoothing",
+    "fname": "stress_test_scatter_fBm_Hurst_LSTM_smoothing_no_overlap",
     "dirname": "./plots",
-    "circle_size": 4,
+    "circle_size": 5,
     "x_jitter": 0,
     "opacity": 0,
     "heatmap": False,

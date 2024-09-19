@@ -26,13 +26,13 @@ scatter_plot({
     "colors": ["#ff7f0e","#2ca02c","#d62728","#9467bd","#1f77b4"],
     "line45_color": "black",
     "legend": {
-        "location": "bottom_right",
+        "location": "top_left",
         "labels": ["R/S","variogram","Higuchi","Whittle","LSTM"],
         "markerscale": 2.0
     },
     "matplotlib": {
-        "width": 6.8,
-        "height": 4.3,
+        "width": 6,
+        "height": 4.5,
         "style": "default"
     },
     "color_settings": {
