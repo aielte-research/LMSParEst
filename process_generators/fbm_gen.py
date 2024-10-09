@@ -5,7 +5,6 @@ from scipy.fftpack import fft
 from fbm import FBM
 
 def fbm(hurst=0.7, n=2000, method="fft", length = 1):
-
     """
         One dimensional fraction Brownian motion generator object through different methods.
         The output is a realization of a fBm (W_t) where t in [0, T] using 'n' equally spaced grid points.
@@ -43,15 +42,12 @@ def fbm(hurst=0.7, n=2000, method="fft", length = 1):
             if i == 0:
                 r[0] = 1
             else:
-                r[i] = 1 / 2 * ((i + 1)**(2*hurst) - 2*i **
-                                (2*hurst) + (i - 1)**(2*hurst))
-        r = np.concatenate([r, r[::-1][1:len(r)-1]])
+                r[i] = 1 / 2 * ((i + 1)**(2*hurst) - 2*i**(2*hurst) + (i - 1)**(2*hurst))
+        r = np.concatenate([r, r[::-1][1:-1]])
         lmbd = np.real(fft(r) / (2*n))
         sqrt = [cmath.sqrt(x) for x in lmbd]
-        W = fft(sqrt * (np.random.normal(size=2*n) +
-                        np.random.normal(size=2*n) * complex(0, 1)))
-        W = n**(-hurst) * \
-            np.cumsum([0, *np.real(W[1:(n + 1)])])
+        W = fft(sqrt * (np.random.normal(size=2*n) + np.random.normal(size=2*n) * complex(0, 1)))
+        W = n**(-hurst) * np.cumsum([0, *np.real(W[1:(n + 1)])])
 
         # rescale the for the final T
         W = (length ** hurst) * W
