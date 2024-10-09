@@ -11,10 +11,10 @@ general_plot({
     "title": "",
     "fname": "fBm_Hurst_losses_log",
     "dirname": "./plots",
-    "legend": {
-        "location": "top_right",
-        "labels": ["fBm Hurst LSTM model n=3200"]
-    },
+    # "legend": {
+    #     "location": "top_right",
+    #     "labels": ["fBm Hurst LSTM model n=3200"]
+    # },
     "colors": None,
     "dashes": ["solid"],
     "markers": ["."],
@@ -27,7 +27,7 @@ general_plot({
     },
     "matplotlib": {
         "width": 6,
-        "height": 3.5,
+        "height": 5,#4.5,
         "style": "default"
     },
     "color_settings":{

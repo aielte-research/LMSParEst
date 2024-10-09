@@ -72,7 +72,7 @@ for sigma in tqdm(Xs):
     est_variogram=[]
     est_higuchi=[]
     est_whittle=[]
-    for _ in range(5):
+    for _ in range(10):
         inputs=[]
         for __ in range(5000):
             H = random.uniform(0, 1)

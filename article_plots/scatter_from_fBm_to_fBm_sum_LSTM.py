@@ -1,6 +1,7 @@
 import sys
 sys.path.append('../')
 from metrics.plotters import scatter_plot
+from bokeh.palettes import Category10
 
 # A+B
 
@@ -24,19 +25,25 @@ scatter_plot({
     "title": "",
     "fname": "scatter_from_fBm_to_fBm_sum_LSTM",
     "dirname": "./plots",
-    "circle_size": 7,
+    "circle_size": 6,
     "x_jitter": 0,
     "opacity": 0,
     "heatmap": False,
     "line45_color": "black",
+    "boundary": {
+        "functions": ['(x+0.1)/2','(x+0.3)/2','(x+0.5)/2','(x+0.7)/2','(x+0.9)/2'],
+        "dashes": ["dotted"],
+        "colors": [Category10[10][i] for i in reversed(range(5))],
+        "legend": [None],
+    },
     "legend": {
         "labels": list(reversed(["H₁ = 0.1","H₁ = 0.3","H₁ = 0.5","H₁ = 0.7","H₁ = 0.9"])),
         "location": "top_left",
         "markerscale": 2.
     },
     "matplotlib": {
-        "width": 6,
-        "height": 4.5,
+        "width": 5,
+        "height": 4,
         "style": "default"
     },
     "color_settings":{

@@ -37,7 +37,7 @@ scatter_plot({
     },
     "matplotlib": {
         "width": 6,
-        "height": 4.5,
+        "height": 5,
         "style": "default"
     },
     "color_settings":{
