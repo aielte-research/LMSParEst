@@ -15,8 +15,8 @@ We introduce a pure deep neural network-based methodology for the estimation of 
 - [Training](#training)
 - [Inference](#inference)
 - [Known Issues](#known-issues)
-- [Contributing](#contributing)
 - [License](#license)
+- [How to Cite](#how-to-cite)
 - [Acknowledgements](#acknowledgements)
 ---
 
