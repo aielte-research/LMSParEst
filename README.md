@@ -171,9 +171,6 @@ And for Anaconda:
 export LD_LIBRARY_PATH=/home/<USERNAME>/anaconda3/envs/LMSParEst/lib
 ```
 
-## Contributing
-Bálint Csanády, Lóránt Nagy, Dániel Boros, Iván Ivkovic, Dávid Kovács
-
 ## License
 Copyright 2024 Bálint Csanády, Lóránt Nagy, Dániel Boros, Iván Ivkovic, Dávid Kovács, Dalma Tóth-Lakits, László Márkus, András Lukács
 
