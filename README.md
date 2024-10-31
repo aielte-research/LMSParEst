@@ -171,7 +171,7 @@ export LD_LIBRARY_PATH=/home/<USERNAME>/anaconda3/envs/LMSParEst/lib
 ```
 
 ## Contributing
-> This paper is currently under double-blind review.
+Bálint Csanády, Lóránt Nagy, Dániel Boros, Iván Ivkovic, Dávid Kovács, Dalma Tóth-Lakits, László Márkus, András Lukács
 
 ## License
 > TBD
