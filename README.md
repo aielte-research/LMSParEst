@@ -186,7 +186,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-### How to Cite
+## How to Cite
 ```bibtex
 @incollection{LMSParEst2024csanady,
   title={Parameter Estimation of Long Memory Stochastic Processes with Deep Neural Networks},
