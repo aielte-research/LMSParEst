@@ -1,0 +1,50 @@
+cff-version: 1.2.0
+message: "If you use our code, please cite it as below."
+authors:
+  - family-names: "Csanády"
+    given-names: "Bálint"
+  - family-names: "Nagy"
+    given-names: "Lóránt"
+  - family-names: "Boros"
+    given-names: "Dániel"
+  - family-names: "Ivkovic"
+    given-names: "Iván"
+  - family-names: "Kovács"
+    given-names: "Dávid"
+  - family-names: "Tóth-Lakits"
+    given-names: "Dalma"
+  - family-names: "Márkus"
+    given-names: "László"
+  - family-names: "Lukács"
+    given-names: "András"
+title: "Parameter Estimation of Long Memory Stochastic Processes with Deep Neural Networks"
+doi: 10.3233/FAIA240784
+date-released: 2024
+url: "https://github.com/aielte-research/LMSParEst"
+preferred-citation:
+  type: conference-paper
+  authors:
+    - family-names: "Csanády"
+      given-names: "Bálint"
+    - family-names: "Nagy"
+      given-names: "Lóránt"
+    - family-names: "Boros"
+      given-names: "Dániel"
+    - family-names: "Ivkovic"
+      given-names: "Iván"
+    - family-names: "Kovács"
+      given-names: "Dávid"
+    - family-names: "Tóth-Lakits"
+      given-names: "Dalma"
+    - family-names: "Márkus"
+      given-names: "László"
+    - family-names: "Lukács"
+      given-names: "András"
+  doi: "10.3233/FAIA240784"
+  book: "ECAI 2024"
+  month: 10
+  start: 2548 # First page number
+  end: 2555 # Last page number
+  title: "Parameter Estimation of Long Memory Stochastic Processes with Deep Neural Networks"
+  volume: 392
+  year: 2024
