@@ -177,5 +177,17 @@ Bálint Csanády, Lóránt Nagy, Dániel Boros, Iván Ivkovic, Dávid Kovács, D
 ## License
 > TBD
 
+### How to Cite
+```bibtex
+@incollection{LMSParEst2024csanady,
+  title={Parameter Estimation of Long Memory Stochastic Processes with Deep Neural Networks},
+  author={Csan{\'a}dy, B{\'a}lint and Nagy, L{\'o}r{\'a}nt and Boros, D{\'a}niel and Ivkovic, Iv{\'a}n and Kov{\'a}cs, D{\'a}vid and T{\'o}th-Lakits, Dalma and M{\'a}rkus, L{\'a}szl{\'o} and Luk{\'a}cs, Andr{\'a}s},
+  booktitle={ECAI 2024},
+  pages={2548--2555},
+  year={2024},
+  publisher={IOS Press}
+}
+```
+
 ## Acknowledgements
 The research was supported by the National Research, Development and Innovation Office within the framework of the Thematic Excellence Program 2021 - National Research Sub programme: “Artificial intelligence, large networks, data security: mathematical foundation and applications" and the Artificial Intelligence National Laboratory Program (MILAB), and the Hungarian National Excellence Grant 2018-1.2.1-NKP-00008.
