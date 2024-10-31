@@ -1,6 +1,7 @@
 # Parameter Estimation of Long Memory Stochastic Processes with Deep Neural Networks
 
-This repository contains the code for the ECAI2024 submission titled "Parameter Estimation of Long Memory Stochastic Processes with Deep Neural Networks".
+This repository contains the code for the [ECAI2024 paper](https://ebooks.iospress.nl/doi/10.3233/FAIA240784) _Parameter Estimation of Long Memory Stochastic Processes with Deep Neural Networks_.
+An extended version with appendix can be found on [arXiv](https://arxiv.org/abs/2410.03776).
 
 ## Introduction
 
