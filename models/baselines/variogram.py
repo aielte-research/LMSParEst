@@ -18,20 +18,16 @@ def variogram(path: list[float], p: float = 1) -> np.float64:
         sample: fBm path
     """
 
-    sum1 = np.sum([np.abs(path[i] - path[i-1]) **
-                   p for i in range(len(path))])
-    sum2 = np.sum([np.abs(path[i] - path[i-2]) **
-                   p for i in range(len(path))])
+    sum1 = np.sum([np.abs(path[i] - path[i-1])**p for i in range(len(path))])
+    sum2 = np.sum([np.abs(path[i] - path[i-2])**p for i in range(len(path))])
 
     # V_p(l/n)
     def vp(increments, l):
         v_p = (1 / (2 * (len(path) - l))) * increments
 
         return v_p
-
-        # D_Vp
-    D = 2 - 1 / p * \
-        ((np.log(vp(sum2, 2)) - np.log(vp(sum1, 1))) / np.log(2))
+        
+    D = 2 - 1 / p * ((np.log(vp(sum2, 2)) - np.log(vp(sum1, 1))) / np.log(2))
 
     return D
 
