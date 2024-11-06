@@ -5,7 +5,15 @@ An extended version with appendix can be found on [arXiv](https://arxiv.org/abs/
 
 ## Introduction
 
-We introduce a pure deep neural network-based methodology for the estimation of long memory parameters associated with time series models, emphasizing on long-range dependence. Such parameters, notably the Hurst exponent, play an essential role in defining the long-range dependence, roughness, and self-similarity of stochastic processes. Our approach is pivotal in diverse domains such as finance, physics, and engineering, where rapid and precise estimation of these parameters is crucial.
+We introduce a pure deep neural network-based methodology for the estimation of long memory parameters associated with time series models, emphasizing on long-range dependence. Such parameters, notably the Hurst exponent, play an essential role in defining the long-range dependence, roughness, and self-similarity of stochastic processes. We harness efficient process generators to provide high-quality synthetic training data, enabling the training of _scale-invariant_ 1D Convolutional Neural Networks (CNNs) and Long Short-Term Memory (LSTM) models. Our approach is pivotal in diverse domains such as finance, physics, and engineering, where rapid and precise estimation of these parameters is crucial.
+
+<p align="left">
+  <img src="./article_plots/readme_plots/volatility_SnP500_daily.png" alt="SnP500" width="600">
+</p>
+
+Hurst-estimates for the daily S&P 500 log-volatility, calculated from 15-minute log-returns. Estimates use 252-day (one year) sliding windows with 189-day overlaps.
+The results provided by our approach are shown in blue.
+We include the estimates (shown in green) produced by $M_{\text{LSTM}}^\ast$ which is not scale and drift invariant. A version $M_{\text{LSTM}}^\ast$ is also shown, where we the input standardized before inference.
 
 ## Table of Contents
 - [Introduction](#introduction)
