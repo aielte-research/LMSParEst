@@ -13,6 +13,7 @@ dependencies:
   - plotly
   - colorcet
   - jupyter
+  - sympy
   - pip
   - pip:
     - neptune
@@ -24,3 +25,4 @@ dependencies:
     - hurst
     - pathos
     - yfinance
+    - cvxpy

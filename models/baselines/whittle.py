@@ -7,7 +7,10 @@ from pathos.multiprocessing import ProcessingPool as Pool
 #source: https://github.com/JFBazille/ICode/blob/master/ICode/estimators/whittle.py
 
 def whittle_fgn(data):
-    return whittle(data, spec_name="fgn")
+    try:
+        return whittle(data, spec_name="fgn")
+    except:
+        return 1
 
 def whittle_arfima(data):
     return whittle(data, spec_name="arfima")

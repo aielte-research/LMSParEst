@@ -4,10 +4,16 @@ import numpy as np
 from pathos.multiprocessing import ProcessingPool as Pool
 
 def compute_Hc_walk(s):
-    return compute_Hc(s, kind='random_walk', simplified=False)[0]
+    try:
+        return compute_Hc(s, kind='random_walk', simplified=False)[0]
+    except:
+        return 1
 
 def compute_Hc_change(s):
-    return compute_Hc(s, kind='change', simplified=False)[0]
+    try:
+        return compute_Hc(s, kind='change', simplified=False)[0]
+    except:
+        return 1
 
 
 class Model():
