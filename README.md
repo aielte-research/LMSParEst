@@ -12,7 +12,7 @@ We introduce a pure deep neural network-based methodology for the estimation of 
 </p>
 
 Hurst-estimates for the daily S&P 500 log-volatility, calculated from 15-minute log-returns. Estimates use 252-day (one year) sliding windows with 189-day overlaps.
-The results provided by our approach are shown in blue.
+The results provided by our approach are shown in blue, and the results by baseline statistical methods are shown in red.
 We include the estimates (shown in green) produced by $M_{\text{LSTM}}^\ast$ which is not scale and drift invariant. A version $M_{\text{LSTM}}^\ast$ is also shown, where we the input standardized before inference.
 
 ## Table of Contents
