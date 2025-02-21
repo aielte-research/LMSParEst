@@ -841,9 +841,9 @@ class ScatterPlotter(Plotter):
         for x,y,color,label in zip(Xs, Ys, colors, labels):
             for i, x_val, y_val in zip(np.random.permutation(range(10)), np.split(np.asarray(x), 10), np.split(np.asarray(y), 10)):
                 if i==0:
-                    plt.scatter(x_val, y_val, marker='.', color=color, zorder=30, alpha=1-self.params["opacity"], linewidth=0, s=self.params["circle_size"]**2, label=label) # type: ignore
+                    ax.scatter(x_val, y_val, marker='.', color=color, zorder=30, alpha=1-self.params["opacity"], linewidth=0, s=self.params["circle_size"]**2, label=label) # type: ignore
                 else:
-                    plt.scatter(x_val, y_val, marker='.', color=color, zorder=30+i, alpha=1-self.params["opacity"], linewidth=0, s=self.params["circle_size"]**2, label=None) # type: ignore
+                    ax.scatter(x_val, y_val, marker='.', color=color, zorder=30+i, alpha=1-self.params["opacity"], linewidth=0, s=self.params["circle_size"]**2, label=None) # type: ignore
         
             if heatmap:
                 xmin = min(x)
@@ -910,6 +910,44 @@ def scatter_plot(params, export_types=["json","html","png","pdf"]):
     fig, ax = init_matplotlib_figure(**plotter.params["matplotlib"])
     plotter.make_matplotlib_plot(ax, Xs, Ys, labels, colors)
     plotter.save_matplotlib_figure(deep_get(params,"matplotlib.png_dpi",240), deep_get(params,"color_settings.bg_transparent",True), png="png" in export_types, svg="svg" in export_types, pdf="pdf" in export_types)
+    return fig
+
+def scatter_grid_plot(params_list: list, width: int=2, export_types=["json","html","png","pdf"]):
+    if len(params_list)==1:
+        return general_plot(params_list[0], export_types=export_types)
+    
+    height = math.ceil(len(params_list)/width)
+    fig, axs = init_matplotlib_grid_figure(
+        grid_w=width,
+        grid_h=height,
+        **params_list[0].get("matplotlib",{
+            "width": 16,
+            "height": 9,
+            "style": "seaborn-poster"
+        })
+    )
+    bokeh_grid = [[None for _ in range(width)] for _ in range(height)]
+    for idx, params in enumerate(params_list):
+        plotter = ScatterPlotter(**params)
+        Xs, Ys = params["Xs"], params["Ys"]
+        labels = params["legend"]["labels"]
+        colors = params["colors"]
+        if "html" in export_types:
+            bokeh_grid[idx//width][idx%width] = plotter.make_bokeh_plot(Xs, Ys, labels, colors) # type: ignore
+        plotter.make_matplotlib_plot(axs[idx], Xs, Ys, labels, colors)
+    if "json" in export_types:
+        plotter.export_json(params_list)
+    if "html" in export_types:        
+        grid = gridplot(bokeh_grid, sizing_mode= 'stretch_both')# type: ignore #, width=deep_get(params,"matplotlib.width",16)*width, height=deep_get(params,"matplotlib.height",9)*height)
+        plotter.save_bokeh_figure(grid)
+    plt.tight_layout()
+    plotter.save_matplotlib_figure(
+        deep_get(params,"matplotlib.png_dpi",240),
+        deep_get(params,"color_settings.bg_transparent",True),
+        png="png" in export_types,
+        svg="svg" in export_types,
+        pdf="pdf" in export_types
+    )
     return fig
 
 class SpectrumPlotter(Plotter):
