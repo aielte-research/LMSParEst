@@ -6,7 +6,8 @@ from bokeh.colors import RGB
 from bokeh.layouts import column, gridplot
 from bokeh.models.ranges import DataRange1d
 from matplotlib import pyplot as plt
-from matplotlib.colors import ListedColormap
+from matplotlib.colors import ListedColormap, to_rgb, to_hex
+from matplotlib.patches import Patch
 import numpy as np
 import colorcet as cc
 import os
@@ -93,6 +94,12 @@ def my_cmap(val, high, low=0, typ="log"):
         val = val**2
         high = high**2
     return cmap[math.ceil(val / high * (len(cmap) - 1))]
+
+def darken_color(hex_color, factor=0.7):
+    """Return a darker version of the given hex color."""
+    rgb = np.array(to_rgb(hex_color))
+    dark_hex = to_hex(rgb * factor)
+    return dark_hex
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -1188,6 +1195,187 @@ def scatter_grid_plot(
                 [extension], make_subfolder
             )
     
+    return fig
+
+
+class AreaPlotter(Plotter):
+    def __init__(
+        self,
+        X,
+        Ys,
+        fname:str = "spectrogram",
+        dirname:str = "",
+        title:str = "",
+        xlabel:str = "x",
+        ylabel:str = "y",
+        normalized:bool = False,
+        colors=None, # the bulit in categorical colors go up to 256
+        legend_labels = None,
+        measure:dir = {
+            "Y": [],
+            "label": None,
+            "color": "black", # the bulit in categorical colors go up to 256
+            "dash": "dashed"
+        },
+        matplotlib:dir = { # for png and svg
+            "width": 16,
+            "height": 9,
+            "style": "seaborn-poster", #"seaborn-poster", "seaborn-talk"
+            "png_dpi": 240 #use 240 for 4k resolution on 16x9 image
+        },
+        color_settings:dir = {
+            "suffix": "",
+            "grid_color": "0.9",
+            "face_color": "white",
+            "line_color": "black",
+            "bg_transparent": False
+        },
+        neptune_experiment=None,
+    ):
+        if hasattr(X, "tolist"):
+            X = X.tolist()
+        if hasattr(Ys, "tolist"):
+            Ys = Ys.tolist()
+        if isinstance(Ys[0], numbers.Number):
+            Ys = [Ys]
+        for i, y in enumerate(Ys):
+            if hasattr(y, "tolist"):
+                Ys[i] = y.tolist()
+
+        if colors is None:
+            colors = get_colors(len(Ys))
+        else:
+            colors = cyclic_fill(colors, len(Ys))
+
+        if len(measure["Y"]) > 0:
+            measure["label"] = measure.get("label", None)
+            measure["color"] = measure.get("color", "black")
+            measure["dash"] = measure.get("dash", ["dashed"])
+
+        self.params = locals()
+        super().__init__(fname, dirname, neptune_experiment)
+
+    ##############
+    # matplotlib #
+    ##############
+    def make_matplotlib_plot(self, ax):
+        ax.set_xlabel(self.params["xlabel"])
+        ax.set_ylabel(self.params["ylabel"])
+
+        x_array = np.array(self.params["X"])
+        Y_array = np.array(self.params["Ys"]).T  # initially shape (num_series, N) now (N, num_series)
+        Y_sum = np.sum(np.abs(Y_array), axis=1, keepdims=True)
+        
+        ax.set_xlim(np.min(x_array), np.max(x_array))
+        ax.set_ylim(0, np.max(Y_sum)*1.05)
+
+        if self.params["normalized"]:
+            ax.set_ylim(0, 1)
+            Y_sum[Y_sum == 0] = 1
+            Y_array = Y_array / Y_sum
+
+        Y_array_abs = np.abs(Y_array)
+
+        # Plot the areas.
+        cumulative = np.cumsum(Y_array_abs, axis=1)
+        bottoms = np.hstack([np.zeros((Y_array_abs.shape[0], 1)), cumulative[:, :-1]])
+        signs = np.sign(Y_array)
+        for j in range(len(self.params["Ys"])):
+            pos_color = self.params["colors"][j]
+            neg_color = darken_color(pos_color, 0.7)
+            for i in range(len(x_array) - 1):
+                seg_color = pos_color if signs[i, j] > 0 else neg_color
+                ax.fill_between(
+                    x_array[i:i + 2],
+                    [bottoms[i, j], bottoms[i + 1, j]],
+                    [cumulative[i, j], cumulative[i + 1, j]],
+                    color=seg_color,
+                    alpha=0.7
+                )
+
+        ax.set_title(self.params["title"], pad=50)
+
+        legend_handles = []
+        if self.params["legend_labels"] is not None:
+            for label, color in zip(self.params["legend_labels"], self.params["colors"]):
+                legend_handles.append(Patch(facecolor=color, label=label))
+
+        if len(self.params["measure"]["Y"]) > 0:
+            dash = matplotlib_dashes[self.params["measure"]["dash"]]
+
+            ax2 = ax.twinx()
+            ax2.plot(
+                x_array,
+                self.params["measure"]["Y"],
+                dash,
+                color=self.params["measure"]["color"],
+                label=self.params["measure"]["label"],
+                linewidth=2
+            )
+            ax2.set_ylabel(self.params["measure"]["label"])
+            legend_handles.append(plt.Line2D(
+                [0], [0], color=self.params["measure"]["color"],
+                linestyle=dash, label=self.params["measure"]["label"]
+            ))
+        
+        ax.legend(
+            legend_handles, [h.get_label() for h in legend_handles],
+            ncol=len(legend_handles),
+            bbox_to_anchor=(0, 1),
+            loc='lower left'
+        )
+
+        matplotlib_setcolors(ax, **self.params["color_settings"])      
+
+def area_plot(params, export_types=["json", "png", "pdf"], make_subfolder=True):
+    plotter = AreaPlotter(**params)
+
+    if "json" in export_types:
+        plotter.export_json(params, make_subfolder)
+
+    fig, ax = init_matplotlib_figure(**plotter.params["matplotlib"])
+    plotter.make_matplotlib_plot(ax)
+    plotter.save_matplotlib_figure(
+        deep_get(params, "matplotlib.png_dpi", 240),
+        deep_get(params, "color_settings.bg_transparent", False),
+        [typ for typ in export_types if typ != "json"],
+        make_subfolder
+    )
+    return fig
+
+def area_grid_plot(params_list, width: int = 2, export_types=["json", "png", "pdf"], make_subfolder=True):
+    if len(params_list) == 1:
+        return area_plot(params_list[0], export_types=export_types, make_subfolder=make_subfolder)
+    
+    height = math.ceil(len(params_list) / width)
+
+    if "json" in export_types:
+        plotter = AreaPlotter(**params_list[0])
+        plotter.export_json(params_list, make_subfolder=make_subfolder)
+
+    fig, axs = init_matplotlib_grid_figure(
+        grid_w=width,
+        grid_h=height,
+        grid_len=len(params_list),
+        **params_list[0].get("matplotlib", {
+            "width": 16,
+            "height": 9,
+            "style": "seaborn-poster"
+        })
+    )
+
+    for idx, params in enumerate(params_list):
+        plotter = AreaPlotter(**params)
+        plotter.make_matplotlib_plot(axs[idx])
+    
+    plt.tight_layout()
+
+    plotter.save_matplotlib_figure(
+        deep_get(params, "matplotlib.png_dpi", 240),
+        deep_get(params, "color_settings.bg_transparent", False),
+        [typ for typ in export_types if typ != "json"],
+        make_subfolder
+    )
     return fig
 
 class SpectrumPlotter(Plotter):
