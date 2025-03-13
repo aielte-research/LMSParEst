@@ -2,10 +2,9 @@ name: LMSParEst
 channels:
   - defaults
 dependencies:
-  - python=3.9
-  - numpy=1.22
-  - scipy=1.6.2
-  #- scikit-learn=1.0.1
+  - python=3.10
+  - numpy
+  - scipy
   - pandas
   - tqdm 
   - bokeh
@@ -26,3 +25,6 @@ dependencies:
     - pathos
     - yfinance
     - cvxpy
+    - whittlehurst==0.7
+    - dcor
+    - minepy
