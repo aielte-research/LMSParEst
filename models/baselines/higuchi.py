@@ -4,7 +4,7 @@ import numpy as np
 from pathos.multiprocessing import ProcessingPool as Pool
 
 class Model():
-    def __init__(self, params, state_dict):
+    def __init__(self, params, state_dict=None):
         self.fc = torch.nn.Linear(10, 10)
         self.baseline = True
         self.diff = params.get('diff', True)
