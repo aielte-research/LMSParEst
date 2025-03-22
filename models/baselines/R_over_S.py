@@ -17,7 +17,7 @@ def compute_Hc_change(s):
 
 
 class Model():
-    def __init__(self, params, state_dict):
+    def __init__(self, params, state_dict=None):
         self.fc = torch.nn.Linear(10, 10)
         self.baseline = True
         self.diff = params.get('diff', True)
@@ -40,7 +40,10 @@ class Model():
         return self.fc.state_dict()
 
     def __call__(self, x):
-        x = np.asarray(x.cpu())
+        try:
+            x = np.asarray(x.cpu())
+        except:
+            x = np.asarray(x)
 
         if self.num_cores>1:
             with Pool(self.num_cores) as p:

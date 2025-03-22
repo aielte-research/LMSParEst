@@ -85,7 +85,7 @@ general_plot({
     "color_settings":{
         "bg_transparent": False
     }
-})
+}, export_types=["png", "pdf"])
 
 general_plot({
     "Ys": deviations_lst,
@@ -109,7 +109,7 @@ general_plot({
     "color_settings":{
         "bg_transparent": False
     }
-})
+}, export_types=["png", "pdf"])
 
 scatter_plot({
     "Xs": [est_R_over_S],
@@ -139,7 +139,7 @@ scatter_plot({
     "color_settings":{
         "bg_transparent": False
     }
-})
+}, export_types=["png", "pdf"])
 
 scatter_plot({
     "Xs": [orig],
@@ -170,7 +170,7 @@ scatter_plot({
     "color_settings":{
         "bg_transparent": False
     }
-})
+}, export_types=["png", "pdf"])
 
 scatter_plot({
     "Xs": [orig]*2,
@@ -201,4 +201,4 @@ scatter_plot({
     "color_settings":{
         "bg_transparent": False
     }
-})
+}, export_types=["png", "pdf"])
