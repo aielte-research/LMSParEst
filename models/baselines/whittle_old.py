@@ -95,7 +95,10 @@ class Model():
         return self.fc.state_dict()
 
     def __call__(self, x):
-        x = np.asarray(x.cpu())
+        try:
+            x = np.asarray(x.cpu())
+        except:
+            x = np.asarray(x)
         if self.diff:
             x = x[:, :-1] - x[:, 1:]
         if self.num_cores>1:
