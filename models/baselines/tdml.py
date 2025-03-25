@@ -1,21 +1,15 @@
-import torch
 import numpy as np
-from whittlehurst import variogram
+from whittlehurst import tdml
+import torch
 from pathos.multiprocessing import ProcessingPool as Pool
 
 class Model():
     def __init__(self, params, state_dict=None):
         self.fc = torch.nn.Linear(10, 10)
         self.baseline = True
-        if params is not None:
-            self.diff = params.get('diff', True)
-            self.num_cores = params.get('num_cores', 16)
-            self.shift = params.get('shift', 0)
-        else:
-            self.diff = True
-            self.num_cores = 16
-            self.shift = 0
-
+        self.diff = params.get('diff', True)
+        self.num_cores = params.get('num_cores', 16)
+        self.shift = params.get('shift', 0)
 
     def to(self, d):
         return self
@@ -37,16 +31,17 @@ class Model():
             x = np.asarray(x.cpu())
         except:
             x = np.asarray(x)
-        if not self.diff:
-            x=[np.cumsum(s) for s in x]
+        if self.diff:
+            x = x[:, :-1] - x[:, 1:]
         if self.num_cores>1:
             with Pool(self.num_cores) as p:
-                est = [H + self.shift for H in p.map(variogram, x)]
+                est = p.map(tdml, x)
         else:
-            est = [variogram(s) + self.shift for s in x]
+            est = [tdml(s) for s in x]
+        est = [s + self.shift for s in est]
         est = torch.FloatTensor(est)
         return torch.unsqueeze(est, 1)
-    
+
 # Example usage:
 if __name__ == '__main__':
     from whittlehurst import fbm
@@ -60,12 +55,17 @@ if __name__ == '__main__':
 
         # Generate an fBm realization
         seq = fbm(H=H, n=12800)
+
+        # Calculate the increments
+        seq = np.diff(seq)
         
         start = time.time()
         # Estimate the Hurst exponent
-        H_est = variogram(seq)
+        H_est = tdml(seq)
         total += time.time() - start
 
         print(H, H_est)
         
     print("Time (s):",total)
+
+

@@ -114,3 +114,29 @@ class Model():
         est = [s + self.shift for s in est]
         est = torch.FloatTensor(est)
         return torch.unsqueeze(est, 1)
+    
+# Example usage:
+if __name__ == '__main__':
+    from whittlehurst import fbm
+    import time
+    
+    total=0
+    
+    # Original Hurst value to test with
+    Hs=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+    for H in Hs:
+
+        # Generate an fBm realization
+        seq = fbm(H=H, n=12800)
+
+        # Calculate the increments, because the estimator works with the fGn spectrum
+        seq = np.diff(seq)
+        
+        start = time.time()
+        # Estimate the Hurst exponent
+        H_est = whittle_fgn(seq)
+        total += time.time() - start
+
+        print(H, H_est)
+        
+    print("Time (s):",total)

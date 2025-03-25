@@ -1,16 +1,38 @@
 import torch
 import numpy as np
-from whittlehurst import whittle
+from scipy.stats import linregress
 from pathos.multiprocessing import ProcessingPool as Pool
 
+def Lm_empirical(x, m=1):
+    N = len(x)
+    ret = 0
+    for k in range(N - m):
+        ret += x[k] * x[k + m]
+    return ret / (N - m)
+
+def log_regress(x, max_lag=5):
+    y = []
+    lags = np.arange(1, max_lag + 1)
+    for m in lags:
+        Lm = Lm_empirical(x, m)
+        # Use absolute value to avoid issues with negative autocovariances
+        y.append(np.log(np.abs(Lm)))
+    slope, intercept, r, p, se = linregress(np.log(lags), y)
+    return slope, intercept
+
+def estimate_H_slope(x, max_lag=5):
+    slope, _ = log_regress(x, max_lag)
+    # slope is approximately 2H - 2, so:
+    return slope / 2 + 1
+
 class Model():
-    def __init__(self, params, state_dict=None):
+    def __init__(self, params, state_dict):
         self.fc = torch.nn.Linear(10, 10)
         self.baseline = True
         self.diff = params.get('diff', True)
+        self.method = params.get('method', "slope")
         self.num_cores = params.get('num_cores', 16)
         self.shift = params.get('shift', 0)
-        self.spec_name = params.get('spec_name', "fgn")
 
     def to(self, d):
         return self
@@ -36,9 +58,16 @@ class Model():
             x = x[:, :-1] - x[:, 1:]
         if self.num_cores>1:
             with Pool(self.num_cores) as p:
-                est = p.map(lambda x: whittle(x,self.spec_name), x)
+                if self.method=="slope":
+                    est = p.map(estimate_H_slope, x)
+                else:
+                    raise
         else:
-            est = [whittle(s, spectrum=self.spec_name) for s in x]
+            if self.method=="slope":
+                est = [estimate_H_slope(s) for s in x]
+            else:
+                raise
+            
         est = [s + self.shift for s in est]
         est = torch.FloatTensor(est)
         return torch.unsqueeze(est, 1)
@@ -56,13 +85,13 @@ if __name__ == '__main__':
 
         # Generate an fBm realization
         seq = fbm(H=H, n=12800)
-
-        # Calculate the increments, because the estimator works with the fGn spectrum
+        
+        # Calculate the increments
         seq = np.diff(seq)
         
         start = time.time()
         # Estimate the Hurst exponent
-        H_est = whittle(seq)
+        H_est = estimate_H_slope(seq)
         total += time.time() - start
 
         print(H, H_est)
